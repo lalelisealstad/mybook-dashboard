@@ -1,6 +1,7 @@
 import requests
 import pandas as pd
 from bs4 import BeautifulSoup
+import re
 
 # URL of the Wikipedia page
 url = "https://en.wikipedia.org/wiki/List_of_Women's_Prize_for_Fiction_winners"
@@ -75,5 +76,14 @@ for table in tables:
 
 # Print the DataFrame
 df.Year = df.Year.astype(int)
+
+# Some titles are returned with wikipedia reference or added characthers, example, title[2]. I adjust the titles to remove the square brackets and the content within. 
+# Function to remove square brackets and their contents using regex
+def remove_square_brackets(text):
+    return re.sub(r'\[.*?\]', '', text)
+
+# Apply the function to the 'Title' column
+df['Title'] = df['Title'].apply(remove_square_brackets)
+
 df.to_parquet('assets/WPH.parquet')
 
