@@ -159,7 +159,7 @@ def get_book_info(book_name, author_name):
         'Rating Count': [rating_count],
         'Language': [language]
     })
-
+    
     return book_info
 
 
@@ -188,7 +188,7 @@ def book_info_add(df):
 
     # Reset the index of the combined DataFrame
     combined_book_info = combined_book_info.reset_index(drop=True)
-
+    combined_book_info = combined_book_info.rename(columns=lambda x: x.replace(' ', '_'))
     # Display the combined DataFrame
     return combined_book_info
 
