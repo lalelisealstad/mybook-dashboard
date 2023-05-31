@@ -34,7 +34,7 @@ Key points:
 - country 
 - popularity
 - sentiment from summaries of books
-
+- ai segmentation av bøker so, jeg ønsker å lese
 
 
 
