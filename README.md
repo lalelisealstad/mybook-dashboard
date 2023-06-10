@@ -15,11 +15,36 @@ pip install -r requirements.txt
 - Use webscraping to collect the table of finalists and winners of the WPF from all years
     - manipulate table to account for merged cells
     - use regex to remove unnecessary signs in the title name
+
 - Collect information about the book using Google Book API
     - API request for book using title and author, if not found then it checks for title with the added strin ': A novel' as I found many books had this title ending in Google Books but not in the WPF wikipedia page, then if book is not found it checks for just title 
     - Normalise string of Title to adjust for Python's case sensitivity before mergning datasett from webscraping wikipeda and google books api
+
 - Collect topics from Open Library API and store as a JSON file
     - To make the topics easy to extract and use I store the information from the OL api as a dictionary with the Title as the Key and the list of topics as the value. 
+
+Vizualisation:
+My read books: 
+- book topics tree map
+- books read timeline
+- timeline showing when books were written
+- top five books rates vs other ratings, with rating count
+- distribution of pages 
+- distribution of languages 
+- top rated topics using categories and the topics from open ai 
+
+Want to read: 
+- top five rated books 
+- top five popular books based on rating count
+- 
+
+Other pages:
+- sentiment analysis of description books. wpf vs own books read vs books want to read
+- segment analysis books read
+- Ai recommend books want to read based on books read
+- using ai to find male or female author
+
+
 * Store Data in BigQuery 
 * Use Open Library API to get the rating, summary and tipcs. 
 * Use Google Trends to get the google searches for all the books and WPF in general 
@@ -35,7 +60,7 @@ Key points:
 - popularity
 - sentiment from summaries of books
 - ai segmentation av bøker so, jeg ønsker å lese
-
+- 
 
 
 
