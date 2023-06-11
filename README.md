@@ -26,12 +26,14 @@ pip install -r requirements.txt
 Vizualisation:
 My read books: 
 - book topics tree map
-- books read timeline
-- timeline showing when books were written
+- books read timeline, line chart
+- timeline showing when books were written, barchart
+
 - top five books rates vs other ratings, with rating count
 - distribution of pages 
 - distribution of languages 
 - top rated topics using categories and the topics from open ai 
+- viz showing own rating vs other ratings. one total to ssee if rating more generous or not than most people
 
 Want to read: 
 - top five rated books 
