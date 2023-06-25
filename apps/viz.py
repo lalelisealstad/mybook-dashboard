@@ -117,7 +117,7 @@ def viz_pub_year(df):
             sizemode='diameter',
             sizeref=sizes.max() / 50,  # Adjust the size scaling factor as needed
             color=ratings,
-            colorscale='Viridis',  # Choose a desired color scale
+            colorscale='Sunset',  # Choose a desired color scale
             showscale=True
         )
     ))
@@ -127,7 +127,8 @@ def viz_pub_year(df):
         title='My Ratings and Publication Year',
         xaxis=dict(title='Publication Years'),
         yaxis=dict(title='My Rating'),
-        showlegend=False
+        showlegend=False,
+        template = "plotly_white"
     )
     
     return fig

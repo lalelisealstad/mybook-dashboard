@@ -28,17 +28,18 @@ My read books:
 - book topics tree map
 - books read timeline, line chart
 - timeline showing when books were written, barchart
+- distribution of pages, bar chart
 
-- top five books rates vs other ratings, with rating count
-- distribution of pages 
-- distribution of languages 
-- top rated topics using categories and the topics from open ai 
-- viz showing own rating vs other ratings. one total to ssee if rating more generous or not than most people
+- distribution of languages, pie chart
+- pie chart categories, 
+- viz showing own rating vs other ratings. one total to ssee if rating more generous or not than most people. use the plotly single figure thing
+- top and botton books use plot with own rating minus goodreads, then center 0 at middle of axis. axis lined along y axis, so opposite way as usual. 
+- most read authors by count, and most liked authors 
+- this year in books, total books and total pages, cummulative line chart for number of books timeline with number of pages as density chart. Show the number as the indicator plotly, just eh number of pages and books. 
 
 Want to read: 
 - top five rated books 
 - top five popular books based on rating count
-- 
 
 Other pages:
 - sentiment analysis of description books. wpf vs own books read vs books want to read
@@ -46,7 +47,10 @@ Other pages:
 - Ai recommend books want to read based on books read
 - using ai to find male or female author
 
+maybe ideas: 
+- top five books rates vs other ratings, with rating count
 
+OLD: 
 * Store Data in BigQuery 
 * Use Open Library API to get the rating, summary and tipcs. 
 * Use Google Trends to get the google searches for all the books and WPF in general 
