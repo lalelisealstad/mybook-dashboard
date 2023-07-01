@@ -247,7 +247,7 @@ def plot_book_ratings(data):
     sorted_data = filtered_data.sort_values('My_Rating', ascending=False)
 
     # Select the top 5 and bottom 5 books based on your own rating
-    top_books = sorted_data.head(10)
+    top_books = sorted_data.head(15)
     bottom_books = sorted_data.tail(10)
 
     # Create the figure object with subplots
@@ -369,7 +369,7 @@ import numpy as np
 
 def create_author_table(data):
     # Filter the data to include only the books you've read
-    data = myreads[myreads['Author'].isin(myreads['Author'].value_counts().nlargest(5).index)].copy()
+    data = data[data['Author'].isin(data['Author'].value_counts().nlargest(5).index)].copy()
 
     # Replace 0 by np.nan so its not included in the mean (Usally 0 rating means it is not rated) 
     data['My_Rating'] = data['My_Rating'].replace(0, np.nan)

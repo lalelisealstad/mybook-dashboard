@@ -24,7 +24,8 @@ pip install -r requirements.txt
     - To make the topics easy to extract and use I store the information from the OL api as a dictionary with the Title as the Key and the list of topics as the value. 
 
 Vizualisation:
-My read books: 
+Done: 
+My read books - viz : 
 - book topics tree map
 - books read timeline, line chart
 - timeline showing when books were written, barchart
@@ -32,31 +33,35 @@ My read books:
 - distribution of languages, pie chart
 - pie chart categories, 
 - top and botton books use plot with own rating minus goodreads, then center 0 at middle of axis. axis lined along y axis, so opposite way as usual. 
-
 - most read authors by count, and most liked authors 
-- this year in books, total books and total pages, cummulative line chart for number of books timeline with number of pages as density chart. Show the number as the indicator plotly, just eh number of pages and books. 
+
+to-do: 
+- this year in books, total books and total pages,Show the number as the indicator plotly, just eh number of pages and books. 
+- Get words from summary. Show most common words, create that into a dictionary like the topics and use word cloud. create filter on this: myreads, my want to reads, my rate 5 books, whp books, 
 
 Want to read: 
 - top five rated books 
 - top five popular books based on rating count
 
+WPF: 
+- top five rated books 
+- top five popular books based on rating count
+
 Other pages:
-- sentiment analysis of description books. wpf vs own books read vs books want to read
-- segment analysis books read
 - Ai recommend books want to read based on books read
 - using ai to find male or female author
 
-maybe ideas: 
-- top five books rates vs other ratings, with rating count
-
 OLD: 
-* Store Data in BigQuery 
-* Use Open Library API to get the rating, summary and tipcs. 
 * Use Google Trends to get the google searches for all the books and WPF in general 
 * country auther from wikipedia
 * price from Google Book API
 * Imput your own books into rhe dashboard - see WPF books matching in seniment, see books that are relevant from WPH using the google books api. 
-* similar books using https://www.gutenberg.org/ebooks/20194/also/ 
+
+Not doable: 
+* Store Data in BigQuery  - no point
+* Use Open Library API to get the rating, summary and tipcs.  - it is not good 
+* similar books using https://www.gutenberg.org/ebooks/20194/also/ - didnt get any books when I did the api call.... 
+
 
 Key points: 
 - pages in book 
