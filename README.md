@@ -29,11 +29,10 @@ My read books:
 - books read timeline, line chart
 - timeline showing when books were written, barchart
 - distribution of pages, bar chart
-
 - distribution of languages, pie chart
 - pie chart categories, 
-- viz showing own rating vs other ratings. one total to ssee if rating more generous or not than most people. use the plotly single figure thing
 - top and botton books use plot with own rating minus goodreads, then center 0 at middle of axis. axis lined along y axis, so opposite way as usual. 
+
 - most read authors by count, and most liked authors 
 - this year in books, total books and total pages, cummulative line chart for number of books timeline with number of pages as density chart. Show the number as the indicator plotly, just eh number of pages and books. 
 
