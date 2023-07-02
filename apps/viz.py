@@ -65,9 +65,7 @@ import plotly.graph_objects as go
 import numpy as np
 
 def viz_pub_year(df):
-    # filter na in publication year and make column publication year integer 
-    df = df.dropna(subset=['Original_Publication_Year'])
-    df['Original_Publication_Year'] = df['Original_Publication_Year'].astype(int)
+
     # Group the DataFrame by year and calculate the average rating and count of books
     year_data = df.groupby('Original_Publication_Year').agg({'My_Rating': 'mean', 'Title': 'count'}).reset_index()
     
@@ -76,12 +74,6 @@ def viz_pub_year(df):
     ratings = year_data['My_Rating']
     book_counts = year_data['Title']
     
-    # # Create the hover text with book title, My_Rating, and Original_Publication_Year
-    # hover_text = []
-    # for year in labels:
-    #     books = df[df['Original_Publication_Year'] == year]
-    #     hover_text.append(f"<span style='font-size: 16px;'>{year}</span><br>" + '<br>'.join(f"{book['Title']} - Rating: {book['My_Rating']}" for _, book in books.iterrows()))
-
     hover_text = []
     for year in labels:
         books = df[df['Original_Publication_Year'] == year]
@@ -137,19 +129,8 @@ import pandas as pd
 import plotly.express as px
 
 def viz_year_read(df):
-    # Convert 'Date_Read' column to datetime type
-    df['Date_Read'] = pd.to_datetime(df['Date_Read'])
     
-    # Extract year and quarter from 'Date_Read' column
-    df['Year'] = df['Date_Read'].dt.year
-    df['Quarter'] = df['Date_Read'].dt.quarter
-    
-    # Create a new column combining year and quarter
-    df['Year_Quarter'] = df['Year'].astype(str) + '-Q' + df['Quarter'].astype(str)
-    
-    # Convert Year_Quarter to categorical variable
-    df['Year_Quarter'] = pd.Categorical(df['Year_Quarter'], ordered=True)
-    
+    df = df.dropna(subset=['Year_Quarter'])
     # Count the number of books read in each year and quarter
     year_quarter_counts = df.groupby('Year_Quarter').size().reset_index(name='Books Read')
     

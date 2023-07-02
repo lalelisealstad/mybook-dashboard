@@ -23,6 +23,12 @@ pip install -r requirements.txt
 - Collect topics from Open Library API and store as a JSON file
     - To make the topics easy to extract and use I store the information from the OL api as a dictionary with the Title as the Key and the list of topics as the value. 
 
+- Data cleaning 
+    - 
+    - for the average rating for top authors, NA for My_rating uses mean imputation, so the average rating per author (excluding the 0 or NA values) are imputed as the rating. 
+    - na for date_read uses date_added
+    - 
+
 Vizualisation:
 Done: 
 My read books - viz : 
