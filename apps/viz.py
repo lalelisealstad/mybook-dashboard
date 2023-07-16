@@ -228,7 +228,7 @@ def plot_book_ratings(data):
     sorted_data = filtered_data.sort_values('My_Rating', ascending=False)
 
     # Select the top 5 and bottom 5 books based on your own rating
-    top_books = sorted_data.head(15)
+    top_books = sorted_data.head(10)
     bottom_books = sorted_data.tail(10)
 
     # Create the figure object with subplots
@@ -243,7 +243,8 @@ def plot_book_ratings(data):
         x=top_books['My_Rating'],
         name='My Rating',
         orientation='h',
-        marker=dict(color=pastel_colors[0])
+        marker=dict(color=pastel_colors[3]),
+        legendgroup='My Rating'
     ), row=1, col=1)
 
     fig.add_trace(go.Bar(
@@ -251,7 +252,8 @@ def plot_book_ratings(data):
         x=top_books['Average_Rating_GoogleBooks'],
         name='Average Rating (Google Books)',
         orientation='h',
-        marker=dict(color=pastel_colors[1])
+        marker=dict(color=pastel_colors[4]),
+        legendgroup='Average Rating (Google Books)'
     ), row=1, col=1)
 
     fig.add_trace(go.Bar(
@@ -259,7 +261,8 @@ def plot_book_ratings(data):
         x=top_books['Average_Rating_Goodreads'],
         name='Average Rating (Goodreads)',
         orientation='h',
-        marker=dict(color=pastel_colors[2])
+        marker=dict(color=pastel_colors[5]),
+        legendgroup='Average Rating (Goodreads)'
     ), row=1, col=1)
 
     # Add traces for bottom rated books
@@ -268,15 +271,19 @@ def plot_book_ratings(data):
         x=bottom_books['My_Rating'],
         name='My Rating',
         orientation='h',
-        marker=dict(color=pastel_colors[3])
+        marker=dict(color=pastel_colors[3]),
+        legendgroup='My Rating',
+        showlegend=False,
     ), row=2, col=1)
 
     fig.add_trace(go.Bar(
         y=bottom_books['Title'],
         x=bottom_books['Average_Rating_GoogleBooks'],
-        name='Average Rating (Google Books)',
+        name=' ',
         orientation='h',
-        marker=dict(color=pastel_colors[4])
+        marker=dict(color=pastel_colors[4]),
+        legendgroup='Average Rating (Google Books)',
+        showlegend=False,
     ), row=2, col=1)
 
     fig.add_trace(go.Bar(
@@ -284,23 +291,23 @@ def plot_book_ratings(data):
         x=bottom_books['Average_Rating_Goodreads'],
         name='Average Rating (Goodreads)',
         orientation='h',
-        marker=dict(color=pastel_colors[5])
+        marker=dict(color=pastel_colors[5]),
+        legendgroup='Average Rating (Goodreads)',
+        showlegend=False,
     ), row=2, col=1)
 
     # Update the layout
     fig.update_layout(
         title='Book Ratings',
-        showlegend=False,
+        showlegend=True,
         height=900,
         width=800,
         plot_bgcolor='rgba(255, 255, 255, 1)',
         paper_bgcolor='rgba(255, 255, 255, 1)',
-        yaxis=dict(title='Title'),
+        yaxis=dict(title='Title', side='top', showticklabels=True),
         xaxis=dict(title='Rating'),
         barmode='group'
     )
-
-    # Show the plot
     fig.show()
 
 
@@ -317,7 +324,7 @@ def create_rating_table(data):
     mean_ratings = filtered_data[['Average_Rating_GoogleBooks', 'Average_Rating_Goodreads', 'My_Rating']].mean()
 
     # Create a list of rating names
-    ratings = ['My Rating', 'Average Rating (Google Books)', 'Average Rating (Goodreads)']
+    ratings = ['My Ratings - Average', 'Ratings (Google Books) - Average', 'Ratings (Goodreads) - Average']
 
     # Create a list of mean rating values
     mean_values = np.round(mean_ratings.values.tolist(),3)
