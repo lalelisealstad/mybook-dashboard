@@ -132,6 +132,7 @@ def viz_year_read(df):
     
     df = df.dropna(subset=['Year_Quarter'])
     # Count the number of books read in each year and quarter
+    
     year_quarter_counts = df.groupby('Year_Quarter').size().reset_index(name='Books Read')
     
     # Create the line chart
