@@ -23,11 +23,13 @@ pip install -r requirements.txt
 - Collect topics from Open Library API and store as a JSON file
     - To make the topics easy to extract and use I store the information from the OL api as a dictionary with the Title as the Key and the list of topics as the value. 
 
-- Data cleaning 
+- Data cleaning / manipulation
     - 
     - for the average rating for top authors, NA for My_rating uses mean imputation, so the average rating per author (excluding the 0 or NA values) are imputed as the rating. 
     - na for date_read uses date_added
-    - 
+    - page count category
+    - year and quarter read
+    - mean impuation for missing rating of top author books
 
 Vizualisation:
 Done: 
@@ -40,9 +42,9 @@ My read books - viz :
 - pie chart categories, 
 - top and botton books use plot with own rating minus goodreads, then center 0 at middle of axis. axis lined along y axis, so opposite way as usual. 
 - most read authors by count, and most liked authors 
+- this year in books, total books and total pages. print
 
 to-do: 
-- this year in books, total books and total pages,Show the number as the indicator plotly, just eh number of pages and books. 
 - Get words from summary. Show most common words, create that into a dictionary like the topics and use word cloud. create filter on this: myreads, my want to reads, my rate 5 books, whp books, 
 
 Want to read: 
