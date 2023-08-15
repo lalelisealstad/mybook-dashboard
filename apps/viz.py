@@ -184,22 +184,30 @@ def visualize_page_categories(myreads, column):
 # pie chart, top 5 categories and languages
 import plotly.graph_objects as go
 
-def viz_top_values(column, top_n=10):
+# pie chart, top 5 categories and languages
+import plotly.graph_objects as go
+
+def viz_top_values(column, top_n=5):
     # Drop NaN values from the column
     column = column.dropna()
-    # Calculate the value counts of the column
-    column_counts = column.value_counts()
+    value_col = column.value_counts().reset_index()
 
-    # Select the top values and their counts
-    top_values = column_counts.head(top_n)
-    labels = top_values.index
-    values = top_values.values
+    if len(value_col) > top_n: 
+        remaining_count =value_col['count'].iloc[top_n:].sum()
+        other = pd.DataFrame([['Other', remaining_count]], columns=[value_col.columns[0], 'count'])
+        val_df =  pd.DataFrame(pd.concat([value_col.head(top_n), other]))
+    else:
+        val_df = pd.DataFrame(value_col)
+
+
+    labels = val_df.iloc[:, 0]
+    values = val_df['count']
 
     # Define the color theme
     colors = ['rgb(244, 202, 228)','rgb(179, 226, 205)', 'rgb(253, 205, 172)', 'rgb(203, 213, 232)',
                'rgb(230, 245, 201)', 'rgb(255, 242, 174)',
-              'rgb(241, 226, 204)', 'rgb(204, 204, 204)', 'rgb(255, 255, 204)',
-              'rgb(197, 226, 255)']
+               'rgb(241, 226, 204)', 'rgb(204, 204, 204)', 'rgb(255, 255, 204)',
+               'rgb(197, 226, 255)', 'rgb(200, 200, 200)']  # Adding color for "Other"
 
     # Create the pie chart
     fig = go.Figure(data=[go.Pie(labels=labels, values=values)])
@@ -212,6 +220,7 @@ def viz_top_values(column, top_n=10):
 
     # Display the chart
     fig.show()
+
 
 
 

@@ -34,7 +34,6 @@ pip install -r requirements.txt
 Vizualisation:
 Done: 
 My read books - viz : 
-- book topics tree map
 - books read timeline, line chart
 - timeline showing when books were written, barchart
 - distribution of pages, bar chart
@@ -44,26 +43,29 @@ My read books - viz :
 - most read authors by count, and most liked authors 
 - this year in books, total books and total pages. print
 
+Book Topics and filter: 
+filter on rating, populatiry, 
+- Get words from summary. Show most common words, create that into a dictionary like the topics and use word cloud. 
+- book topics tree map
+
+
 to-do: 
-- Get words from summary. Show most common words, create that into a dictionary like the topics and use word cloud. create filter on this: myreads, my want to reads, my rate 5 books, whp books, 
+- density 
 
-Want to read: 
-- top five rated books 
-- top five popular books based on rating count
 
-WPF: 
-- top five rated books 
-- top five popular books based on rating count
+What to read next section: 
+    Want to read: 
+    - top five rated books 
+    - top five popular books based on rating count
+
+    WPF: 
+    - top five rated books 
+    - top five popular books based on rating count
 
 Other pages:
 - Ai recommend books want to read based on books read
 - using ai to find male or female author
 
-OLD: 
-* Use Google Trends to get the google searches for all the books and WPF in general 
-* country auther from wikipedia
-* price from Google Book API
-* Imput your own books into rhe dashboard - see WPF books matching in seniment, see books that are relevant from WPH using the google books api. 
 
 Not doable: 
 * Store Data in BigQuery  - no point
