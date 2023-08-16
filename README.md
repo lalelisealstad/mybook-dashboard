@@ -48,10 +48,8 @@ filter on rating, populatiry,
 - Get words from summary. Show most common words, create that into a dictionary like the topics and use word cloud. 
 - book topics tree map
 
-
-to-do: 
-- density 
-
+TODO: 
+- meta info create
 
 What to read next section: 
     Want to read: 
