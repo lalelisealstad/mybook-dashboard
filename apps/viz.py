@@ -67,6 +67,7 @@ import numpy as np
 def viz_pub_year(df):
 
     # Group the DataFrame by year and calculate the average rating and count of books
+    df = df.query('Original_Publication_Year != 0')
     year_data = df.groupby('Original_Publication_Year').agg({'My_Rating': 'mean', 'Title': 'count'}).reset_index()
     
     # Extract the year labels, average ratings, and book counts
