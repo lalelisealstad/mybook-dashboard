@@ -185,9 +185,6 @@ def visualize_page_categories(myreads, column):
 # pie chart, top 5 categories and languages
 import plotly.graph_objects as go
 
-# pie chart, top 5 categories and languages
-import plotly.graph_objects as go
-
 def viz_top_values(column, top_n=5):
     # Drop NaN values from the column
     column = column.dropna()
@@ -223,103 +220,72 @@ def viz_top_values(column, top_n=5):
     fig.show()
 
 
-
-
 #### highest and lowest rated books
+import plotly.express as px
 
-import plotly.graph_objects as go
-import plotly.colors
-from plotly.subplots import make_subplots
+def book_ratings(data, title, top_rated=True):
+    # Define custom colors
+    my_rating_color = 'purple'
+    google_books_color = 'green'
+    goodreads_color = 'antiquewhite'
 
-def plot_book_ratings(data):
-    # Filter the data where My_Rating > 0
+    # Filter the data where My_Rating > 0 since this would include non-rated books
     filtered_data = data[data['My_Rating'] > 0]
 
-    # Sort the filtered data by your own rating in descending order
-    sorted_data = filtered_data.sort_values('My_Rating', ascending=False)
+    # Sort the filtered data by your own rating in ascending order for bottom-rated books
+    if top_rated:
+        filtered_data = filtered_data.sort_values(['My_Rating', 'Date_Read'], ascending=False)
+    else: 
+        filtered_data = filtered_data.sort_values(['My_Rating', 'Date_Read'], ascending=True)
 
-    # Select the top 5 and bottom 5 books based on your own rating
-    top_books = sorted_data.head(10)
-    bottom_books = sorted_data.tail(10)
+    # Select the top 10 books based on your own rating
+    top_books = filtered_data.head(15)
 
-    # Create the figure object with subplots
-    fig = make_subplots(rows=2, cols=1, subplot_titles=("My highest Rated Books", "My lowest Rated Books"))
+    # Create the figure object
+    fig = px.scatter()
 
-    # Define the Pastel1 color scheme
-    pastel_colors = plotly.colors.qualitative.Pastel1
-
-    # Add traces for top rated books
-    fig.add_trace(go.Bar(
-        y=top_books['Title'],
+    # Add trace for My Rating as dots
+    fig.add_trace(go.Scatter(
         x=top_books['My_Rating'],
-        name='My Rating',
-        orientation='h',
-        marker=dict(color=pastel_colors[3]),
-        legendgroup='My Rating'
-    ), row=1, col=1)
-
-    fig.add_trace(go.Bar(
         y=top_books['Title'],
+        mode='markers',
+        name='My Rating',
+        marker=dict(color=my_rating_color, symbol='circle', size=15),
+    ))
+
+    # Add trace for Average_Rating_GoogleBooks as dots with a different color and shape
+    fig.add_trace(go.Scatter(
         x=top_books['Average_Rating_GoogleBooks'],
-        name='Average Rating (Google Books)',
-        orientation='h',
-        marker=dict(color=pastel_colors[4]),
-        legendgroup='Average Rating (Google Books)'
-    ), row=1, col=1)
-
-    fig.add_trace(go.Bar(
         y=top_books['Title'],
+        mode='markers',
+        name='Average Rating (Google Books)',
+        marker=dict(color=google_books_color, symbol='square', size=15),
+    ))
+
+    # Add trace for Average_Rating_Goodreads as dots with a different color and shape
+    fig.add_trace(go.Scatter(
         x=top_books['Average_Rating_Goodreads'],
+        y=top_books['Title'],
+        mode='markers',
         name='Average Rating (Goodreads)',
-        orientation='h',
-        marker=dict(color=pastel_colors[5]),
-        legendgroup='Average Rating (Goodreads)'
-    ), row=1, col=1)
-
-    # Add traces for bottom rated books
-    fig.add_trace(go.Bar(
-        y=bottom_books['Title'],
-        x=bottom_books['My_Rating'],
-        name='My Rating',
-        orientation='h',
-        marker=dict(color=pastel_colors[3]),
-        legendgroup='My Rating',
-        showlegend=False,
-    ), row=2, col=1)
-
-    fig.add_trace(go.Bar(
-        y=bottom_books['Title'],
-        x=bottom_books['Average_Rating_GoogleBooks'],
-        name=' ',
-        orientation='h',
-        marker=dict(color=pastel_colors[4]),
-        legendgroup='Average Rating (Google Books)',
-        showlegend=False,
-    ), row=2, col=1)
-
-    fig.add_trace(go.Bar(
-        y=bottom_books['Title'],
-        x=bottom_books['Average_Rating_Goodreads'],
-        name='Average Rating (Goodreads)',
-        orientation='h',
-        marker=dict(color=pastel_colors[5]),
-        legendgroup='Average Rating (Goodreads)',
-        showlegend=False,
-    ), row=2, col=1)
+        marker=dict(color=goodreads_color, symbol='diamond', size=15),
+    ))
 
     # Update the layout
     fig.update_layout(
-        title='Book Ratings',
-        showlegend=True,
-        height=900,
+        title= f'{title}<br><span style="font-size: 8px;">*Showing only 15 latest read books</span>',
+        height=650,  # Adjust the height as needed
         width=800,
         plot_bgcolor='rgba(255, 255, 255, 1)',
         paper_bgcolor='rgba(255, 255, 255, 1)',
         yaxis=dict(title='Title', side='top', showticklabels=True),
-        xaxis=dict(title='Rating'),
-        barmode='group'
+        xaxis=dict(
+            title='Rating',
+            range=[0, 5.2],  # Set the X-axis range from 0 to 5
+        ),
     )
-    fig.show()
+
+    return fig
 
 
 
