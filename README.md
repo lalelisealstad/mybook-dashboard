@@ -1,6 +1,3 @@
-
-hello
-
 Run: 
 $ source venv/bin/activate 
 $ pip install pipenv
@@ -50,14 +47,14 @@ To-Do:
 - update poetry file eller requirements filen? så pakker er oppdaterte.
 
 # Developing: 
-- filters and drop downs: 
+### filters and drop downs: 
 - date read filter. 
 - ratings select filter. 
 - poplarity filter. 
 
 - find books based on word or topic: show a list of the books. 
 
-What to read next section: 
+### What to read next section: 
 Want to read: 
 - top five rated books 
 - top five popular books based on rating count
@@ -67,15 +64,15 @@ WPF:
 - top five popular books based on rating count
 - books from your top authors
 
-Other visualisations: 
+### Other visualisations: 
 - visualise distrobution of ratings, bar chart of count of rated books per rating. Does ratings and popularity correlate? mine vs other ratings.
 
-Other pages:
+### Other pages:
 - Ai recommend books want to read based on books read, segment analysis. 
 - using ai to find male or female author, illustrate distribution 
 
 
-Not doable: 
+#### Not doable: 
 * similar books using https://www.gutenberg.org/ebooks/20194/also/ - didnt get any books when I did the api call.... 
 
 
