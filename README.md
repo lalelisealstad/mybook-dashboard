@@ -38,7 +38,7 @@ My read books - viz :
 - distribution of pages, bar chart
 - distribution of languages, pie chart
 - pie chart categories, 
-- top and botton books use plot with own rating minus goodreads, then center 0 at middle of axis. axis lined along y axis, so opposite way as usual. 
+- top and botton books my rating with other ratings 
 - most read authors by count, and most liked authors 
 - this year in books, total books and total pages. print
 
