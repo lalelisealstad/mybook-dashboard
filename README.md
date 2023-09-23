@@ -44,34 +44,31 @@ My read books - viz :
 
 To-Do: 
 - move notebooks to own repo, med sys. for å endre word directory. 
-- make py file for all data cleaning
-- legg inn viz som mangler eg category pie
-- update poetry file eller requirements filen? så pakker er oppdaterte. 
-- 
-
-
-
+- make py file for all data cleaning 
+- add function so people can add their books
+- add loading things so people can see it is loading. 
+- update poetry file eller requirements filen? så pakker er oppdaterte.
 
 # Developing: 
+- filters and drop downs: 
+- date read filter. 
+- ratings select filter. 
+- poplarity filter. 
+
+- find books based on word or topic: show a list of the books. 
+
 What to read next section: 
-    Want to read: 
-    - top five rated books 
-    - top five popular books based on rating count
-    - books from your top authors
-
-    WPF: 
-    - top five rated books 
-    - top five popular books based on rating count
-    - books from your top authors
-
-Add interactive filter/selection component to dash: 
-Book Topics and filter: 
-filter on rating, populatiry, 
-- Get words from summary. Show most common words, create that into a dictionary like the topics and use word cloud. 
-- book topics tree map
+Want to read: 
+- top five rated books 
+- top five popular books based on rating count
+- books from your top authors
+WPF: 
+- top five rated books 
+- top five popular books based on rating count
+- books from your top authors
 
 Other visualisations: 
-- visualise distrobution of ratings, bar chart of count of rated books per rating. 
+- visualise distrobution of ratings, bar chart of count of rated books per rating. Does ratings and popularity correlate? mine vs other ratings.
 
 Other pages:
 - Ai recommend books want to read based on books read, segment analysis. 

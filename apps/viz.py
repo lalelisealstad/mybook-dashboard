@@ -45,27 +45,20 @@ def tree_topics(topics_dict):
 
     # Customize the appearance of the treemap and set size
     fig.update_layout(
-        title='Book Topics<span style="font-size: 8px;"><br>Book topics collected from Open Library</span>',
-        width=1000,  # Set the width of the treemap
-        height=700  # Set the height of the treemap
+        title='Book Topics<span style="font-size: 12px;"><br>Book topics collected from Open Library</span>',
+        # width=1000,  # Set the width of the treemap
+        # height=700  # Set the height of the treemap
+        font=dict(size=18)
     )
 
     # Set text properties for wrapping
     fig.update_traces(
-        textfont=dict(size=14),
+        textfont=dict(size=16),
         hovertemplate='<b>%{label}</b><br>Count: %{value}<extra></extra>'  # Display count on hover
     )
 
-    # Set layout properties for wrapping
-    fig.update_layout(
-        autosize=True,
-        margin=dict(l=10, r=10, t=30, b=10),
-        font=dict(size=14),
-        hoverlabel=dict(font=dict(size=12))
-    )
-
     # Add custom data (Title) to each treemap trace
-    fig.data[0].update(customdata=grouped_df['Topic'])
+    # fig.data[0].update(customdata=grouped_df['Topic'])
     return fig
 
 
@@ -151,7 +144,7 @@ def viz_year_read(df):
     fig['data'][0]['line']['color']='#A777F1'
     # Customize the plot layout
     fig.update_layout(
-        title='Number of Books Read per Year and Quarter<span style="font-size: 10px;"><br>Year read is based on when you set the dates read manually, and if no dates where set then the date the book was added is used</span>',
+        title='Number of Books Read per Year and Quarter<span style="font-size: 11px;"><br>Year read is based on when you set the dates read manually, and if no dates where set<br>then the date the book was added is used</span>',
         xaxis=dict(title='Year and Quarter'),
         yaxis=dict(title='Number of Books Read'),
         showlegend=False
@@ -166,12 +159,12 @@ import plotly.graph_objects as go
 import plotly.io as pio
 import pandas as pd
 
-def visualize_page_categories(myreads, column):
+def visualize_page_categories(myreads, column, title, xtitle):
     # Group the DataFrame by page category and count the number of books in each category
     category_counts = myreads[column].value_counts().sort_index()
 
     # Assign a unique color to each category
-    colors = ['rgb(251,180,174)', 'rgb(179,205,227)', 'rgb(204,235,197)', 'rgb(222,203,228)', 'rgb(254,217,166)', 'rgb(255,255,204)']
+    colors = ['rgb(251,180,174)', 'rgb(179,205,227)', 'rgb(204,235,197)', 'rgb(222,203,228)', 'rgb(254,217,166)', 'rgb(250,231,175)','rgb(251,180,174)' ]
 
     # Create the bar chart
     fig = go.Figure(data=go.Bar(
@@ -182,8 +175,8 @@ def visualize_page_categories(myreads, column):
 
     # Set the chart title and axis labels
     fig.update_layout(
-        title='Number of books per Page Count Category',
-        xaxis=dict(title='Page Count Category'),
+        title=title,
+        xaxis=dict(title=xtitle),
         yaxis=dict(title='Number of Books'),
         template = "plotly_white"
     )
@@ -233,7 +226,7 @@ def viz_top_values(column, top_n=5):
 #### highest and lowest rated books
 import plotly.express as px
 
-def book_ratings(data, title, top_rated=True):
+def book_ratings(data, title, top_rated=True, show_legend=True):
     # Define custom colors
     my_rating_color = 'rgb(180,151,231)'
     google_books_color = '#4285F4'
@@ -252,15 +245,15 @@ def book_ratings(data, title, top_rated=True):
     top_books = filtered_data.head(15)
 
     # Create the figure object
-    fig = px.scatter()
+    fig = px.scatter(template = "plotly_white")
 
     # Add trace for My Rating as dots
     fig.add_trace(go.Scatter(
         x=top_books['My_Rating'],
         y=top_books['Title'],
         mode='markers',
-        name='My Rating',
-        marker=dict(color=my_rating_color, symbol='circle', size=15),
+        name='My Rating'if show_legend else '',
+        marker=dict(color=my_rating_color, symbol='circle', size=25),
     ))
 
     # Add trace for Average_Rating_GoogleBooks as dots with a different color and shape
@@ -268,8 +261,8 @@ def book_ratings(data, title, top_rated=True):
         x=top_books['Average_Rating_GoogleBooks'],
         y=top_books['Title'],
         mode='markers',
-        name='Average Rating (Google Books)',
-        marker=dict(color=google_books_color, symbol='square', size=15),
+        name='Average Rating (Google Books)'if show_legend else '',
+        marker=dict(color=google_books_color, symbol='square', size=25),
     ))
 
     # Add trace for Average_Rating_Goodreads as dots with a different color and shape
@@ -277,25 +270,23 @@ def book_ratings(data, title, top_rated=True):
         x=top_books['Average_Rating_Goodreads'],
         y=top_books['Title'],
         mode='markers',
-        name='Average Rating (Goodreads)',
-        marker=dict(color=goodreads_color, symbol='diamond', size=15),
+        name='Average Rating (Goodreads)'if show_legend else '',
+        marker=dict(color=goodreads_color, symbol='diamond', size=25),
     ))
 
     # Update the layout
     fig.update_layout(
-        title= f'{title}<br><span style="font-size: 8px;">*Showing only 15 latest read books</span>',
-        # height=650,  # Adjust the height as needed
-        # width=800,
-        plot_bgcolor='white',
-        paper_bgcolor='white',
+        title= f'{title}<br><span style="font-size: 11px;">*Showing only 15 latest read books</span>',
+        font=dict(size=12),
         yaxis=dict(title='Title', side='top', showticklabels=True),
         xaxis=dict(
             title='Rating',
-            range=[0, 5.2],  # Set the X-axis range from 0 to 5
+            tickmode='array',
+            tickvals=[1, 2, 3, 4, 5],
+            range=[0.5, 5.5],  # Set the X-axis range from 0 to 5
             showgrid=True,
         ),
     )
-
     return fig
 
 
@@ -322,11 +313,11 @@ def create_rating_table(data):
         header=dict(values=['Rating', 'Mean Rating'],
                     fill_color='rgba(230,230,250, 1)',
                     align=['left', 'center'], 
-                    height=30),
+                    height=25),
         cells=dict(values=[ratings, mean_values],
                    fill_color='rgba(248,248,255,0.5)',
                    align=['left', 'center'], 
-                   height=30)
+                   height=25)
     )])
 
     # Set the table colors
@@ -334,9 +325,7 @@ def create_rating_table(data):
         title = 'My ratings vs other peoples ratings',
         template='plotly_white',
         plot_bgcolor='white', 
-        # width=450, 
-        # height = 500,
-        font=dict(size=16),  # Font size for the entire table
+        font=dict(size=12),  # Font size for the entire table
     )
 
     return table
@@ -378,7 +367,7 @@ def create_author_table(data):
         header=dict(values=['Author', 'Number of books read by author', 'My Average Rating', 'Number of times rated on Goodreads', 'Average Goodreads Rating'],
                     fill_color='rgba(230,230,250, 1)',
                     align='center', 
-                    height=30),
+                    height=20),
         cells=dict(values=[top_authors['Author'],
                            top_authors['Read_Count'],
                            top_authors['My_Rating'],
@@ -386,7 +375,7 @@ def create_author_table(data):
                            top_authors['Average_Rating_Goodreads']], 
                            fill=dict(color=['rgba(230,230,250, 0.5)'] + ['rgba(248,248,255,0.5)'] * 2),  # Darker color for the first column
                            align='center',
-                           height=30)
+                           height=20)
     )])
 
 
@@ -396,9 +385,7 @@ def create_author_table(data):
         template='plotly_white',
         plot_bgcolor='white',
         paper_bgcolor='white',
-        # width=600,
-        # height=500, 
-        font=dict(size=16),  # Font size for the entire table
+        font=dict(size=12),  # Font size for the entire table
     )
 
     return table
@@ -424,12 +411,19 @@ def desc_tree(Description):
 
     # Create a DataFrame from the word counts
     word_counts_df = pd.DataFrame(word_counts.items(), columns=['Word', 'Count'])
+
     # Create a tree map using Plotly Express
     fig = px.treemap(word_counts_df.sort_values(by='Count', ascending=False).head(55), path=['Word'], values='Count')
 
+    # Set text properties for wrapping
+    fig.update_traces(
+        textfont=dict(size=14),
+        hovertemplate='<b>%{label}</b><br>Count: %{value}<extra></extra>'  # Display count on hover
+    )
     # Update the layout of the tree map
     fig.update_layout(
-        title='Most common words found in book descriptions',
+        title='Most common words found in the book descriptions',
         font=dict(size=16),
     )
+    
     return fig
