@@ -6,9 +6,8 @@ import plotly.express as px
 
 def tree_topics(topics_dict): 
     """
-    Creates a tree map visualisation of book topics by count
-    param: dictionary contaning title of book as key and the value is one list contaning the book's topics
-    
+    Creates a tree map visualization of book topics by count
+    param: dictionary containing title of the book as key and the value is one list containing the book's topics
     """
 
     # Prepare the data for the treemap
@@ -21,24 +20,34 @@ def tree_topics(topics_dict):
 
     # Group by 'Title' and 'Topic' columns and count the occurrences
     grouped_df = df.groupby(['Topic']).size().reset_index(name='Count')
+    grouped_df =grouped_df.query('Count > 5').sort_values(by='Count').reset_index()
 
-    # Create the treemap figure
-    # fig = px.treemap(grouped_df.query('Count > 1'), path=['Topic'], values='Count')
-    grouped_df = grouped_df[~grouped_df["Topic"].str.contains('fiction', case=False)]
-    # Create the treemap figure
+    # Get the "Pastel2" color palette
+    pastel2_colors = px.colors.qualitative.Set3
+    # Initialize an empty list to store colors
+    colors = []
+
+    # Loop through the DataFrame and assign colors cyclically
+    for i, row in grouped_df.iterrows():
+        color = pastel2_colors[i % len(pastel2_colors)]  # Cycle through colors
+        colors.append(color)
+
+    # Add the 'Color' column to the DataFrame
+    grouped_df['Color'] = colors
+     # Create the treemap figure
     fig = px.treemap(
-        grouped_df.query('Count > 2'),
+        grouped_df,
         path=['Topic'],
         values='Count',
-        color='Count',
-        color_continuous_scale='Purp',
+        color=grouped_df['Color'],
         hover_name='Topic'
     )
 
-    # Customize the appearance of the treemap
+    # Customize the appearance of the treemap and set size
     fig.update_layout(
-        title='Book Topics Treemap',
-        treemapcolorway=px.colors.sequential.Purp  # Use pretty pastel color palette
+        title='Book Topics<span style="font-size: 8px;"><br>Book topics collected from Open Library</span>',
+        width=1000,  # Set the width of the treemap
+        height=700  # Set the height of the treemap
     )
 
     # Set text properties for wrapping
@@ -57,7 +66,8 @@ def tree_topics(topics_dict):
 
     # Add custom data (Title) to each treemap trace
     fig.data[0].update(customdata=grouped_df['Topic'])
-    return fig 
+    return fig
+
 
 
 import pandas as pd
@@ -110,7 +120,7 @@ def viz_pub_year(df):
             sizemode='diameter',
             sizeref=sizes.max() / 50,  # Adjust the size scaling factor as needed
             color=ratings,
-            colorscale='Sunset',  # Choose a desired color scale
+            colorscale='Purp',  # Choose a desired color scale
             showscale=True
         )
     ))
@@ -225,9 +235,9 @@ import plotly.express as px
 
 def book_ratings(data, title, top_rated=True):
     # Define custom colors
-    my_rating_color = 'purple'
-    google_books_color = 'green'
-    goodreads_color = 'antiquewhite'
+    my_rating_color = 'rgb(180,151,231)'
+    google_books_color = '#4285F4'
+    goodreads_color = '#e9e5cd'
 
     # Filter the data where My_Rating > 0 since this would include non-rated books
     filtered_data = data[data['My_Rating'] > 0]
@@ -276,12 +286,13 @@ def book_ratings(data, title, top_rated=True):
         title= f'{title}<br><span style="font-size: 8px;">*Showing only 15 latest read books</span>',
         height=650,  # Adjust the height as needed
         width=800,
-        plot_bgcolor='rgba(255, 255, 255, 1)',
-        paper_bgcolor='rgba(255, 255, 255, 1)',
+        plot_bgcolor='white',
+        paper_bgcolor='white',
         yaxis=dict(title='Title', side='top', showticklabels=True),
         xaxis=dict(
             title='Rating',
             range=[0, 5.2],  # Set the X-axis range from 0 to 5
+            showgrid=True,
         ),
     )
 
@@ -309,10 +320,10 @@ def create_rating_table(data):
     # Create a Plotly table
     table = go.Figure(data=[go.Table(
         header=dict(values=['Rating', 'Mean Rating'],
-                    fill_color='rgba(200, 220, 240, 0.5)',
+                    fill_color='rgba(230,230,250, 1)',
                     align=['left', 'center']),
         cells=dict(values=[ratings, mean_values],
-                   fill_color='rgba(220, 235, 245, 0.5)',
+                   fill_color='rgba(248,248,255,0.5)',
                    align=['left', 'center'])
     )])
 
@@ -361,7 +372,7 @@ def create_author_table(data):
     # Create a Plotly table
     table = go.Figure(data=[go.Table(
         header=dict(values=['Author', 'Number of books read by author', 'Average Rating', 'Number of times rated on Goodreads', 'Average Goodreads Rating'],
-                    fill_color='rgba(200, 220, 240, 1)',
+                    fill_color='rgba(230,230,250, 1)',
                     align='center', 
                     height=30,),
         cells=dict(values=[top_authors['Author'],
@@ -369,7 +380,7 @@ def create_author_table(data):
                            top_authors['My_Rating'],
                            top_authors['Rating_Count'],
                            top_authors['Average_Rating_Goodreads']], 
-                           fill=dict(color=['rgba(200, 220, 240, 0.5)'] + ['rgba(220, 235, 245, 0.5)'] * 2),  # Darker color for the first column
+                           fill=dict(color=['rgba(230,230,250, 0.5)'] + ['rgba(248,248,255,0.5)'] * 2),  # Darker color for the first column
                            align='center')
     )])
 
