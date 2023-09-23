@@ -1,104 +1,97 @@
 import dash
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc
+# import dash_core_components as dcc
+from dash import html
+# import dash_html_components as html
+import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output
 import plotly.express as px
 import plotly.graph_objs as go
+import pandas as pd 
+import json
+import numpy as np
+from apps.viz import *
 
-# Sample data for your figures (replace with your own data)
-data = [
-    {'Category': 'A', 'Value': 10},
-    {'Category': 'B', 'Value': 15},
-    {'Category': 'C', 'Value': 7},
-]
+## GET THE DATA
+mybooks = pd.read_pickle('assets/my_books.pkl')
+myreads = mybooks.query('Exclusive_Shelf == "read"')
+myreads['Date_Read'] = myreads['Date_Read'].fillna(myreads['Date_Added'].copy())
+myreads = myreads.sort_values(by='Date_Read')
 
-# Create a Dash web application
-app = dash.Dash(__name__)
+#  Create a Dash web application
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-# Define the layout of the app with rows and columns
-app.layout = html.Div([
-    html.H1("Your Dashboard Title"),
-
-    # First row with two figures side by side
-    html.Div([
-        html.Div([
+# Define the layout of the app with rows and columns using Bootstrap grid system
+app.layout = dbc.Container([
+    html.H1("Visualising my read books", className="mt-4"),  # Add margin top
+    html.H5("Using Goodreads library export with Open Library API and Google Books API"),
+    # First row with two columns
+    dbc.Row([
+        dbc.Col(
             dcc.Graph(
                 id='scatter-plot',
-                figure={
-                    'data': [
-                        go.Scatter(
-                            x=[1, 2, 3],
-                            y=[4, 1, 2],
-                            mode='lines+markers',
-                            name='Line Plot',
-                        ),
-                    ],
-                    'layout': go.Layout(
-                        title='Scatter Plot',
-                        xaxis={'title': 'X-Axis'},
-                        yaxis={'title': 'Y-Axis'},
-                    )
-                }
+                figure=viz_pub_year(myreads)
             ),
-        ], className='six columns'),  # Specify the width of the column (6 out of 12)
-
-        html.Div([
+            width=6  # Width for the first column
+        ),
+        dbc.Col(
             dcc.Graph(
                 id='bar-chart',
-                figure={
-                    'data': [
-                        go.Bar(
-                            x=['A', 'B', 'C'],
-                            y=[10, 15, 7],
-                            name='Bar Chart',
-                        ),
-                    ],
-                    'layout': go.Layout(
-                        title='Bar Chart',
-                        xaxis={'title': 'Category'},
-                        yaxis={'title': 'Value'},
-                    )
-                }
+                figure=viz_year_read(myreads)
             ),
-        ], className='six columns'),  # Specify the width of the column (6 out of 12)
-    ], className='row'),  # Create a row to contain the figures
+            width=6  # Width for the second column
+        ),
+    ], className="mt-4"),  # Add margin top
 
     # Second row with a component (e.g., dropdown) and a figure
-    html.Div([
-        html.Div([
-            dcc.Dropdown(
-                id='dropdown',
-                options=[
-                    {'label': 'Option 1', 'value': 'opt1'},
-                    {'label': 'Option 2', 'value': 'opt2'},
-                ],
-                value='opt1',
-            ),
-        ], className='three columns'),  # Specify the width of the column (3 out of 12)
-
-        html.Div([
+    dbc.Row([
+        dbc.Col(
             dcc.Graph(
                 id='line-chart',
-                figure={
-                    'data': [
-                        go.Scatter(
-                            x=[1, 2, 3],
-                            y=[4, 2, 3],
-                            mode='lines+markers',
-                            name='Line Chart',
-                        ),
-                    ],
-                    'layout': go.Layout(
-                        title='Line Chart',
-                        xaxis={'title': 'X-Axis'},
-                        yaxis={'title': 'Y-Axis'},
-                    )
-                }
+                figure=viz_top_values(mybooks['Language'], top_n=5)
             ),
-        ], className='nine columns'),  # Specify the width of the column (9 out of 12)
-    ], className='row'),  # Create another row for the dropdown and line chart
+            width=6  # Width for the line chart column
+        ),
+        dbc.Col(
+            dcc.Graph(
+                id='line-chart',
+                figure=visualize_page_categories(myreads, 'Page_Cat')
+            ),
+            width=6  # Width for the line chart column
+        ),
+    ], className="mt-4"),  # Add margin top
 
-])
+    # Third row with a component (e.g., dropdown) and a figure
+    dbc.Row([
+        dbc.Col(
+            dcc.Graph(
+                id='line-chart',
+                figure=create_rating_table(myreads)
+            ),
+            width=5  # Width for the line chart column
+            ),
+        dbc.Col(
+            dcc.Graph(
+                id='line-chart',
+                figure=create_author_table(myreads)
+            ),
+            width=7  # Width for the line chart column
+        ),
+    ], className="mt-4"),  # Add margin top   
+    
+    # Fourth row with a component (e.g., dropdown) and a figure
+    dbc.Row([
+        dbc.Col(
+            dcc.Graph(
+                id='line-chart',
+                figure=desc_tree(mybooks['Description'])
+            ),
+            width=12  # Width for the line chart column
+        ),
+    ], className="mt-2"),  # Add margin top   
+], fluid=True)  # Use fluid=True for a full-width container
 
+
+#desc_tree(mybooks['Description'])
 if __name__ == '__main__':
     app.run_server(debug=True)

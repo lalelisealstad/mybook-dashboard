@@ -148,7 +148,7 @@ def viz_year_read(df):
     
     # Create the line chart
     fig = px.line(year_quarter_counts, x='Year_Quarter', y='Books Read', markers=True, template = "plotly_white")
-    
+    fig['data'][0]['line']['color']='#A777F1'
     # Customize the plot layout
     fig.update_layout(
         title='Number of Books Read per Year and Quarter<span style="font-size: 10px;"><br>Year read is based on when you set the dates read manually, and if no dates where set then the date the book was added is used</span>',
@@ -189,7 +189,7 @@ def visualize_page_categories(myreads, column):
     )
 
     # Display the chart
-    fig.show()
+    return fig
 
 
 # pie chart, top 5 categories and languages
@@ -227,7 +227,7 @@ def viz_top_values(column, top_n=5):
     fig.update_layout(title=f'Top {top_n} Values of {column.name}')
 
     # Display the chart
-    fig.show()
+    return fig
 
 
 #### highest and lowest rated books
@@ -284,8 +284,8 @@ def book_ratings(data, title, top_rated=True):
     # Update the layout
     fig.update_layout(
         title= f'{title}<br><span style="font-size: 8px;">*Showing only 15 latest read books</span>',
-        height=650,  # Adjust the height as needed
-        width=800,
+        # height=650,  # Adjust the height as needed
+        # width=800,
         plot_bgcolor='white',
         paper_bgcolor='white',
         yaxis=dict(title='Title', side='top', showticklabels=True),
@@ -321,19 +321,23 @@ def create_rating_table(data):
     table = go.Figure(data=[go.Table(
         header=dict(values=['Rating', 'Mean Rating'],
                     fill_color='rgba(230,230,250, 1)',
-                    align=['left', 'center']),
+                    align=['left', 'center'], 
+                    height=30),
         cells=dict(values=[ratings, mean_values],
                    fill_color='rgba(248,248,255,0.5)',
-                   align=['left', 'center'])
+                   align=['left', 'center'], 
+                   height=30)
     )])
 
     # Set the table colors
     table.update_layout(
+        title = 'My ratings vs other peoples ratings',
         template='plotly_white',
         plot_bgcolor='white', 
-        width=600
+        # width=450, 
+        # height = 500,
+        font=dict(size=16),  # Font size for the entire table
     )
-
 
     return table
 
@@ -345,7 +349,7 @@ import numpy as np
 
 def create_author_table(data):
     # Filter the data to include only the books you've read
-    data = data[data['Author'].isin(data['Author'].value_counts().nlargest(5).index)].copy()
+    data = data[data['Author'].isin(data['Author'].value_counts().nlargest(7).index)].copy()
 
     # Replace 0 by np.nan so its not included in the mean (Usally 0 rating means it is not rated) 
     data['My_Rating'] = data['My_Rating'].replace(0, np.nan)
@@ -367,21 +371,22 @@ def create_author_table(data):
     sorted_authors = author_stats.sort_values('Read_Count', ascending=False)
 
     # Select the top five authors
-    top_authors = sorted_authors.head(5)
+    top_authors = sorted_authors.head(7)
 
     # Create a Plotly table
     table = go.Figure(data=[go.Table(
-        header=dict(values=['Author', 'Number of books read by author', 'Average Rating', 'Number of times rated on Goodreads', 'Average Goodreads Rating'],
+        header=dict(values=['Author', 'Number of books read by author', 'My Average Rating', 'Number of times rated on Goodreads', 'Average Goodreads Rating'],
                     fill_color='rgba(230,230,250, 1)',
                     align='center', 
-                    height=30,),
+                    height=30),
         cells=dict(values=[top_authors['Author'],
                            top_authors['Read_Count'],
                            top_authors['My_Rating'],
                            top_authors['Rating_Count'],
                            top_authors['Average_Rating_Goodreads']], 
                            fill=dict(color=['rgba(230,230,250, 0.5)'] + ['rgba(248,248,255,0.5)'] * 2),  # Darker color for the first column
-                           align='center')
+                           align='center',
+                           height=30)
     )])
 
 
@@ -391,8 +396,40 @@ def create_author_table(data):
         template='plotly_white',
         plot_bgcolor='white',
         paper_bgcolor='white',
-        width=500,
-        height=600
+        # width=600,
+        # height=500, 
+        font=dict(size=16),  # Font size for the entire table
     )
 
     return table
+
+from wordcloud import WordCloud, STOPWORDS
+import numpy as np
+import plotly.express as px
+import re
+from collections import Counter
+
+def desc_tree(Description):
+
+    STOPWORDS.update({'Author', 'S', 'will','New','York','Time','book','novel', 'read', 'day', 'make','year', 'one', 'times', 'Times, of', 's', 'award','author','new','york','selling','story','t','1','og'})
+    
+    descriptions_all = ' '.join(Description.dropna()).lower()
+
+    descriptions_all = re.findall(r'\b\w+\b', descriptions_all.lower())
+
+    # Remove stop words from the list of words
+    filtered_words = [word for word in descriptions_all if word not in STOPWORDS]
+
+    word_counts = Counter(filtered_words)
+
+    # Create a DataFrame from the word counts
+    word_counts_df = pd.DataFrame(word_counts.items(), columns=['Word', 'Count'])
+    # Create a tree map using Plotly Express
+    fig = px.treemap(word_counts_df.sort_values(by='Count', ascending=False).head(55), path=['Word'], values='Count')
+
+    # Update the layout of the tree map
+    fig.update_layout(
+        title='Most common words found in book descriptions',
+        font=dict(size=16),
+    )
+    return fig

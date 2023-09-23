@@ -42,6 +42,15 @@ My read books - viz :
 - most read authors by count, and most liked authors 
 - this year in books, total books and total pages. print
 
+To-Do: 
+- move notebooks to own repo, med sys. for å endre word directory. 
+- make py file for all data cleaning
+- legg inn viz som mangler eg category pie
+- update poetry file eller requirements filen? så pakker er oppdaterte. 
+- 
+
+
+
 
 # Developing: 
 What to read next section: 
