@@ -1,8 +1,6 @@
 import dash
 from dash import dcc
-# import dash_core_components as dcc
 from dash import html
-# import dash_html_components as html
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output
 import plotly.express as px
@@ -11,26 +9,28 @@ import pandas as pd
 import json
 import numpy as np
 from apps.viz import *
+from apps.dataimport import *
+from apps.collect_data import *
+from datetime import datetime
 
-## GET THE DATA - Goodreads pkl
-mybooks = pd.read_pickle('assets/my_books.pkl')
-myreads = mybooks.query('Exclusive_Shelf == "read"')
-myreads.loc[myreads['Date_Read'].isnull(), 'Date_Read'] = myreads['Date_Added'].copy()
-myreads = myreads.sort_values(by='Date_Read')
 
-# GET DATA - topics json
-import json
+#################
+## GET THE DATA 
+mybooks = pd.read_csv('assets/goodreads_library_export.csv')
+myreads = mybooks.loc[mybooks['Exclusive Shelf'] == "read"]
+my_read_topics, myreads = dataprep(myreads.head(25))
 
-# Load JSON data from a file
-with open('assets/my_topics.json') as file:
-    json_data = json.load(file)
+# # GET DATA - topics json
+# import json
+# # Load JSON data from a file
+# with open('assets/my_topics.json') as file:
+#     json_data = json.load(file)
 
-# Convert JSON data to a dictionary
-my_topics = dict(json_data)
-my_read_topics = {k: v for k, v in my_topics.items() if k in myreads.Title.to_list()}
+# # Convert JSON data to a dictionary
+my_read_topics = dict(my_read_topics)
+##########################
 
 # Finding todays year and the text for subtitle
-from datetime import datetime
 today_year = datetime.today().year
 
 #  Create a Dash web application
@@ -49,13 +49,44 @@ app.layout = html.Div([
                     # width={'size': 12, 'offset': 2}
                 )
             , style={'background-color': '#FFEFFF'}),
+            
+            # row to upload books 
+            dbc.Row([
+                dbc.Col(
+                        html.P("Upload your Goodreads library export to the dashboard to see your books. How to: step1 odv. Upload here:"),
+                    width=6  # Width for the second column
+                ),
+                dbc.Col(
+                    dcc.Upload(
+                        id='upload-data',
+                        children=html.Div([
+                            'Drag and Drop or ',
+                            html.A('Select Files')
+                        ]),
+                        style={
+                            'width': '100%',
+                            'height': '60px',
+                            'lineHeight': '60px',
+                            'borderWidth': '1px',
+                            'borderStyle': 'dashed',
+                            'borderRadius': '5px',
+                            'textAlign': 'center',
+                            'margin': '10px'
+                        },
+                        multiple=False  # Allow only one file upload at a time
+                    ),width=6 
+                ),
+            ], className="mt-4", style={'height': '100px'}), 
+            
+            # row with text summarising year in books
             dbc.Row([
                 dbc.Col(
                         html.H5(f"This year I have read over {len(myreads.query('Year == @today_year'))} books. Totaling {f'{(myreads.Number_of_Pages.sum().astype(int)):,}'} pages read!", style={'color': '#2B2B35', 'text-align': 'center'}),
                     width=12 
                 ),
             ], className="mt-4", style={'height': '60px'}), 
-            # First row with two columns
+
+            # First row with figures
             dbc.Row([
                 dbc.Col(
                     dcc.Graph(
@@ -96,20 +127,20 @@ app.layout = html.Div([
                 dbc.Col(
                     dcc.Graph(
                         id='pie1',
-                        figure=viz_top_values(mybooks['Language'], top_n=7)
+                        figure=viz_top_values(myreads['Language'], top_n=7)
                     ),
                     width=6  
                 ),
                 dbc.Col(
                     dcc.Graph(
                         id='pie2',
-                        figure=viz_top_values(mybooks['Categories'], top_n=7)
+                        figure=viz_top_values(myreads['Categories'], top_n=7)
                     ),
                     width=6  
                 ),
             ], className="mt-0"),  
 
-            # Fourth row with ratings table and author table
+            # Tables
             dbc.Row([
                 dbc.Col(
                     dcc.Graph(
@@ -127,30 +158,32 @@ app.layout = html.Div([
                 ),
             ], className="mt-0"),   
 
-            # Fifth row top and bottom books
+            # Rows for bottom and top rated books
             dbc.Row([
                 dbc.Col(
                     dcc.Graph(
                         id='figr1',
                         figure=book_ratings(myreads, 'Top Rated Books', top_rated=True, show_legend=True)
                     ),
-                    width=7 
+                    width=12 
                     ),
+            ], className="mt-0"), 
+            dbc.Row([
                 dbc.Col(
                     dcc.Graph(
                         id='figr2',
-                        figure=book_ratings(myreads, 'Bottom Rated Books', top_rated=False,show_legend=False)
+                        figure=book_ratings(myreads, 'Bottom Rated Books')
                     ),
-                    width=5  
+                    width=12  
                 ),
-            ], className="mt-0", style={'height': '450px'}),  
+            ], className="mt-0"),  
             
             # Sixth row with desc fig
             dbc.Row([
                 dbc.Col(
                     dcc.Graph(
                         id='tree1',
-                        figure=desc_tree(mybooks['Description'])
+                        figure=desc_tree(myreads['Description'])
                     ),
                     width=12 
                 ),
@@ -167,7 +200,7 @@ app.layout = html.Div([
                 ),
             ], className="mt-0"), 
         ], fluid=True),
-    ], style={'margin': '0 40px'}),  # Adjust the margin values as needed
+    ], style={'margin': '0 40px'}),  
 ])
 
 

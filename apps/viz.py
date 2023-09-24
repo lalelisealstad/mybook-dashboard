@@ -20,7 +20,7 @@ def tree_topics(topics_dict):
 
     # Group by 'Title' and 'Topic' columns and count the occurrences
     grouped_df = df.groupby(['Topic']).size().reset_index(name='Count')
-    grouped_df =grouped_df.query('Count > 5').sort_values(by='Count').reset_index()
+    grouped_df =grouped_df.sort_values(by='Count').reset_index().head(55)
 
     # Get the "Pastel2" color palette
     pastel2_colors = px.colors.qualitative.Set3
@@ -144,7 +144,7 @@ def viz_year_read(df):
     fig['data'][0]['line']['color']='#A777F1'
     # Customize the plot layout
     fig.update_layout(
-        title='Number of Books Read per Year and Quarter<span style="font-size: 11px;"><br>Year read is based on when you set the dates read manually, and if no dates where set<br>then the date the book was added is used</span>',
+        title='Number of Books Read per Year and Quarter<span style="font-size: 10px;"><br>Based on when you set the book to read in Goodreads, if no date read, date added is used</span>',
         xaxis=dict(title='Year and Quarter'),
         yaxis=dict(title='Number of Books Read'),
         showlegend=False
