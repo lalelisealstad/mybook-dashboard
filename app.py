@@ -2,7 +2,7 @@ import dash
 from dash import dcc
 from dash import html
 import dash_bootstrap_components as dbc
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 import plotly.express as px
 import plotly.graph_objs as go
 import pandas as pd 
@@ -12,23 +12,18 @@ from apps.viz import *
 from apps.dataimport import *
 from apps.collect_data import *
 from datetime import datetime
-
+import pickle 
+import base64
+import io
 
 #################
-## GET THE DATA 
-mybooks = pd.read_csv('assets/goodreads_library_export.csv')
-myreads = mybooks.loc[mybooks['Exclusive Shelf'] == "read"]
-my_read_topics, myreads = dataprep(myreads.head(25))
 
-# # GET DATA - topics json
-# import json
-# # Load JSON data from a file
-# with open('assets/my_topics.json') as file:
-#     json_data = json.load(file)
-
-# # Convert JSON data to a dictionary
-my_read_topics = dict(my_read_topics)
-##########################
+mybooks = pd.read_pickle("assets/my_books.pkl")
+myreads = mybooks.loc[mybooks['Exclusive_Shelf'] == "read"]
+with open('assets/my_topics.json') as file:
+    json_data = json.load(file)
+my_topics = dict(json_data)
+my_read_topics = {k: v for k, v in my_topics.items() if k in myreads.Title.to_list()}  
 
 # Finding todays year and the text for subtitle
 today_year = datetime.today().year
@@ -53,7 +48,7 @@ app.layout = html.Div([
             # row to upload books 
             dbc.Row([
                 dbc.Col(
-                        html.P("Upload your Goodreads library export to the dashboard to see your books. How to: step1 odv. Upload here:"),
+                        dcc.Markdown(id='data-info-text', dangerously_allow_html=True, style={'font-size': '16px'}),
                     width=6  # Width for the second column
                 ),
                 dbc.Col(
@@ -61,13 +56,13 @@ app.layout = html.Div([
                         id='upload-data',
                         children=html.Div([
                             'Drag and Drop or ',
-                            html.A('Select Files')
+                            html.A('Select Files', style={'color': 'blue', 'font-weight': 'bold'})
                         ]),
                         style={
                             'width': '100%',
-                            'height': '60px',
-                            'lineHeight': '60px',
-                            'borderWidth': '1px',
+                            'height': '80px',
+                            'lineHeight': '80px',
+                            'borderWidth': '2px',
                             'borderStyle': 'dashed',
                             'borderRadius': '5px',
                             'textAlign': 'center',
@@ -76,22 +71,23 @@ app.layout = html.Div([
                         multiple=False  # Allow only one file upload at a time
                     ),width=6 
                 ),
-            ], className="mt-4", style={'height': '100px'}), 
+            ], className="mt-4", style={'height': '120px'}), 
             
             # row with text summarising year in books
-            dbc.Row([
-                dbc.Col(
-                        html.H5(f"This year I have read over {len(myreads.query('Year == @today_year'))} books. Totaling {f'{(myreads.Number_of_Pages.sum().astype(int)):,}'} pages read!", style={'color': '#2B2B35', 'text-align': 'center'}),
-                    width=12 
-                ),
-            ], className="mt-4", style={'height': '60px'}), 
+            # dbc.Row([
+            #     dbc.Col(
+            #             html.Div(id='data-info-text'),
+            #             # (f"This year I have read over {len(myreads.query('Year == @today_year'))} books. Totaling {f'{(myreads.Number_of_Pages.sum().astype(int)):,}'} pages read!", style={'color': '#2B2B35', 'text-align': 'center'}),
+            #         width=12 
+            #     ),
+            # ], className="mt-4", style={'height': '60px'}), 
 
             # First row with figures
             dbc.Row([
                 dbc.Col(
                     dcc.Graph(
                         id='fig1',
-                        figure=viz_pub_year(myreads),
+                        # figure=viz_pub_year(myreads),
                     ),
                     width=6  # Width for the first column
                 ),
@@ -172,7 +168,7 @@ app.layout = html.Div([
                 dbc.Col(
                     dcc.Graph(
                         id='figr2',
-                        figure=book_ratings(myreads, 'Bottom Rated Books')
+                        figure=book_ratings(myreads, 'Bottom Rated Books',top_rated=False, show_legend=False)
                     ),
                     width=12  
                 ),
@@ -202,6 +198,58 @@ app.layout = html.Div([
         ], fluid=True),
     ], style={'margin': '0 40px'}),  
 ])
+
+ ### CALLBACKS
+
+
+# Initialize an empty DataFrame to store uploaded data
+uploaded_data = pd.DataFrame()
+my_read_topics = {}
+
+# Callback to update the line chart with uploaded data
+@app.callback(
+    [Output('fig1', 'figure'), Output('data-info-text', 'children')],
+    [Input('upload-data', 'contents')],
+    [State('upload-data', 'filename')]
+)
+def update_figure(contents, filename):
+    global myreads, my_read_topic
+    
+    if contents is None:
+        # Use the default data if no file is uploaded
+        if uploaded_data.empty:
+            # Load your default data
+            mybooks = pd.read_pickle("assets/my_books.pkl")
+            myreads = mybooks.loc[mybooks['Exclusive_Shelf'] == "read"]
+            with open('assets/my_topics.json') as file:
+                json_data = json.load(file)
+            my_topics = dict(json_data)
+            my_read_topics = {k: v for k, v in my_topics.items() if k in myreads.Title.to_list()}  
+            uploadtxt_sug =  """See your reading stats by uploading your Goodreads library export here:
+                            <br><span style="font-size: 12px;">
+                            How to find and export Goodreads library:
+                            <br>
+                            1. Go to [your Goodreads profile](https://www.goodreads.com/)<br>
+                            2. Click on "My Books"<br>
+                            3. Scroll down and click on "Import/Export" under "Tools" on the left sidebar<br>
+                            4. Click "Export Your Books" to download the export file</span>"""
+            return viz_pub_year(myreads), uploadtxt_sug
+
+    content_type, content_string = contents.split(',')
+    decoded = base64.b64decode(content_string)
+    
+    try:
+        new_data = pd.read_csv(io.StringIO(decoded.decode('utf-8')))
+        new_data = new_data.loc[new_data['Exclusive Shelf'] == "read"]
+        nmy_read_topics, nmyreads = dataprep(new_data)
+        nmy_read_topics = dict(nmy_read_topics)
+        uploadtxt_suc = "Success, your data have been uploaded and the figures updated!"
+        return viz_pub_year(nmyreads), uploadtxt_suc
+    except Exception as e:
+        print(str(e))
+        uploadtxt_fail = "Upload failiure...Are you using the csv file from Goodreads export?"
+        return viz_pub_year(myreads),  uploadtxt_fail
+
 
 
 #desc_tree(mybooks['Description'])

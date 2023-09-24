@@ -46,7 +46,10 @@ My read books - viz :
 
 # To-Do: 
 - add function so people can add their books
+    - add all figures to callback, and add figures to be returned in the callback action
+    - add text to inform reader upload was working 
 - add loading things so people can see it is loading. 
+- improve text on how to find goodreads library. 
 
 # Developing: 
 #### filters and drop downs: 
