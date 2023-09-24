@@ -49,7 +49,7 @@ My read books - viz :
     - add all figures to callback, and add figures to be returned in the callback action
     - add text to inform reader upload was working 
 - add loading things so people can see it is loading. 
-- improve text on how to find goodreads library. 
+- improve text on how to find goodreads library. - > just split the text and the instructions into two divs... much easier
 
 # Developing: 
 #### filters and drop downs: 
