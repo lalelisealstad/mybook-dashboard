@@ -159,7 +159,7 @@ import plotly.graph_objects as go
 import plotly.io as pio
 import pandas as pd
 
-def visualize_page_categories(myreads, column, title, xtitle):
+def visualize_categories(myreads, column, title, xtitle):
     # Group the DataFrame by page category and count the number of books in each category
     category_counts = myreads[column].value_counts().sort_index()
 

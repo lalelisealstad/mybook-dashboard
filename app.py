@@ -16,17 +16,9 @@ import pickle
 import base64
 import io
 
-#################
-
+################# this can be deleted when the figures are included in the update_figure module
 mybooks = pd.read_pickle("assets/my_books.pkl")
 myreads = mybooks.loc[mybooks['Exclusive_Shelf'] == "read"]
-with open('assets/my_topics.json') as file:
-    json_data = json.load(file)
-my_topics = dict(json_data)
-my_read_topics = {k: v for k, v in my_topics.items() if k in myreads.Title.to_list()}  
-
-# Finding todays year and the text for subtitle
-today_year = datetime.today().year
 
 #  Create a Dash web application
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.LUX])
@@ -48,7 +40,10 @@ app.layout = html.Div([
             # row to upload books 
             dbc.Row([
                 dbc.Col(
-                        dcc.Markdown(id='data-info-text', dangerously_allow_html=True, style={'font-size': '16px'}),
+                    [
+                        dcc.Markdown(id='data-info-text1', dangerously_allow_html=True, style={'font-size': '16px'}),
+                        dcc.Markdown(id='data-info-text2', dangerously_allow_html=True, style={'font-size': '11px'}),
+                    ], 
                     width=6  # Width for the second column
                 ),
                 dbc.Col(
@@ -60,8 +55,8 @@ app.layout = html.Div([
                         ]),
                         style={
                             'width': '100%',
-                            'height': '80px',
-                            'lineHeight': '80px',
+                            'height': '100px',
+                            'lineHeight': '100px',
                             'borderWidth': '2px',
                             'borderStyle': 'dashed',
                             'borderRadius': '5px',
@@ -71,48 +66,46 @@ app.layout = html.Div([
                         multiple=False  # Allow only one file upload at a time
                     ),width=6 
                 ),
-            ], className="mt-4", style={'height': '120px'}), 
+            ], className="mt-2", style={'color': '#2B2B35', 'height': '160px'}), 
             
             # row with text summarising year in books
-            # dbc.Row([
-            #     dbc.Col(
-            #             html.Div(id='data-info-text'),
-            #             # (f"This year I have read over {len(myreads.query('Year == @today_year'))} books. Totaling {f'{(myreads.Number_of_Pages.sum().astype(int)):,}'} pages read!", style={'color': '#2B2B35', 'text-align': 'center'}),
-            #         width=12 
-            #     ),
-            # ], className="mt-4", style={'height': '60px'}), 
+
+            dbc.Row([
+                dbc.Col(
+                        html.Div(id='data-info-text3'),
+                        # (f"This year I have read over {len(myreads.query('Year == @today_year'))} books. Totaling {f'{(myreads.Number_of_Pages.sum().astype(int)):,}'} pages read!", style={'color': '#2B2B35', 'text-align': 'center'}),
+                    width=12 
+                ),
+            ], className="mt-6", style={'height': '30px', 'font-size': '16px'}), 
 
             # First row with figures
             dbc.Row([
                 dbc.Col(
                     dcc.Graph(
-                        id='fig1',
+                        id='fig1'
                         # figure=viz_pub_year(myreads),
                     ),
                     width=6  # Width for the first column
                 ),
                 dbc.Col(
                     dcc.Graph(
-                        id='fig2',
-                        figure=viz_year_read(myreads)
+                        id='fig2'
                     ),
-                    width=6  # Width for the second column
+                    width=6  
                 ),
-            ],className="mt-2"),
+            ],className="mt-1"),
 
             # Second row with bar charts
             dbc.Row([
                 dbc.Col(
                     dcc.Graph(
-                        id='fig3',
-                        figure=visualize_page_categories(myreads, 'My_Rating', 'How do I rate my books?<br><span style="font-size: 8px;">Number of books per Ratings category</span>', 'Goodreads rating')
+                        id='fig3'
                     ),
                     width=6  
                 ),
                 dbc.Col(
                     dcc.Graph(
-                        id='fig4',
-                        figure=visualize_page_categories(myreads, 'Page_Cat', 'How long are the books I read?<br><span style="font-size: 8px;">Number of books per Page Count Category</span>', 'Page Count Category')
+                        id='fig4'
                     ),
                     width=6 
                 ),
@@ -189,8 +182,7 @@ app.layout = html.Div([
             dbc.Row([
                 dbc.Col(
                     dcc.Graph(
-                        id='tree2',
-                        figure=tree_topics(my_read_topics)
+                        id='tree2'
                     ),
                     width=12  
                 ),
@@ -205,10 +197,20 @@ app.layout = html.Div([
 # Initialize an empty DataFrame to store uploaded data
 uploaded_data = pd.DataFrame()
 my_read_topics = {}
+today_year = datetime.today().year
 
 # Callback to update the line chart with uploaded data
 @app.callback(
-    [Output('fig1', 'figure'), Output('data-info-text', 'children')],
+    [
+        Output('fig1', 'figure'),
+        Output('data-info-text1', 'children'),
+        Output('data-info-text2', 'children'),
+        Output('fig2', 'figure'),
+        Output('tree2', 'figure'),
+        Output('data-info-text3', 'children'),
+        Output('fig3', 'figure'),
+        Output('fig4', 'figure')
+        ],
     [Input('upload-data', 'contents')],
     [State('upload-data', 'filename')]
 )
@@ -225,15 +227,25 @@ def update_figure(contents, filename):
                 json_data = json.load(file)
             my_topics = dict(json_data)
             my_read_topics = {k: v for k, v in my_topics.items() if k in myreads.Title.to_list()}  
-            uploadtxt_sug =  """See your reading stats by uploading your Goodreads library export here:
-                            <br><span style="font-size: 12px;">
-                            How to find and export Goodreads library:
-                            <br>
+
+            uploadtxt_sug1 = "See your reading stats by uploading your Goodreads library export here:"
+            uploadtxt_sug2 =  """How to find and export Goodreads library:<br>
                             1. Go to [your Goodreads profile](https://www.goodreads.com/)<br>
                             2. Click on "My Books"<br>
                             3. Scroll down and click on "Import/Export" under "Tools" on the left sidebar<br>
-                            4. Click "Export Your Books" to download the export file</span>"""
-            return viz_pub_year(myreads), uploadtxt_sug
+                            4. Click "Export Your Books" to download the export file"""
+            year_text = f"This year I have read over {len(myreads.query('Year == @today_year'))} books. Totaling {f'{(myreads.Number_of_Pages.sum().astype(int)):,}'} pages read!"
+            
+            return (
+                viz_pub_year(myreads), 
+                uploadtxt_sug1, 
+                uploadtxt_sug2, 
+                viz_year_read(myreads), 
+                tree_topics(my_read_topics), 
+                year_text, 
+                visualize_categories(myreads, 'My_Rating', 'How do I rate my books?<br><span style="font-size: 8px;">Number of books per Ratings category</span>', 'Goodreads rating'), 
+                visualize_categories(myreads, 'Page_Cat', 'How long are the books I read?<br><span style="font-size: 8px;">Number of books per Page Count Category</span>', 'Page Count Category')
+            )
 
     content_type, content_string = contents.split(',')
     decoded = base64.b64decode(content_string)
@@ -244,14 +256,35 @@ def update_figure(contents, filename):
         nmy_read_topics, nmyreads = dataprep(new_data)
         nmy_read_topics = dict(nmy_read_topics)
         uploadtxt_suc = "Success, your data have been uploaded and the figures updated!"
-        return viz_pub_year(nmyreads), uploadtxt_suc
+        nyear_text = f"This year I have read over {len(nmyreads.query('Year == @today_year'))} books. Totaling {(nmyreads.Number_of_Pages.sum().astype(int))} pages read!"
+
+        return (
+            viz_pub_year(nmyreads), 
+            uploadtxt_suc, 
+            "", 
+            viz_year_read(nmyreads), 
+            tree_topics(nmy_read_topics), 
+            nyear_text, 
+            visualize_categories(nmyreads, 'My_Rating', 'How do I rate my books?<br><span style="font-size: 8px;">Number of books per Ratings category</span>', 'Goodreads rating'),
+            visualize_categories(nmyreads, 'Page_Cat', 'How long are the books I read?<br><span style="font-size: 8px;">Number of books per Page Count Category</span>', 'Page Count Category')
+        )
+    
     except Exception as e:
         print(str(e))
         uploadtxt_fail = "Upload failiure...Are you using the csv file from Goodreads export?"
-        return viz_pub_year(myreads),  uploadtxt_fail
+        year_text = f"This year I have read over {len(myreads.query('Year == @today_year'))} books. Totaling {(myreads.Number_of_Pages.sum().astype(int))} pages read!"
+        
+        return (
+            viz_pub_year(myreads), 
+            uploadtxt_fail, 
+            "", 
+            viz_year_read(myreads), 
+            tree_topics(my_read_topics), 
+            year_text, 
+            visualize_categories(myreads, 'My_Rating', 'How do I rate my books?<br><span style="font-size: 8px;">Number of books per Ratings category</span>', 'Goodreads rating'),
+            visualize_categories(myreads, 'Page_Cat', 'How long are the books I read?<br><span style="font-size: 8px;">Number of books per Page Count Category</span>', 'Page Count Category')
+        )
 
 
-
-#desc_tree(mybooks['Description'])
 if __name__ == '__main__':
     app.run_server(debug=True)
