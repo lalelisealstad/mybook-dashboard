@@ -15,6 +15,7 @@ from datetime import datetime
 import pickle 
 import base64
 import io
+from wordcloud import WordCloud, STOPWORDS
 
 ################# this can be deleted when the figures are included in the update_figure module
 mybooks = pd.read_pickle("assets/my_books.pkl")

@@ -390,6 +390,7 @@ def create_author_table(data):
 
     return table
 
+import wordcloud 
 from wordcloud import WordCloud, STOPWORDS
 import numpy as np
 import plotly.express as px

@@ -1,12 +1,14 @@
 
 Run: 
 $ python3 -m venv .venv
-$ source venv/bin/activate 
+$ source .venv/bin/activate 
 $ pip install pipenv
+$ pipenv shell
+$ pipenv install ipykernel
 $ pipenv install -r requirements.txt
 
-alternativ nå: 
-pip install -r requirements.txt
+pipenv lock -r
+
 
 ## Process, see notebooks: 
 #### 1_wpf_export
@@ -84,7 +86,6 @@ WPF:
     https://www.kaggle.com/datasets/athu1105/book-genre-prediction
     https://www.kaggle.com/code/iamhungundji/book-summary-genre-prediction/notebook
     https://github.com/chikne97/Book-Genre-Prediction/blob/master/BookGenrePrediction.ipynb
-    https://medium.com/@nandukuv/multi-label-book-genre-classification-d5fac8f164b7
 
     using genre bookshelfs on gr: https://help.goodreads.com/s/article/Can-I-edit-a-shelf-for-multiple-books-at-once-1553870933542
 
