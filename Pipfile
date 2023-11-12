@@ -17,6 +17,9 @@ plotly = "*"
 requests = "*"
 nltk = "*"
 nbformat = "*"
+seaborn = "*"
+missingno = "*"
+scikit-learn = "*"
 
 [dev-packages]
 ipykernel = "*"
