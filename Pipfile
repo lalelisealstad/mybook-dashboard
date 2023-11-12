@@ -16,6 +16,7 @@ pandas = "*"
 plotly = "*"
 requests = "*"
 nltk = "*"
+nbformat = "*"
 
 [dev-packages]
 ipykernel = "*"

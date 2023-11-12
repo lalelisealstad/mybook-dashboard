@@ -15,7 +15,6 @@ from datetime import datetime
 import pickle 
 import base64
 import io
-from wordcloud import WordCloud, STOPWORDS
 
 ################# this can be deleted when the figures are included in the update_figure module
 mybooks = pd.read_pickle("assets/my_books.pkl")
@@ -48,25 +47,27 @@ app.layout = html.Div([
                     width=6  # Width for the second column
                 ),
                 dbc.Col(
-                    dcc.Upload(
-                        id='upload-data',
-                        children=html.Div([
-                            'Drag and Drop or ',
-                            html.A('Select Files', style={'color': 'blue', 'font-weight': 'bold'})
-                        ]),
-                        style={
-                            'width': '100%',
-                            'height': '100px',
-                            'lineHeight': '100px',
-                            'borderWidth': '2px',
-                            'borderStyle': 'dashed',
-                            'borderRadius': '5px',
-                            'textAlign': 'center',
-                            'margin': '10px'
-                        },
-                        multiple=False  # Allow only one file upload at a time
-                    ),width=6 
-                ),
+                    dbc.Spinner(children=[
+                        dcc.Upload(
+                            id='upload-data',
+                            children=html.Div([
+                                'Drag and Drop or ',
+                                html.A('Select Files', style={'color': 'blue', 'font-weight': 'bold'})
+                            ]),
+                            style={
+                                'width': '100%',
+                                'height': '100px',
+                                'lineHeight': '100px',
+                                'borderWidth': '2px',
+                                'borderStyle': 'dashed',
+                                'borderRadius': '5px',
+                                'textAlign': 'center',
+                                'margin': '10px'
+                            },
+                            multiple=False),  # Allow only one file upload at a time
+                        dcc.Markdown(id='upload-text', dangerously_allow_html=True, style={'font-size': '11px'}),
+                    ]),width=6 
+                )
             ], className="mt-2", style={'color': '#2B2B35', 'height': '160px'}), 
             
             # row with text summarising year in books
@@ -116,15 +117,13 @@ app.layout = html.Div([
             dbc.Row([
                 dbc.Col(
                     dcc.Graph(
-                        id='pie1',
-                        figure=viz_top_values(myreads['Language'], top_n=7)
+                        id='viztop1',
                     ),
                     width=6  
                 ),
                 dbc.Col(
                     dcc.Graph(
-                        id='pie2',
-                        figure=viz_top_values(myreads['Categories'], top_n=7)
+                        id='viztop2',
                     ),
                     width=6  
                 ),
@@ -135,14 +134,12 @@ app.layout = html.Div([
                 dbc.Col(
                     dcc.Graph(
                         id='tbl1',
-                        figure=create_rating_table(myreads)
                     ),
                     width=5 
                     ),
                 dbc.Col(
                     dcc.Graph(
                         id='tbl2',
-                        figure=create_author_table(myreads)
                     ),
                     width=7  
                 ),
@@ -153,7 +150,6 @@ app.layout = html.Div([
                 dbc.Col(
                     dcc.Graph(
                         id='figr1',
-                        figure=book_ratings(myreads, 'Top Rated Books', top_rated=True, show_legend=True)
                     ),
                     width=12 
                     ),
@@ -162,7 +158,6 @@ app.layout = html.Div([
                 dbc.Col(
                     dcc.Graph(
                         id='figr2',
-                        figure=book_ratings(myreads, 'Bottom Rated Books',top_rated=False, show_legend=False)
                     ),
                     width=12  
                 ),
@@ -173,7 +168,6 @@ app.layout = html.Div([
                 dbc.Col(
                     dcc.Graph(
                         id='tree1',
-                        figure=desc_tree(myreads['Description'])
                     ),
                     width=12 
                 ),
@@ -210,7 +204,15 @@ today_year = datetime.today().year
         Output('tree2', 'figure'),
         Output('data-info-text3', 'children'),
         Output('fig3', 'figure'),
-        Output('fig4', 'figure')
+        Output('fig4', 'figure'),
+        Output('viztop1', 'figure'),
+        Output('viztop2', 'figure'),
+        Output('tbl1', 'figure'),
+        Output('tbl2', 'figure'),
+        Output('figr1', 'figure'),
+        Output('figr2', 'figure'),
+        Output('tree1', 'figure'),
+        Output('upload-text', 'children')
         ],
     [Input('upload-data', 'contents')],
     [State('upload-data', 'filename')]
@@ -245,7 +247,15 @@ def update_figure(contents, filename):
                 tree_topics(my_read_topics), 
                 year_text, 
                 visualize_categories(myreads, 'My_Rating', 'How do I rate my books?<br><span style="font-size: 8px;">Number of books per Ratings category</span>', 'Goodreads rating'), 
-                visualize_categories(myreads, 'Page_Cat', 'How long are the books I read?<br><span style="font-size: 8px;">Number of books per Page Count Category</span>', 'Page Count Category')
+                visualize_categories(myreads, 'Page_Cat', 'How long are the books I read?<br><span style="font-size: 8px;">Number of books per Page Count Category</span>', 'Page Count Category'),
+                viz_top_values(myreads['Language'], top_n=7),
+                viz_top_values(myreads['Categories'], top_n=7),
+                create_rating_table(myreads),
+                create_author_table(myreads),
+                book_ratings(myreads, 'Top Rated Books', top_rated=True, show_legend=True),
+                book_ratings(myreads, 'Bottom Rated Books',top_rated=False, show_legend=False),
+                desc_tree(myreads['Description']),
+                'upload0'
             )
 
     content_type, content_string = contents.split(',')
@@ -267,7 +277,15 @@ def update_figure(contents, filename):
             tree_topics(nmy_read_topics), 
             nyear_text, 
             visualize_categories(nmyreads, 'My_Rating', 'How do I rate my books?<br><span style="font-size: 8px;">Number of books per Ratings category</span>', 'Goodreads rating'),
-            visualize_categories(nmyreads, 'Page_Cat', 'How long are the books I read?<br><span style="font-size: 8px;">Number of books per Page Count Category</span>', 'Page Count Category')
+            visualize_categories(nmyreads, 'Page_Cat', 'How long are the books I read?<br><span style="font-size: 8px;">Number of books per Page Count Category</span>', 'Page Count Category'),
+            viz_top_values(nmyreads['Language'], top_n=7),
+            viz_top_values(nmyreads['Categories'], top_n=7),
+            create_rating_table(nmyreads),
+            create_author_table(nmyreads),
+            book_ratings(nmyreads, 'Top Rated Books', top_rated=True, show_legend=True),
+            book_ratings(nmyreads, 'Bottom Rated Books',top_rated=False, show_legend=False),
+            desc_tree(nmyreads['Description']),
+            'upload'
         )
     
     except Exception as e:
@@ -283,7 +301,15 @@ def update_figure(contents, filename):
             tree_topics(my_read_topics), 
             year_text, 
             visualize_categories(myreads, 'My_Rating', 'How do I rate my books?<br><span style="font-size: 8px;">Number of books per Ratings category</span>', 'Goodreads rating'),
-            visualize_categories(myreads, 'Page_Cat', 'How long are the books I read?<br><span style="font-size: 8px;">Number of books per Page Count Category</span>', 'Page Count Category')
+            visualize_categories(myreads, 'Page_Cat', 'How long are the books I read?<br><span style="font-size: 8px;">Number of books per Page Count Category</span>', 'Page Count Category'),
+            viz_top_values(myreads['Language'], top_n=7),
+            viz_top_values(myreads['Categories'], top_n=7),
+            create_rating_table(myreads),
+            create_author_table(myreads),
+            book_ratings(myreads, 'Top Rated Books', top_rated=True, show_legend=True),
+            book_ratings(myreads, 'Bottom Rated Books',top_rated=False, show_legend=False),
+            desc_tree(myreads['Description']),
+            'upload1'
         )
 
 

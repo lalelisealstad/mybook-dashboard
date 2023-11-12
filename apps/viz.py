@@ -3,62 +3,38 @@
 
 import pandas as pd
 import plotly.express as px
+from collections import Counter
 
 def tree_topics(topics_dict): 
     """
     Creates a tree map visualization of book topics by count
     param: dictionary containing title of the book as key and the value is one list containing the book's topics
     """
+    word_counts_dict = Counter()
 
-    # Prepare the data for the treemap
-    data = []
-    for title, topics in topics_dict.items():
-        for topic in topics:
-            data.append({'Title': title, 'Topic': topic})
+    # Count the occurrences of each word in the values of the original dictionary
+    for values in topics_dict.values():
+        for value in values:
+            for word in value.replace(', ', ',').split(','):
+                word_counts_dict[word.lower()] += 1
 
-    df = pd.DataFrame(data)
+    df_word_counts = pd.DataFrame(list(word_counts_dict.items()), columns=['Word', 'Count'])
+    df_word_counts = df_word_counts.sort_values(by='Count', ascending=False).reset_index().head(45)
 
-    # Group by 'Title' and 'Topic' columns and count the occurrences
-    grouped_df = df.groupby(['Topic']).size().reset_index(name='Count')
-    grouped_df =grouped_df.sort_values(by='Count').reset_index().head(55)
-
-    # Get the "Pastel2" color palette
-    pastel2_colors = px.colors.qualitative.Set3
-    # Initialize an empty list to store colors
-    colors = []
-
-    # Loop through the DataFrame and assign colors cyclically
-    for i, row in grouped_df.iterrows():
-        color = pastel2_colors[i % len(pastel2_colors)]  # Cycle through colors
-        colors.append(color)
-
-    # Add the 'Color' column to the DataFrame
-    grouped_df['Color'] = colors
-     # Create the treemap figure
     fig = px.treemap(
-        grouped_df,
-        path=['Topic'],
+        df_word_counts,
+        path=['Word'],
         values='Count',
-        color=grouped_df['Color'],
-        hover_name='Topic'
-    )
+        custom_data=['Count'] )
 
-    # Customize the appearance of the treemap and set size
+    # Update the layout of the tree map
     fig.update_layout(
-        title='Book Topics<span style="font-size: 12px;"><br>Book topics collected from Open Library</span>',
-        # width=1000,  # Set the width of the treemap
-        # height=700  # Set the height of the treemap
-        font=dict(size=18)
+        title='Most common topics'
     )
-
-    # Set text properties for wrapping
     fig.update_traces(
-        textfont=dict(size=16),
-        hovertemplate='<b>%{label}</b><br>Count: %{value}<extra></extra>'  # Display count on hover
+        hovertemplate='<b>%{label}</b><br>Count: %{customdata[0]}'
     )
-
-    # Add custom data (Title) to each treemap trace
-    # fig.data[0].update(customdata=grouped_df['Topic'])
+    # Show the plot
     return fig
 
 
@@ -390,41 +366,41 @@ def create_author_table(data):
 
     return table
 
-import wordcloud 
-from wordcloud import WordCloud, STOPWORDS
+
+# Three viz of count of words in description
 import numpy as np
 import plotly.express as px
 import re
 from collections import Counter
+import nltk
+from nltk.corpus import stopwords
 
 def desc_tree(Description):
-
-    STOPWORDS.update({'Author', 'S', 'will','New','York','Time','book','novel', 'read', 'day', 'make','year', 'one', 'times', 'Times, of', 's', 'award','author','new','york','selling','story','t','1','og'})
-    
+    from collections import Counter
+    stop_words = nltk.download('stopwords')
+    stopwords_dict = Counter(stopwords.words('english'))
+    stopwords_dict.update({'author', 'S', 'will','new','york','time','book','novel', 'read', 'day', 'make','year', 'one', 'times', 'times, of', 's', 'award','author','new','york','selling','story','t','1','og'})
+        
     descriptions_all = ' '.join(Description.dropna()).lower()
 
     descriptions_all = re.findall(r'\b\w+\b', descriptions_all.lower())
 
     # Remove stop words from the list of words
-    filtered_words = [word for word in descriptions_all if word not in STOPWORDS]
+    filtered_words = [word for word in descriptions_all if word not in stopwords_dict]
 
     word_counts = Counter(filtered_words)
 
     # Create a DataFrame from the word counts
     word_counts_df = pd.DataFrame(word_counts.items(), columns=['Word', 'Count'])
-
     # Create a tree map using Plotly Express
-    fig = px.treemap(word_counts_df.sort_values(by='Count', ascending=False).head(55), path=['Word'], values='Count')
+    fig = px.treemap(word_counts_df.sort_values(by='Count', ascending=False).head(55), path=['Word'], values='Count', custom_data=['Count'] )
 
-    # Set text properties for wrapping
-    fig.update_traces(
-        textfont=dict(size=14),
-        hovertemplate='<b>%{label}</b><br>Count: %{value}<extra></extra>'  # Display count on hover
-    )
     # Update the layout of the tree map
     fig.update_layout(
-        title='Most common words found in the book descriptions',
-        font=dict(size=16),
+        title='Most common words found in book descriptions'
     )
-    
+    fig.update_traces(
+        hovertemplate='<b>%{label}</b><br>Count: %{customdata[0]}'
+    )
+
     return fig
