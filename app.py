@@ -233,7 +233,7 @@ def update_figure(contents, filename):
 
             uploadtxt_sug1 = "See your reading stats by uploading your Goodreads library export here:"
             uploadtxt_sug2 =  """How to find and export Goodreads library:<br>
-                            1. Go to [your Goodreads profile](https://www.goodreads.com/)<br>
+                            1. Go to [your Goodreads profile](https://www.goodreads.com/?target=_blank)<br>
                             2. Click on "My Books"<br>
                             3. Scroll down and click on "Import/Export" under "Tools" on the left sidebar<br>
                             4. Click "Export Your Books" to download the export file"""
@@ -255,7 +255,7 @@ def update_figure(contents, filename):
                 book_ratings(myreads, 'Top Rated Books', top_rated=True, show_legend=True),
                 book_ratings(myreads, 'Bottom Rated Books',top_rated=False, show_legend=False),
                 desc_tree(myreads['Description']),
-                'upload0'
+                ' '
             )
 
     content_type, content_string = contents.split(',')
@@ -285,7 +285,7 @@ def update_figure(contents, filename):
             book_ratings(nmyreads, 'Top Rated Books', top_rated=True, show_legend=True),
             book_ratings(nmyreads, 'Bottom Rated Books',top_rated=False, show_legend=False),
             desc_tree(nmyreads['Description']),
-            'upload'
+            'Upload success'
         )
     
     except Exception as e:
@@ -309,7 +309,7 @@ def update_figure(contents, filename):
             book_ratings(myreads, 'Top Rated Books', top_rated=True, show_legend=True),
             book_ratings(myreads, 'Bottom Rated Books',top_rated=False, show_legend=False),
             desc_tree(myreads['Description']),
-            'upload1'
+            'upload fail'
         )
 
 

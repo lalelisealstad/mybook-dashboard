@@ -47,10 +47,7 @@ My read books - viz :
 - this year in books, total books and total pages. print
 
 # To-Do: 
-- add function so people can add their books
-    - add all figures to callback, and add figures to be returned in the callback action
-- add loading things so people can see it is loading. 
-- improve text on how to find goodreads library. - > just split the text and the instructions into two divs... much easier
+- open new tab
 
 # Developing: 
 #### filters and drop downs: 
