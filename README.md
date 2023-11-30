@@ -46,8 +46,6 @@ My read books - viz :
 - most read authors by count, and most liked authors 
 - this year in books, total books and total pages. print
 
-# To-Do: 
-- open new tab
 
 # Developing: 
 #### filters and drop downs: 
@@ -100,4 +98,13 @@ recommendations:
 #### Not doable: 
 * similar books using https://www.gutenberg.org/ebooks/20194/also/ - didnt get any books when I did the api call.... 
 
+#### Notes for self: 
+- topics from openlibrary API taken out of data prepp function
+    my_topics = get_book_topics(mybooks)
 
+## to do:
+- topics upload, dcc store needs to include author too
+- include book description topicc tree too
+- improve api call, with await functions 
+- fix colour on the pie charts, make them same size too
+- adjust width of table ratings. 

@@ -75,7 +75,4 @@ def dataprep(mybooksgr):
     mybooks = mybooks.replace('nan', np.nan)
     mybooks = mybooks.replace('NaN', np.nan)    
 
-    # Collect topics for my own books from OLapi
-    my_topics = get_book_topics(mybooks)
-
-    return my_topics, mybooks
+    return mybooks
