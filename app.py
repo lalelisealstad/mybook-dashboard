@@ -30,9 +30,9 @@ app.layout = html.Div([
                             html.H1("Visualising my read books", className="my-4 text-center",style={'color': '#2B2B35', 'text-align': 'center'},),
                             html.H6("Using Goodreads library export with Open Library API and Google Books API", style={'color': '#2B2B35', 'text-align': 'center'},),
                         ],
-                    # width={'size': 12, 'offset': 2}
-                )
-            , style={'background-color': '#D6C9F2'}),
+                    style={'background-color': '#D6C9F2', 'size':10},
+                width=10)
+            ,justify="center"),
             
             # row to upload books 
             dbc.Row([
@@ -41,7 +41,7 @@ app.layout = html.Div([
                         dcc.Markdown(id='data-info-text1', dangerously_allow_html=True, style={'font-size': '16px'}),
                         dcc.Markdown(id='data-info-text2', dangerously_allow_html=True, style={'font-size': '11px'}),
                     ], 
-                    width=6  # Width for the second column
+                    width=5  # Width for the second column
                 ),
                 dbc.Col(
                     dbc.Spinner(children=[
@@ -63,9 +63,9 @@ app.layout = html.Div([
                             },
                             multiple=False),  # Allow only one file upload at a time
                         dcc.Markdown(id='upload-text', dangerously_allow_html=True, style={'font-size': '11px'}),
-                    ]),width=6 
+                    ]),width=5 
                 )
-            ], className="mt-2", style={'color': '#2B2B35', 'height': '160px'}), 
+            ], className="mt-2", style={'color': '#2B2B35', 'height': '160px'}, justify="center"), 
             
             # row with text summarising year in books
 
@@ -73,9 +73,9 @@ app.layout = html.Div([
                 dbc.Col(
                         html.Div(id='data-info-text3'),
                         # (f"This year I have read over {len(myreads.query('Year == @today_year'))} books. Totaling {f'{(myreads.Number_of_Pages.sum().astype(int)):,}'} pages read!", style={'color': '#2B2B35', 'text-align': 'center'}),
-                    width=12 
+                    width=10 
                 ),
-            ], className="mt-6", style={'height': '30px', 'font-size': '16px'}), 
+            ], className="mt-6", style={'height': '30px', 'font-size': '16px'}, justify="center"), 
 
             # First row with figures
             dbc.Row([
@@ -84,15 +84,15 @@ app.layout = html.Div([
                         id='fig1'
                         # figure=viz_pub_year(myreads),
                     ),
-                    width=6  # Width for the first column
+                    width=5  # Width for the first column
                 ),
                 dbc.Col(
                     dcc.Graph(
                         id='fig2'
                     ),
-                    width=6  
+                    width=5  
                 ),
-            ],className="mt-1"),
+            ],className="mt-2", justify="center"),
 
             # Second row with bar charts
             dbc.Row([
@@ -100,15 +100,15 @@ app.layout = html.Div([
                     dcc.Graph(
                         id='fig3'
                     ),
-                    width=6  
+                    width=5  
                 ),
                 dbc.Col(
                     dcc.Graph(
                         id='fig4'
                     ),
-                    width=6 
+                    width=5 
                 ),
-            ], className="mt-0"),  # Add margin top
+            ], className="mt-4", justify="center"),  # Add margin top
 
             # Third row - pie charts
             dbc.Row([
@@ -116,15 +116,15 @@ app.layout = html.Div([
                     dcc.Graph(
                         id='viztop1',
                     ),
-                    width=6  
+                    width=5  
                 ),
                 dbc.Col(
                     dcc.Graph(
                         id='viztop2',
                     ),
-                    width=6  
+                    width=5  
                 ),
-            ], className="mt-0"),  
+            ], className="mt-4", justify="center"),  
 
             # Tables
             dbc.Row([
@@ -138,9 +138,9 @@ app.layout = html.Div([
                     dcc.Graph(
                         id='tbl2',
                     ),
-                    width=7  
+                    width=5  
                 ),
-            ], className="mt-0"),   
+            ], className="mt-4", justify="center"),   
 
             # Rows for bottom and top rated books
             dbc.Row([
@@ -148,17 +148,17 @@ app.layout = html.Div([
                     dcc.Graph(
                         id='figr1',
                     ),
-                    width=12 
+                    width=10 
                     ),
-            ], className="mt-0"), 
+            ], className="mt-4", justify="center"), 
             dbc.Row([
                 dbc.Col(
                     dcc.Graph(
                         id='figr2',
                     ),
-                    width=12  
+                    width=10  
                 ),
-            ], className="mt-0"),  
+            ], className="mt-4", justify="center"),  
             
             # Sixth row with desc fig
             dbc.Row([
@@ -166,9 +166,9 @@ app.layout = html.Div([
                     dcc.Graph(
                         id='tree2',
                     ),
-                    width=12,
+                    width=10,
                 ), 
-            ], className="mt-0", style={'height': '420px'}), 
+            ], className="mt-4", style={'height': '420px'}, justify="center"), 
 
             # # Seventh row with topic fig
             # dbc.Row([
@@ -181,11 +181,19 @@ app.layout = html.Div([
             # ], className="mt-0"), 
             html.Div([
                 # dcc.Store inside the user's current browser session
-                dcc.Store(id='store-data', data=[], storage_type='memory'), # store of the list of read books
-                dcc.Store(id='is-uploaded-data', data=[], storage_type='memory')  # store binary showing if data is uploaded 
+                dcc.Store(id='store-data', data=[], storage_type='session'), # store of the list of read books
+                dcc.Store(id='is-uploaded-data', data=[], storage_type='session')  # store binary showing if data is uploaded 
             ])
         ], fluid=True),
-    ], style={'margin': '0 40px'}),  
+    ], style={'width': '100%', 'display': 'inline-block',
+                                 'border-radius': '35px',
+                                 'box-shadow': '2px 2px 2px lightgrey',
+                                 'background-color': '#fcfcfc',
+                                 'padding': '10px',
+                                 'margin-bottom': '10px', 
+                                 'align':"center"
+
+                                 }),  
 ])
 
  ### CALLBACKS

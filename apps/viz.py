@@ -181,10 +181,9 @@ def viz_top_values(column, top_n=5):
     values = val_df['count']
 
     # Define the color theme
-    colors = ['rgb(244, 202, 228)','rgb(179, 226, 205)', 'rgb(253, 205, 172)', 'rgb(203, 213, 232)',
-               'rgb(230, 245, 201)', 'rgb(255, 242, 174)',
-               'rgb(241, 226, 204)', 'rgb(204, 204, 204)', 'rgb(255, 255, 204)',
-               'rgb(197, 226, 255)', 'rgb(200, 200, 200)']  # Adding color for "Other"
+    colors = ['rgb(179,205,227)', 'rgb(204,235,197)', 'rgb(222,203,228)', 'rgb(254,217,166)', 'rgb(250,231,175)','rgb(251,180,174)', 'rgb(251,180,174)','#9DC8C8', '#84B1ED' ]
+
+    #['#84B1ED','#383A3F','#9DC8C8','#A593E0','#58C9B9', '#519D9E','#D1B6E1','#F6B352', ]  # Adding color for "Other"
 
     # Create the pie chart
     fig = go.Figure(data=[go.Pie(labels=labels, values=values)])
@@ -205,7 +204,7 @@ import plotly.express as px
 def book_ratings(data, title, top_rated=True, show_legend=True):
     # Define custom colors
     my_rating_color = 'rgb(180,151,231)'
-    google_books_color = '#4285F4'
+    google_books_color = '#34A853'
     goodreads_color = '#e9e5cd'
 
     # Filter the data where My_Rating > 0 since this would include non-rated books
@@ -237,7 +236,7 @@ def book_ratings(data, title, top_rated=True, show_legend=True):
         x=top_books['Average_Rating_GoogleBooks'],
         y=top_books['Title'],
         mode='markers',
-        name='Average Rating (Google Books)'if show_legend else '',
+        name=f"Average Rating Google Books"if show_legend else '',
         marker=dict(color=google_books_color, symbol='square', size=25),
     ))
 
@@ -246,7 +245,7 @@ def book_ratings(data, title, top_rated=True, show_legend=True):
         x=top_books['Average_Rating_Goodreads'],
         y=top_books['Title'],
         mode='markers',
-        name='Average Rating (Goodreads)'if show_legend else '',
+        name='Average Rating Goodreads'if show_legend else '',
         marker=dict(color=goodreads_color, symbol='diamond', size=25),
     ))
 
@@ -340,15 +339,15 @@ def create_author_table(data):
 
     # Create a Plotly table
     table = go.Figure(data=[go.Table(
-        header=dict(values=['Author', 'Number of books read by author', 'My Average Rating', 'Number of times rated on Goodreads', 'Average Goodreads Rating'],
+        header=dict(values=['Author', 'Number of books read by author', 'My Average Rating'], #, 'Number of times rated on Goodreads', 'Average Goodreads Rating'],
                     fill_color='rgba(230,230,250, 1)',
                     align='center', 
                     height=20),
         cells=dict(values=[top_authors['Author'],
                            top_authors['Read_Count'],
-                           top_authors['My_Rating'],
-                           top_authors['Rating_Count'],
-                           top_authors['Average_Rating_Goodreads']], 
+                           top_authors['My_Rating']],
+                        #    top_authors['Rating_Count'],
+                        #    top_authors['Average_Rating_Goodreads']], 
                            fill=dict(color=['rgba(230,230,250, 0.5)'] + ['rgba(248,248,255,0.5)'] * 2),  # Darker color for the first column
                            align='center',
                            height=20)
