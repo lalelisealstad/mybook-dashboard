@@ -44,7 +44,7 @@ async def book_info_add(df, api_key):
 
     # Run the asynchronous code
     results = await asyncio.gather(*tasks)  # Corrected placement of await
-
+    print('finishe, creating dfd')
     combined_book_info = pd.DataFrame()
 
     # Extract the actual results from the list
@@ -81,10 +81,6 @@ async def book_info_add(df, api_key):
 
     return combined_book_info
 
-async def run_async_script(myreads):
-    from apps.api import api_key
-    result = await book_info_add(myreads, api_key)
-    return result 
 
 if __name__ == "__main__":
-    asyncio.run(run_async_script())
+    asyncio.run(book_info_add())
