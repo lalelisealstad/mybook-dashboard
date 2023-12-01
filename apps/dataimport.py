@@ -6,15 +6,14 @@ import numpy as np
 # Import functions from apps folder
 from apps.collect_data import *
 
+
+
 def dataprep(mybooksgr):
     mybooksgr = mybooksgr.rename(columns=lambda x: x.replace(' ', '_'))
 
-    # Collecting data from GBApi and OLApi
-    apimydf = book_info_add(mybooksgr)
-
     # Merge dataframes 
     mybooks = pd.merge(mybooksgr,
-                        apimydf,
+                        mybooksgr,
                         on='Title', 
                         suffixes = ('_Goodreads', '_GoogleBooks'), 
                         how='left')

@@ -20,6 +20,8 @@ nbformat = "*"
 seaborn = "*"
 missingno = "*"
 scikit-learn = "*"
+aiohttp = "*"
+nest-asyncio = "*"
 
 [dev-packages]
 ipykernel = "*"

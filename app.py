@@ -15,6 +15,12 @@ from datetime import datetime
 import pickle 
 import base64
 import io
+import requests
+import pandas as pd
+import aiohttp
+import asyncio
+import nest_asyncio
+import time
 
 
 #  Create a Dash web application
@@ -274,6 +280,14 @@ def update_figure_gapi(contents, filename):
     try:
         new_data = pd.read_csv(io.StringIO(decoded.decode('utf-8')))
         nmyreads = new_data.loc[new_data['Exclusive Shelf'] == "read"]
+        from apps.async_googleapi import main as async_main
+
+        async def run_async_script(nmyreads):
+            await async_main(nmyreads)
+
+        if __name__ == "__main__":
+            asyncio.run(run_async_script(nmyreads))
+   
         nmyreads = dataprep(nmyreads)
         uploadtxt_suc = "Success, your data have been uploaded and the figures updated!"
         nyear_text = f"This year I have read over {len(nmyreads.query('Year == @today_year'))} books. Totaling {(nmyreads.Number_of_Pages.sum().astype(int))} pages read!"
@@ -303,6 +317,7 @@ def update_figure_gapi(contents, filename):
         print(str(e))
         uploadtxt_fail = "Upload failiure...Are you using the csv file from Goodreads export?"
         year_text = f"This year I have read over {len(myreads.query('Year == @today_year'))} books. Totaling {(myreads.Number_of_Pages.sum().astype(int))} pages read!"
+        myreads_list = myreads.Title.to_list()
         
         return (
             viz_pub_year(myreads), 
