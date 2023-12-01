@@ -26,7 +26,7 @@ import asyncio
 from apps.api import api_key
 async def get_ggl(books):
     global nmyreadsgg 
-    nmyreadsgg = await book_info_add(books, api_key) 
+    nmyreadsgg = book_info_add(books, api_key) 
 
 
 #  Create a Dash web application
@@ -286,7 +286,7 @@ def update_figure_gapi(contents, filename):
         nmyreads = new_data.loc[new_data['Exclusive Shelf'] == "read"]
 
         asyncio.run(get_ggl(nmyreads))
-
+        print(nmyreads)
         nmyreads = dataprep(nmyreads, nmyreadsgg)
         print('dataprep completed')
         uploadtxt_suc = "Success, your data have been uploaded and the figures updated!"

@@ -1,11 +1,9 @@
-
 import requests
 import pandas as pd
 import numpy as np
 import aiohttp
 import asyncio
 import nest_asyncio
-import time
 
 async def get_book_info_async(session, book_name, author_name, api_key):
     base_url = 'https://www.googleapis.com/books/v1/volumes'
@@ -30,7 +28,7 @@ async def get_book_info(book_name, author_name, api_key):
     async with aiohttp.ClientSession() as session:
         return await get_book_info_async(session, book_name, author_name, api_key)
 
-async def book_info_add(df, api_key):
+def book_info_add(df, api_key):
     async def get_book_info_wrapper(row):
         book_name = row['Title']
         author_name = row['Author']
@@ -39,15 +37,21 @@ async def book_info_add(df, api_key):
     # Use nest_asyncio to allow running asyncio in a notebook
     nest_asyncio.apply()
 
-    # Run the asynchronous code
-    tasks = [get_book_info_wrapper(row) for _, row in df.iterrows()]
+    # Create an event loop
+    loop = asyncio.get_event_loop()
 
     # Run the asynchronous code
-    results = await asyncio.gather(*tasks)  # Corrected placement of await
+    # tasks = [get_book_info_wrapper(row) for _, row in df.iterrows()]
+    # delay = 0.2
+    # book_infos = loop.run_until_complete(asyncio.gather(*tasks))
+
+    delay = 0.1
+    book_infos = asyncio.run(asyncio.gather(*[get_book_info_wrapper(row) for _, row in df.iterrows()]))
+
+
     combined_book_info = pd.DataFrame()
 
-    # Extract the actual results from the list
-    for book_info in results:
+    for book_info in book_infos:
         if book_info:
             authors = book_info.get('authors', [np.nan])
             publish_date = book_info.get('publishedDate', np.nan)
@@ -82,4 +86,4 @@ async def book_info_add(df, api_key):
 
 
 if __name__ == "__main__":
-    asyncio.run(book_info_add())
+    asyncio.run(book_info_add(df, api_key))
