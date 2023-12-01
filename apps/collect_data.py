@@ -104,7 +104,7 @@ def get_book_info(book_name, author_name):
 
     base_url = 'https://www.googleapis.com/books/v1/volumes'
     params = {
-        'q': f'intitle:{book_name}+inauthor:{author_name}',
+        'q': f'intitle:{book_name}+inauthor:{author_name}&key=AIzaSyAdOtm-dWnxerfUfKywpDqJxUAYBNBzkaI',
         'maxResults': 1
     }
 
@@ -118,23 +118,19 @@ def get_book_info(book_name, author_name):
         adjusted_book_name = f"{book_name}: A novel"
         params['q'] = f'intitle:{adjusted_book_name}'
 
-        response = requests.get(base_url, params=params)
-        data = response.json()
-
         if 'items' in data and len(data['items']) > 0:
             book = data['items'][0]['volumeInfo']
+            print(book)
         else:
             # Reset the query to check for just the title
             params['q'] = f'intitle:{book_name}'
             
-            response = requests.get(base_url, params=params)
-            data = response.json()
             
             if 'items' in data and len(data['items']) > 0:
                 book = data['items'][0]['volumeInfo']
             else:
                 book = {}
-
+    print(data)
     # title = using the imput from the df to make sure the title return will match the df. 
     authors = book.get('authors', [np.nan])
     publish_date = book.get('publishedDate', np.nan)
