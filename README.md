@@ -105,6 +105,4 @@ recommendations:
 ## to do:
 - topics upload, dcc store needs to include author too
 - include book description topicc tree too
-- improve api call, with await functions 
-- fix colour on the pie charts, make them same size too
-- adjust width of table ratings. 
+- improve api call, with await functions - improve the asyncronous, I syspect they are not really asyncronous now 

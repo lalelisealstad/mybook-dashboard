@@ -18,9 +18,15 @@ import io
 import requests
 import pandas as pd
 import aiohttp
-import asyncio
 import nest_asyncio
 import time
+
+from apps.async_googleapi import book_info_add 
+import asyncio
+from apps.api import api_key
+async def get_ggl(books):
+    global nmyreadsgg 
+    nmyreadsgg = await book_info_add(books, api_key) 
 
 
 #  Create a Dash web application
@@ -192,11 +198,9 @@ app.layout = html.Div([
             ])
         ], fluid=True),
     ], style={'width': '100%', 'display': 'inline-block',
-                                 'border-radius': '35px',
                                  'box-shadow': '2px 2px 2px lightgrey',
                                  'background-color': '#fcfcfc',
                                  'padding': '10px',
-                                 'margin-bottom': '10px', 
                                  'align':"center"
 
                                  }),  
@@ -280,15 +284,11 @@ def update_figure_gapi(contents, filename):
     try:
         new_data = pd.read_csv(io.StringIO(decoded.decode('utf-8')))
         nmyreads = new_data.loc[new_data['Exclusive Shelf'] == "read"]
-        from apps.async_googleapi import main as async_main
 
-        async def run_async_script(nmyreads):
-            await async_main(nmyreads)
+        asyncio.run(get_ggl(nmyreads))
 
-        if __name__ == "__main__":
-            asyncio.run(run_async_script(nmyreads))
-   
-        nmyreads = dataprep(nmyreads)
+        nmyreads = dataprep(nmyreads, nmyreadsgg)
+        print('dataprep completed')
         uploadtxt_suc = "Success, your data have been uploaded and the figures updated!"
         nyear_text = f"This year I have read over {len(nmyreads.query('Year == @today_year'))} books. Totaling {(nmyreads.Number_of_Pages.sum().astype(int))} pages read!"
         nmyreads_list = nmyreads.Title.to_list()
@@ -350,18 +350,18 @@ def update_figure_gapi(contents, filename):
 # open library API figures
 
 def update_figure_ol_api(data, isuploaded):    
-    if isuploaded == True: 
-        nmy_topics = get_book_topics(nmyreads)
-    #   nmy_read_topics = dict(nmy_topics)
-        my_read_topics = {k: v for k, v in my_topics.items() if k in data}  
-        fig = tree_topics(my_read_topics)
-    else: 
+    # if isuploaded == True: 
+    #     nmy_topics = get_book_topics(nmyreads)
+    # #   nmy_read_topics = dict(nmy_topics)
+    #     my_read_topics = {k: v for k, v in my_topics.items() if k in data}  
+    #     fig = tree_topics(my_read_topics)
+    # else: 
         with open('assets/my_topics.json') as file:
             json_data = json.load(file)
         my_topics = dict(json_data)
         my_read_topics = {k: v for k, v in my_topics.items() if k in data}  
         fig = tree_topics(my_read_topics)
-    return [fig]
+        return [fig]
 
 
     #     if new upload

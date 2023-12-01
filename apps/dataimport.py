@@ -8,12 +8,12 @@ from apps.collect_data import *
 
 
 
-def dataprep(mybooksgr):
+def dataprep(mybooksgr, mybooksgg):
     mybooksgr = mybooksgr.rename(columns=lambda x: x.replace(' ', '_'))
 
     # Merge dataframes 
     mybooks = pd.merge(mybooksgr,
-                        mybooksgr,
+                        mybooksgg,
                         on='Title', 
                         suffixes = ('_Goodreads', '_GoogleBooks'), 
                         how='left')
