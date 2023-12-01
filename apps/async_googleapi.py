@@ -32,6 +32,7 @@ def book_info_add(df, api_key):
     async def get_book_info_wrapper(row):
         book_name = row['Title']
         author_name = row['Author']
+        await asyncio.sleep(0.1)
         return await get_book_info(book_name, author_name, api_key)
 
     # Use nest_asyncio to allow running asyncio in a notebook
@@ -40,13 +41,10 @@ def book_info_add(df, api_key):
     # Create an event loop
     loop = asyncio.get_event_loop()
 
+    # Alternative 1 # 2.5  mins
     # Run the asynchronous code
-    # tasks = [get_book_info_wrapper(row) for _, row in df.iterrows()]
-    # delay = 0.2
-    # book_infos = loop.run_until_complete(asyncio.gather(*tasks))
-
-    delay = 0.1
-    book_infos = asyncio.run(asyncio.gather(*[get_book_info_wrapper(row) for _, row in df.iterrows()]))
+    tasks = [get_book_info_wrapper(row) for _, row in df.iterrows()]
+    book_infos = loop.run_until_complete(asyncio.gather(*tasks))
 
 
     combined_book_info = pd.DataFrame()
