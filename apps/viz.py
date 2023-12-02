@@ -215,7 +215,7 @@ def viz_top_values(column, top_n=5):
 #### highest and lowest rated books
 import plotly.express as px
 
-def book_ratings(data, title, top_rated=True, show_legend=True):
+def book_ratings(data, title, top_rated=True):
     # Define custom colors
     my_rating_color = 'rgb(180,151,231)'
     google_books_color = '#34A853'
@@ -241,7 +241,7 @@ def book_ratings(data, title, top_rated=True, show_legend=True):
         x=top_books['My_Rating'],
         y=top_books['Title'],
         mode='markers',
-        name='My Rating'if show_legend == True else '',
+        name='My Rating',
         marker=dict(color=my_rating_color, symbol='circle', size=25),
     ))
 
@@ -250,7 +250,7 @@ def book_ratings(data, title, top_rated=True, show_legend=True):
         x=top_books['Average_Rating_GoogleBooks'],
         y=top_books['Title'],
         mode='markers',
-        name=f"Average Rating Google Books"if show_legend == True else '',
+        name=f"Average Rating Google Books",
         marker=dict(color=google_books_color, symbol='square', size=25),
     ))
 
@@ -259,7 +259,7 @@ def book_ratings(data, title, top_rated=True, show_legend=True):
         x=top_books['Average_Rating_Goodreads'],
         y=top_books['Title'],
         mode='markers',
-        name='Average Rating Goodreads'if show_legend == True else '',
+        name='Average Rating Goodreads',
         marker=dict(color=goodreads_color, symbol='diamond', size=25),
     ))
 
@@ -269,13 +269,18 @@ def book_ratings(data, title, top_rated=True, show_legend=True):
         font=dict(size=12),
         yaxis=dict(title='Title', side='top', showticklabels=True),
         xaxis=dict(
-            title='Rating',
+            title='Ratings:',
             tickmode='array',
             tickvals=[1, 2, 3, 4, 5],
-            range=[0.5, 5.5],  # Set the X-axis range from 0 to 5
-            showgrid=True,
-        ),
-    )
+            range=[0.5, 5.5],  # Set the X-axis range from 0 to 5, 
+            showgrid=True),
+        legend=dict(
+            title='Ratings:',  # Set legend title
+            orientation='h',  # Set legend orientation (horizontal)
+            x=0.01,  # Adjust x position of the legend
+            y=1.2,  # Adjust y position of the legend
+        )
+        )
     return fig
 
 
@@ -425,4 +430,45 @@ def desc_tree(Description):
         hovertemplate='<b>%{label}</b><br>Count: %{customdata[0]}'
     )
 
+    return fig
+
+
+import plotly.express as px
+import plotly.graph_objects as go
+
+def scatter_popularity(df):
+    # Create scatter plot
+
+    df['My_Rating'] = df['My_Rating'].replace(0, np.nan)
+    df = df.dropna(subset=['Rating_Count', 'Average_Rating_Goodreads'])
+
+    melted_df = pd.melt(df[['Rating_Count', 'Average_Rating_Goodreads', 'My_Rating']], id_vars=['Rating_Count'], value_vars=['Average_Rating_Goodreads', 'My_Rating'],
+                        var_name='Rating_Type', value_name='Rating')
+
+    color_scale = px.colors.qualitative.Set2[2:8]  # 
+
+    fig = px.scatter(
+        melted_df, x='Rating_Count', y='Rating',color='Rating_Type', trendline="ols", title="Do popularity correlate with rating?<br>",
+        template="plotly_white",  
+        color_discrete_sequence=color_scale, 
+        labels={"Rating_Type": "Rating", 'Average_Rating_Goodreads': "Average Rating on Goodreads"},
+        category_orders={"Rating_Type": ["Average_Rating_Goodreads", "My_Rating"]}
+    )
+    # Customize the legend
+    fig.update_layout(
+        legend=dict(
+            title='Rating Type:', 
+            orientation='h',  
+            x=0.5,  
+            y=1.2,  
+        ),
+        
+        xaxis=dict(
+            title='Number of times the book has been rates in Google Books',  
+        ),
+        
+        yaxis=dict(
+            title='Rating', 
+        )
+    )
     return fig

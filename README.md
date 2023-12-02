@@ -98,9 +98,17 @@ recommendations:
 #### Not doable: 
 * similar books using https://www.gutenberg.org/ebooks/20194/also/ - didnt get any books when I did the api call.... 
 
-#### Notes for self: 
 
 
 ## to do:
 - visualise distrobution of ratings, bar chart of count of rated books per rating. Does ratings and popularity correlate? mine vs other ratings.
+- genre prediciton using machine learning 
+- improve speed using client side callbacks 
 - improve api call, with await functions - improve the asyncronous, I syspect they are not really asyncronous now 
+- want to read section. 
+
+
+- with genre
+    - show spider figure how often read genre, how well one rate genre
+    - show time plot with all different lines for genre to see certains times genre has been popular for one
+    - sunburst with other topics around 

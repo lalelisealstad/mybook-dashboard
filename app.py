@@ -190,6 +190,16 @@ app.layout = html.Div([
                 ),
             ], className="mt-4", justify="center"),  
             
+            # Eight row with scatter plot popularity
+            dbc.Row([
+                dbc.Col(
+                    dcc.Graph(
+                        id='scatter-fig'
+                    ),
+                    width=10,  
+                ),
+            ], className="mt-4", justify="center"),  
+            
             html.Div([
                 # dcc.Store inside the user's current browser session
                 dcc.Store(id='store-data', data=[], storage_type='session'), # store of the list of read books
@@ -232,8 +242,8 @@ today_year = datetime.today().year
         Output('figr2', 'figure'),
         Output('upload-text', 'children'),
         Output('store-data', 'data'), 
-        Output('is-uploaded-data', 'data')
-        ],
+        Output('is-uploaded-data', 'data'),
+        Output('scatter-fig', 'figure')],
     [Input('upload-data', 'contents')],
     [State('upload-data', 'filename')]
 )
@@ -271,11 +281,12 @@ def update_figure_gapi(contents, filename):
                 viz_top_values(myreads['Categories'], top_n=7),
                 create_rating_table(myreads),
                 create_author_table(myreads),
-                book_ratings(myreads, 'Top Rated Books', top_rated=True, show_legend=True),
-                book_ratings(myreads, 'Bottom Rated Books',top_rated=False, show_legend=False),
+                book_ratings(myreads, 'Top Rated Books', top_rated=True),
+                book_ratings(myreads, 'Bottom Rated Books',top_rated=False),
                 ' ', 
                 myreads_list, 
-                False
+                False, 
+                scatter_popularity(myreads)
             )
 
     content_type, content_string = contents.split(',')
@@ -306,11 +317,12 @@ def update_figure_gapi(contents, filename):
             viz_top_values(nmyreads['Categories'], top_n=7),
             create_rating_table(nmyreads),
             create_author_table(nmyreads),
-            book_ratings(nmyreads, 'Top Rated Books', top_rated=True, show_legend=True),
-            book_ratings(nmyreads, 'Bottom Rated Books',top_rated=False, show_legend=False),
+            book_ratings(nmyreads, 'Top Rated Books', top_rated=True),
+            book_ratings(nmyreads, 'Bottom Rated Books',top_rated=False),
             'Upload success', 
             nmyreads_list, 
-            True
+            True, 
+            scatter_popularity(nmyreads)
         )
     
     except Exception as e:
@@ -331,11 +343,12 @@ def update_figure_gapi(contents, filename):
             viz_top_values(myreads['Categories'], top_n=7),
             create_rating_table(myreads),
             create_author_table(myreads),
-            book_ratings(myreads, 'Top Rated Books', top_rated=True, show_legend=True),
-            book_ratings(myreads, 'Bottom Rated Books',top_rated=False, show_legend=False),
+            book_ratings(myreads, 'Top Rated Books', top_rated=True),
+            book_ratings(myreads, 'Bottom Rated Books',top_rated=False),
             'upload fail', 
             myreads_list, 
-            False
+            False, 
+            scatter_popularity(myreads)
             
         )
 
