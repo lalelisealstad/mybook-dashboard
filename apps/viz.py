@@ -27,10 +27,24 @@ def tree_topics(topics_dict):
         values='Count',
         custom_data=['Count'] )
 
-    # Update the layout of the tree map
     fig.update_layout(
-        title='Most common topics'
+        title={
+            'text': 'Most common book topics',
+            'y': 0.9,
+            'x': 0.5,
+            'xanchor': 'center',
+            'yanchor': 'top',
+            'font': dict(
+                size=22
+            )
+        },
+        uniformtext=dict(minsize=16),  # Increase the minimum text size to 70
+        font=dict(
+            size=16  # Adjust the font size for the entire figure
+        )
     )
+    
+    
     fig.update_traces(
         hovertemplate='<b>%{label}</b><br>Count: %{customdata[0]}'
     )
@@ -47,7 +61,7 @@ def viz_pub_year(df):
 
     # Group the DataFrame by year and calculate the average rating and count of books
     df = df.query('Original_Publication_Year != 0')
-    year_data = df.groupby('Original_Publication_Year').agg({'My_Rating': 'mean', 'Title': 'count'}).reset_index()
+    year_data = df.groupby('Original_Publication_Year',  observed=True).agg({'My_Rating': 'mean', 'Title': 'count'}).reset_index()
     
     # Extract the year labels, average ratings, and book counts
     labels = year_data['Original_Publication_Year']
@@ -113,7 +127,7 @@ def viz_year_read(df):
     df = df.dropna(subset=['Year_Quarter'])
     # Count the number of books read in each year and quarter
     
-    year_quarter_counts = df.groupby('Year_Quarter').size().reset_index(name='Books Read')
+    year_quarter_counts = df.groupby('Year_Quarter',  observed=True).size().reset_index(name='Books Read')
     
     # Create the line chart
     fig = px.line(year_quarter_counts, x='Year_Quarter', y='Books Read', markers=True, template = "plotly_white")
@@ -192,7 +206,7 @@ def viz_top_values(column, top_n=5):
     fig.update_traces(marker=dict(colors=colors))
 
     # Set the chart title
-    fig.update_layout(title=f'Top {top_n} Values of {column.name}')
+    fig.update_layout(title=f'Top {top_n} {column.name}')
 
     # Display the chart
     return fig
@@ -211,7 +225,7 @@ def book_ratings(data, title, top_rated=True, show_legend=True):
     filtered_data = data[data['My_Rating'] > 0]
 
     # Sort the filtered data by your own rating in ascending order for bottom-rated books
-    if top_rated:
+    if top_rated == True:
         filtered_data = filtered_data.sort_values(['My_Rating', 'Date_Read'], ascending=False)
     else: 
         filtered_data = filtered_data.sort_values(['My_Rating', 'Date_Read'], ascending=True)
@@ -227,7 +241,7 @@ def book_ratings(data, title, top_rated=True, show_legend=True):
         x=top_books['My_Rating'],
         y=top_books['Title'],
         mode='markers',
-        name='My Rating'if show_legend else '',
+        name='My Rating'if show_legend == True else '',
         marker=dict(color=my_rating_color, symbol='circle', size=25),
     ))
 
@@ -236,7 +250,7 @@ def book_ratings(data, title, top_rated=True, show_legend=True):
         x=top_books['Average_Rating_GoogleBooks'],
         y=top_books['Title'],
         mode='markers',
-        name=f"Average Rating Google Books"if show_legend else '',
+        name=f"Average Rating Google Books"if show_legend == True else '',
         marker=dict(color=google_books_color, symbol='square', size=25),
     ))
 
@@ -245,7 +259,7 @@ def book_ratings(data, title, top_rated=True, show_legend=True):
         x=top_books['Average_Rating_Goodreads'],
         y=top_books['Title'],
         mode='markers',
-        name='Average Rating Goodreads'if show_legend else '',
+        name='Average Rating Goodreads'if show_legend == True else '',
         marker=dict(color=goodreads_color, symbol='diamond', size=25),
     ))
 
@@ -319,12 +333,12 @@ def create_author_table(data):
     data['My_Rating'] = data['My_Rating'].replace(0, np.nan)
 
     # Calculate the mean 'My_Rating' grouped by 'Author'
-    data['mean_rating_by_author'] = data.groupby('Author')['My_Rating'].transform('mean').copy()
+    data['mean_rating_by_author'] = data.groupby('Author',  observed=True)['My_Rating'].transform('mean').copy()
 
     data['My_Rating'] = np.where((data['My_Rating'] == np.nan) | data['My_Rating'].isnull(), data['mean_rating_by_author'], data['My_Rating'])
 
     # Group the data by author and calculate the required statistics
-    author_stats = np.round(data.groupby('Author').agg({
+    author_stats = np.round(data.groupby('Author',  observed=True).agg({
         'Read_Count' :'count', 
         'My_Rating': 'mean',
         'Average_Rating_Goodreads': 'mean',
@@ -371,14 +385,10 @@ import numpy as np
 import plotly.express as px
 import re
 from collections import Counter
-import nltk
-from nltk.corpus import stopwords
 
 def desc_tree(Description):
     from collections import Counter
-    stop_words = nltk.download('stopwords')
-    stopwords_dict = Counter(stopwords.words('english'))
-    stopwords_dict.update({'author', 'S', 'will','new','york','time','book','novel', 'read', 'day', 'make','year', 'one', 'times', 'times, of', 's', 'award','author','new','york','selling','story','t','1','og'})
+    stopwords_dict = {'like', 'author', 'S', 'will','new','york','time','book','novel', 'read', 'day', 'make','year', 'one', 'times', 'times, of', 's', 'award','author','new','york','selling','story','t','1','og', 'call', 'upon', 'still', 'nevertheless', 'down', 'every', 'forty', '‘re', 'always', 'whole', 'side', "n't", 'now', 'however', 'an', 'show', 'least', 'give', 'below', 'did', 'sometimes', 'which', "'s", 'nowhere', 'per', 'hereupon', 'yours', 'she', 'moreover', 'eight', 'somewhere', 'within', 'whereby', 'few', 'has', 'so', 'have', 'for', 'noone', 'top', 'were', 'those', 'thence', 'eleven', 'after', 'no', '’ll', 'others', 'ourselves', 'themselves', 'though', 'that', 'nor', 'just', '’s', 'before', 'had', 'toward', 'another', 'should', 'herself', 'and', 'these', 'such', 'elsewhere', 'further', 'next', 'indeed', 'bottom', 'anyone', 'his', 'each', 'then', 'both', 'became', 'third', 'whom', '‘ve', 'mine', 'take', 'many', 'anywhere', 'to', 'well', 'thereafter', 'besides', 'almost', 'front', 'fifteen', 'towards', 'none', 'be', 'herein', 'two', 'using', 'whatever', 'please', 'perhaps', 'full', 'ca', 'we', 'latterly', 'here', 'therefore', 'us', 'how', 'was', 'made', 'the', 'or', 'may', '’re', 'namely', "'ve", 'anyway', 'amongst', 'used', 'ever', 'of', 'there', 'than', 'why', 'really', 'whither', 'in', 'only', 'wherein', 'last', 'under', 'own', 'therein', 'go', 'seems', '‘m', 'wherever', 'either', 'someone', 'up', 'doing', 'on', 'rather', 'ours', 'again', 'same', 'over', '‘s', 'latter', 'during', 'done', "'re", 'put', "'m", 'much', 'neither', 'among', 'seemed', 'into', 'once', 'my', 'otherwise', 'part', 'everywhere', 'never', 'myself', 'must', 'will', 'am', 'can', 'else', 'although', 'as', 'beyond', 'are', 'too', 'becomes', 'does', 'a', 'everyone', 'but', 'some', 'regarding', '‘ll', 'against', 'throughout', 'yourselves', 'him', "'d", 'it', 'himself', 'whether', 'move', '’m', 'hereafter', 're', 'while', 'whoever', 'your', 'first', 'amount', 'twelve', 'serious', 'other', 'any', 'off', 'seeming', 'four', 'itself', 'nothing', 'beforehand', 'make', 'out', 'very', 'already', 'various', 'until', 'hers', 'they', 'not', 'them', 'where', 'would', 'since', 'everything', 'at', 'together', 'yet', 'more', 'six', 'back', 'with', 'thereupon', 'becoming', 'around', 'due', 'keep', 'somehow', 'n‘t', 'across', 'all', 'when', 'i', 'empty', 'nine', 'five', 'get', 'see', 'been', 'name', 'between', 'hence', 'ten', 'several', 'from', 'whereupon', 'through', 'hereby', "'ll", 'alone', 'something', 'formerly', 'without', 'above', 'onto', 'except', 'enough', 'become', 'behind', '’d', 'its', 'most', 'n’t', 'might', 'whereas', 'anything', 'if', 'her', 'via', 'fifty', 'is', 'thereby', 'twenty', 'often', 'whereafter', 'their', 'also', 'anyhow', 'cannot', 'our', 'could', 'because', 'who', 'beside', 'by', 'whence', 'being', 'meanwhile', 'this', 'afterwards', 'whenever', 'mostly', 'what', 'one', 'nobody', 'seem', 'less', 'do', '‘d', 'say', 'thus', 'unless', 'along', 'yourself', 'former', 'thru', 'he', 'hundred', 'three', 'sixty', 'me', 'sometime', 'whose', 'you', 'quite', '’ve', 'about', 'even'}
         
     descriptions_all = ' '.join(Description.dropna()).lower()
 
@@ -394,10 +404,23 @@ def desc_tree(Description):
     # Create a tree map using Plotly Express
     fig = px.treemap(word_counts_df.sort_values(by='Count', ascending=False).head(55), path=['Word'], values='Count', custom_data=['Count'] )
 
-    # Update the layout of the tree map
     fig.update_layout(
-        title='Most common words found in book descriptions'
+        title={
+            'text': 'Most common words found in book descriptions',
+            'y': 0.9,
+            'x': 0.5,
+            'xanchor': 'center',
+            'yanchor': 'top',
+            'font': dict(
+                size=22
+            )
+        },
+        uniformtext=dict(minsize=16),  # Increase the minimum text size to 70
+        font=dict(
+            size=16  # Adjust the font size for the entire figure
+        )
     )
+
     fig.update_traces(
         hovertemplate='<b>%{label}</b><br>Count: %{customdata[0]}'
     )

@@ -21,12 +21,8 @@ import aiohttp
 import nest_asyncio
 import time
 
-from apps.async_googleapi import book_info_add 
-import asyncio
+from apps.async_googleapi import book_info_add, asyncio
 from apps.api import api_key
-async def get_ggl(books):
-    global nmyreadsgg 
-    nmyreadsgg = book_info_add(books, api_key) 
 
 
 #  Create a Dash web application
@@ -55,13 +51,13 @@ app.layout = html.Div([
                     ], 
                     width=5  # Width for the second column
                 ),
-                dbc.Col(
+                dbc.Col([
                     dbc.Spinner(children=[
                         dcc.Upload(
                             id='upload-data',
                             children=html.Div([
                                 'Drag and Drop or ',
-                                html.A('Select Files', style={'color': 'blue', 'font-weight': 'bold'})
+                                html.A('Select Files', style={'color': 'blue', 'font-weight': 'bold'}), 
                             ]),
                             style={
                                 'width': '100%',
@@ -74,8 +70,10 @@ app.layout = html.Div([
                                 'margin': '10px'
                             },
                             multiple=False),  # Allow only one file upload at a time
-                        dcc.Markdown(id='upload-text', dangerously_allow_html=True, style={'font-size': '11px'}),
-                    ]),width=5 
+                        dcc.Markdown(id='upload-text', dangerously_allow_html=True, style={'font-size': '11px',  'textAlign': 'center'}),
+                    ]), 
+                    dcc.Markdown('''Upload may take a while depending on library size. Large libraries may take up to 15 minutes..''', style={'font-size': '11px',  'textAlign': 'center'})]
+                    ,width=5 
                 )
             ], className="mt-2", style={'color': '#2B2B35', 'height': '160px'}, justify="center"), 
             
@@ -176,21 +174,22 @@ app.layout = html.Div([
             dbc.Row([
                 dbc.Col(
                     dcc.Graph(
-                        id='tree2',
+                        id='tree',
                     ),
                     width=10,
                 ), 
-            ], className="mt-4", style={'height': '420px'}, justify="center"), 
+            ], className="mt-4", justify="center"), 
 
-            # # Seventh row with topic fig
-            # dbc.Row([
-            #     dbc.Col(
-            #         dcc.Graph(
-            #             id='tree2'
-            #         ),
-            #         width=12  
-            #     ),
-            # ], className="mt-0"), 
+            # Seventh row with topic fig
+            dbc.Row([
+                dbc.Col(
+                    dcc.Graph(
+                        id='tree2'
+                    ),
+                    width=10,  
+                ),
+            ], className="mt-4", justify="center"),  
+            
             html.Div([
                 # dcc.Store inside the user's current browser session
                 dcc.Store(id='store-data', data=[], storage_type='session'), # store of the list of read books
@@ -206,8 +205,9 @@ app.layout = html.Div([
                                  }),  
 ])
 
- ### CALLBACKS
 
+
+### CALLBACKS
 
 # Initialize an empty DataFrame to store uploaded data
 uploaded_data = pd.DataFrame()
@@ -242,6 +242,7 @@ today_year = datetime.today().year
 # google api figures         
 def update_figure_gapi(contents, filename):
     global myreads
+    global nmyreads
     
     if contents is None:
         # Use the default data if no file is uploaded
@@ -256,7 +257,7 @@ def update_figure_gapi(contents, filename):
                             3. Scroll down and click on "Import/Export" under "Tools" on the left sidebar<br>
                             4. Click "Export Your Books" to download the export file"""
             year_text = f"This year I have read over {len(myreads.query('Year == @today_year'))} books. Totaling {f'{(myreads.Number_of_Pages.sum().astype(int)):,}'} pages read!"
-            myreads_list = myreads.Title.to_list()
+            myreads_list = myreads[['Author','Title']].to_dict()
              
             return (
                 viz_pub_year(myreads), 
@@ -272,7 +273,6 @@ def update_figure_gapi(contents, filename):
                 create_author_table(myreads),
                 book_ratings(myreads, 'Top Rated Books', top_rated=True, show_legend=True),
                 book_ratings(myreads, 'Bottom Rated Books',top_rated=False, show_legend=False),
-                # desc_tree(myreads['Description']),
                 ' ', 
                 myreads_list, 
                 False
@@ -283,15 +283,16 @@ def update_figure_gapi(contents, filename):
     
     try:
         new_data = pd.read_csv(io.StringIO(decoded.decode('utf-8')))
+        print(new_data)
         nmyreads = new_data.loc[new_data['Exclusive Shelf'] == "read"]
-
-        asyncio.run(get_ggl(nmyreads))
+        print('almost async')
+        nmyreadsgg = asyncio.run(book_info_add(nmyreads, api_key))
         print(nmyreads)
         nmyreads = dataprep(nmyreads, nmyreadsgg)
         print('dataprep completed')
         uploadtxt_suc = "Success, your data have been uploaded and the figures updated!"
         nyear_text = f"This year I have read over {len(nmyreads.query('Year == @today_year'))} books. Totaling {(nmyreads.Number_of_Pages.sum().astype(int))} pages read!"
-        nmyreads_list = nmyreads.Title.to_list()
+        nmyreads_list = nmyreads[['Author','Title']].to_dict()
         
         return(
             viz_pub_year(nmyreads), 
@@ -307,7 +308,6 @@ def update_figure_gapi(contents, filename):
             create_author_table(nmyreads),
             book_ratings(nmyreads, 'Top Rated Books', top_rated=True, show_legend=True),
             book_ratings(nmyreads, 'Bottom Rated Books',top_rated=False, show_legend=False),
-            # desc_tree(nmyreads['Description']),
             'Upload success', 
             nmyreads_list, 
             True
@@ -317,7 +317,7 @@ def update_figure_gapi(contents, filename):
         print(str(e))
         uploadtxt_fail = "Upload failiure...Are you using the csv file from Goodreads export?"
         year_text = f"This year I have read over {len(myreads.query('Year == @today_year'))} books. Totaling {(myreads.Number_of_Pages.sum().astype(int))} pages read!"
-        myreads_list = myreads.Title.to_list()
+        myreads_list = myreads[['Author','Title']].to_dict()
         
         return (
             viz_pub_year(myreads), 
@@ -333,7 +333,6 @@ def update_figure_gapi(contents, filename):
             create_author_table(myreads),
             book_ratings(myreads, 'Top Rated Books', top_rated=True, show_legend=True),
             book_ratings(myreads, 'Bottom Rated Books',top_rated=False, show_legend=False),
-            # desc_tree(myreads['Description']),
             'upload fail', 
             myreads_list, 
             False
@@ -343,33 +342,37 @@ def update_figure_gapi(contents, filename):
 
 # # app call back for the three figure using open library api
 @app.callback(
-    [Output('tree2', 'figure')],
+    [Output('tree', 'figure')],
     [Input('store-data', 'data'),
     Input('is-uploaded-data', 'data')]
 )
-# open library API figures
+# # app call back for the three figure using open library api
 
 def update_figure_ol_api(data, isuploaded):    
-    # if isuploaded == True: 
-    #     nmy_topics = get_book_topics(nmyreads)
-    # #   nmy_read_topics = dict(nmy_topics)
-    #     my_read_topics = {k: v for k, v in my_topics.items() if k in data}  
-    #     fig = tree_topics(my_read_topics)
-    # else: 
+    if isuploaded == True: 
+        nmyreads = pd.DataFrame(data)
+        nmy_topics = get_book_topics(nmyreads)
+        fig = tree_topics(nmy_topics)
+    else: 
         with open('assets/my_topics.json') as file:
             json_data = json.load(file)
         my_topics = dict(json_data)
-        my_read_topics = {k: v for k, v in my_topics.items() if k in data}  
+        my_read_topics = {k: v for k, v in my_topics.items() if k in list(set(data['Title'].values()))}  
         fig = tree_topics(my_read_topics)
-        return [fig]
+    return [fig]
 
 
-    #     if new upload
-    # try:
-    #     nmy_topics = get_book_topics(nmyreads)
-    #     nmy_read_topics = dict(nmy_topics)
-    # except Exception as e:
-    #     return tree_topics(my_read_topics)
+# call back for the desc tree since the ntlk package stop words is so slow
+@app.callback(
+    [Output('tree2', 'figure')],
+    [Input('is-uploaded-data', 'data')]
+)
+def update_figure_ol_api(isuploaded):    
+    if isuploaded == True: 
+        desctree = desc_tree(nmyreads['Description']),
+    else: 
+        desctree = desc_tree(myreads['Description']),
+    return desctree
 
 if __name__ == '__main__':
     app.run_server(debug=True)

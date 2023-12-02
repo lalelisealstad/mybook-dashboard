@@ -5,7 +5,7 @@ $ source .venv/bin/activate
 $ pip install pipenv
 $ pipenv shell
 $ pipenv install ipykernel
-$ pipenv install -r requirements.txt
+$ pipenv install 
 
 pipenv lock -r
 
@@ -32,8 +32,7 @@ Using export of books from Good reads, add additional book information using API
     - page count category
     - year and quarter read
     - mean impuation for missing rating of top author books
-#### 3_analysis
-    - figues shown in the dashboard
+
 
 ## Data Vizualisation
 My read books - viz : 
@@ -44,7 +43,11 @@ My read books - viz :
 - pie chart categories, 
 - top and botton books my rating with other ratings 
 - most read authors by count, and most liked authors 
-- this year in books, total books and total pages. print
+- this year in books, total books and total pages. 
+
+## Performance improvements
+- using a spinner for visual indication that file is being uploaded
+- using asyncronous code for the google books api call to run all requests asyncronously 
 
 
 # Developing: 
@@ -56,9 +59,6 @@ My read books - viz :
 
 #### Improve performance / layout: 
 - set up of topics in json not necessary in case of input
-- default set up dont need api call, improve this.
-- larger title for top and bottom ratings. 
-- add text for how to interpret, eg in the average ratings table.  
 - 0 rating should be changed to "not rated" in the ratings bar. 
 - text that explains how to interact with the figures. 
 - link to github / explainer of how the dashboard, api call collection works. 
@@ -74,7 +74,7 @@ WPF:
 - books from your top authors
 
 #### Other visualisations: 
-- visualise distrobution of ratings, bar chart of count of rated books per rating. Does ratings and popularity correlate? mine vs other ratings.
+
 
 #### Genre categorisation AI
 - genre category AI, using genre shelfs on goodreads to trail AI. export from gr. 
@@ -99,10 +99,8 @@ recommendations:
 * similar books using https://www.gutenberg.org/ebooks/20194/also/ - didnt get any books when I did the api call.... 
 
 #### Notes for self: 
-- topics from openlibrary API taken out of data prepp function
-    my_topics = get_book_topics(mybooks)
+
 
 ## to do:
-- topics upload, dcc store needs to include author too
-- include book description topicc tree too
+- visualise distrobution of ratings, bar chart of count of rated books per rating. Does ratings and popularity correlate? mine vs other ratings.
 - improve api call, with await functions - improve the asyncronous, I syspect they are not really asyncronous now 
