@@ -18,10 +18,10 @@ async def get_book_info_async(session, book_name, author_name, api_key):
 
     async with session.get(base_url, params=params) as response:
         if response.status == 200:
+            print('request one done')
             data = await response.json()
             if 'items' in data and len(data['items']) > 0:
                 return data['items'][0]['volumeInfo']
-            print('request one done')
         else:
             print(f"Error {response.status}: {await response.text()}")
             return None
@@ -33,6 +33,7 @@ async def get_book_info(book_name, author_name, api_key):
 async def book_info_add(df, api_key):
     async def get_book_info_wrapper(row):
         book_name = row['Title']
+        print(book_name)
         author_name = row['Author']
         await asyncio.sleep(1)
         return await get_book_info(book_name, author_name, api_key)

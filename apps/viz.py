@@ -448,7 +448,7 @@ def scatter_popularity(df):
     color_scale = px.colors.qualitative.Set2[2:8]  # 
 
     fig = px.scatter(
-        melted_df, x='Rating_Count', y='Rating',color='Rating_Type', trendline="ols", title="Do popularity correlate with rating?<br>",
+        melted_df, x='Rating_Count', y='Rating',color='Rating_Type', trendline="ols", title="Does popularity correlate with rating?<br>",
         template="plotly_white",  
         color_discrete_sequence=color_scale, 
         labels={"Rating_Type": "Rating", 'Average_Rating_Goodreads': "Average Rating on Goodreads"},
