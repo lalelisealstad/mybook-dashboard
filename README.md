@@ -1,14 +1,19 @@
 
-Run: 
+Run first time: 
+'''
 $ python3 -m venv .venv
 $ source .venv/bin/activate 
 $ pip install pipenv
 $ pipenv shell
 $ pipenv install ipykernel
 $ pipenv install 
+'''
 
-pipenv lock -r
-
+run after installation: 
+'''
+$ source .venv/bin/activate
+$ python "app.py"
+'''
 
 ## Process, see notebooks: 
 #### 1_wpf_export
@@ -101,7 +106,7 @@ recommendations:
 
 
 ## to do:
-- visualise distrobution of ratings, bar chart of count of rated books per rating. Does ratings and popularity correlate? mine vs other ratings.
+- align first two graphs
 - genre prediciton using machine learning 
 - improve speed using client side callbacks 
 - improve api call, with await functions - improve the asyncronous, I syspect they are not really asyncronous now 

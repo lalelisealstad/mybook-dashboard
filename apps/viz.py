@@ -1,9 +1,14 @@
 
-# topics viz tree map
-
-import pandas as pd
+# Import libraries 
 import plotly.express as px
+import plotly.graph_objects as go
+import pandas as pd
 from collections import Counter
+import plotly.io as pio
+import numpy as np
+import re
+
+# topics viz tree map
 
 def tree_topics(topics_dict): 
     """
@@ -52,11 +57,7 @@ def tree_topics(topics_dict):
     return fig
 
 
-
-import pandas as pd
-import plotly.graph_objects as go
-import numpy as np
-
+# Publication year and rating 
 def viz_pub_year(df):
 
     # Group the DataFrame by year and calculate the average rating and count of books
@@ -119,9 +120,8 @@ def viz_pub_year(df):
     
     return fig
 
-import pandas as pd
-import plotly.express as px
 
+# Publication year vs rating 
 def viz_year_read(df):
     
     df = df.dropna(subset=['Year_Quarter'])
@@ -144,10 +144,6 @@ def viz_year_read(df):
     return fig
 
 ### Page count 
-
-import plotly.graph_objects as go
-import plotly.io as pio
-import pandas as pd
 
 def visualize_categories(myreads, column, title, xtitle):
     # Group the DataFrame by page category and count the number of books in each category
@@ -176,7 +172,6 @@ def visualize_categories(myreads, column, title, xtitle):
 
 
 # pie chart, top 5 categories and languages
-import plotly.graph_objects as go
 
 def viz_top_values(column, top_n=5):
     # Drop NaN values from the column
@@ -213,7 +208,6 @@ def viz_top_values(column, top_n=5):
 
 
 #### highest and lowest rated books
-import plotly.express as px
 
 def book_ratings(data, title, top_rated=True):
     # Define custom colors
@@ -242,7 +236,7 @@ def book_ratings(data, title, top_rated=True):
         y=top_books['Title'],
         mode='markers',
         name='My Rating',
-        marker=dict(color=my_rating_color, symbol='circle', size=25),
+        marker=dict(color=my_rating_color, symbol='circle', size=15),
     ))
 
     # Add trace for Average_Rating_GoogleBooks as dots with a different color and shape
@@ -251,7 +245,7 @@ def book_ratings(data, title, top_rated=True):
         y=top_books['Title'],
         mode='markers',
         name=f"Average Rating Google Books",
-        marker=dict(color=google_books_color, symbol='square', size=25),
+        marker=dict(color=google_books_color, symbol='square', size=15),
     ))
 
     # Add trace for Average_Rating_Goodreads as dots with a different color and shape
@@ -260,7 +254,7 @@ def book_ratings(data, title, top_rated=True):
         y=top_books['Title'],
         mode='markers',
         name='Average Rating Goodreads',
-        marker=dict(color=goodreads_color, symbol='diamond', size=25),
+        marker=dict(color=goodreads_color, symbol='diamond', size=15),
     ))
 
     # Update the layout
@@ -286,8 +280,7 @@ def book_ratings(data, title, top_rated=True):
 
 
 
-# Rating compare
-import plotly.graph_objects as go
+# Rating comparison table 
 
 def create_rating_table(data):
     # Filter the data where My_Rating > 0
@@ -327,8 +320,6 @@ def create_rating_table(data):
 
 
 # My top authors 
-import plotly.graph_objects as go
-import numpy as np
 
 def create_author_table(data):
     # Filter the data to include only the books you've read
@@ -386,10 +377,6 @@ def create_author_table(data):
 
 
 # Three viz of count of words in description
-import numpy as np
-import plotly.express as px
-import re
-from collections import Counter
 
 def desc_tree(Description):
     from collections import Counter
