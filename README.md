@@ -112,6 +112,11 @@ recommendations:
 - improve api call, with await functions - improve the asyncronous, I syspect they are not really asyncronous now 
 - want to read section. 
 
+ML genre:
+- check why some books do not have description (api query not getting a hit?)
+- use genre prediction using dataset: https://github.com/uchidalab/book-dataset/tree/master and collect description from google books api
+- 
+
 
 - with genre
     - show spider figure how often read genre, how well one rate genre
