@@ -15,7 +15,7 @@ min_count = 50 #change to 80
 # Use groupby and apply to sample each group equally
 dfcall = amazondfsample.groupby('genre', group_keys=False).apply(lambda x: x.sample(min_count))
 
-n = 100
+n = 2
 dfcall_limit = dfcall.head(n)
 filename = 'assets/amazon_books_description.pkl'
 
@@ -23,8 +23,7 @@ filename = 'assets/amazon_books_description.pkl'
 async def process_data(df, api_key, filename):
     print(df)
     books_desc = await book_info_add(df, api_key)
-    print(books_desc)
-    books_desc_genre = books_desc.merge(dfcall_limit[['Title', 'genre']], how='left', on='Title')
+    books_desc_genre = books_desc.merge(dfcall_limit[['Title', 'genre']], how='left', left_on='Title_org', right_on='Title')
     amazondfnew = pd.concat([amazondf_already, books_desc_genre])
 
     amazondfnew.to_pickle(filename)

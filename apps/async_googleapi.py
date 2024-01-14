@@ -22,7 +22,9 @@ async def get_book_info_async(session, book_name, author_name, api_key):
             print('request done')
             data = await response.json()
             if 'items' in data and len(data['items']) > 0:
-                return data['items'][0]['volumeInfo']
+                result = data['items'][0]['volumeInfo']
+                result['Title_org'] = book_name
+                return result
         else:
             print(f"Error {response.status}: {await response.text()}")
             return None
@@ -50,7 +52,6 @@ async def book_info_add(df, api_key):
     # Extract the actual results from the list
     for book_info in results:
         if book_info:
-            print(book_info)
             authors = book_info.get('authors', [np.nan])
             publish_date = book_info.get('publishedDate', np.nan)
             description = book_info.get('description', np.nan)
@@ -61,6 +62,7 @@ async def book_info_add(df, api_key):
             average_rating = book_info.get('averageRating', np.nan)
             rating_count = book_info.get('ratingsCount', np.nan)
             language = book_info.get('language', np.nan)
+            book_name = book_info.get('Title_org', np.nan)
 
 
             book_info_df = pd.DataFrame({
@@ -73,7 +75,8 @@ async def book_info_add(df, api_key):
                 'Categories': [", ".join(map(str, categories))],
                 'Average Rating': [average_rating],
                 'Rating Count': [rating_count],
-                'Language': [language]
+                'Language': [language],
+                'Title_org' : book_name
             })
             combined_book_info = pd.concat([combined_book_info, book_info_df])
 
