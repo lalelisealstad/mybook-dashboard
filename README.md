@@ -16,14 +16,17 @@ $ python "app.py"
 '''
 
 ## Process, see notebooks: 
-#### 1_wpf_export
+I first make the code in notebooks and then export the modules in python files to be used in the dahboard. 
+
+#### 1 wpf export
 Collect dataframe of Womens prize for fiction winners and finalists with Book Title, Author and year. 
 - Use webscraping to collect the table of finalists and winners of the WPF from all years
     - manipulate table to account for merged cells
     - use regex to remove unnecessary signs in the title name
 
-#### 2_data_cleaning 
-Using export of books from Good reads, add additional book information using APIs, do some data cleaning 
+## 2 Data preperation
+**Collect metadata from APIs and clean data**
+
 - Collect information about the book using Google Book API
     - API request for book using title and author, if not found then it checks for title with the added strin ': A novel' as I found many books had this title ending in Google Books but not in the WPF wikipedia page, then if book is not found it checks for just title 
     - Normalise string of Title to adjust for Python's case sensitivity before mergning datasett from webscraping wikipeda and google books api
@@ -38,8 +41,12 @@ Using export of books from Good reads, add additional book information using API
     - year and quarter read
     - mean impuation for missing rating of top author books
 
+## 3 Asyncronous queries 
+- using asyncronous code for the google books api call to run all requests asyncronously 
+- making dashboard faster 
 
-## Data Vizualisation
+
+## 4 Data Vizualisation
 My read books - viz : 
 - books read timeline, line chart
 - timeline showing when books were written, barchart
@@ -49,14 +56,25 @@ My read books - viz :
 - top and botton books my rating with other ratings 
 - most read authors by count, and most liked authors 
 - this year in books, total books and total pages. 
+- tree figures showing category and topics in books 
+- scatter pot to visualize if rating and populatity correlate 
 
-## Performance improvements
+
+## Dashboard components: 
+- upload component so user can upload their own Goodreads library and see it visualised
 - using a spinner for visual indication that file is being uploaded
-- using asyncronous code for the google books api call to run all requests asyncronously 
+- created a datapipeline for uploaded data: cleaning data and collecting metadata
+- using asynronous programming for collecting metadata faster 
 
 
 # Developing: 
-#### filters and drop downs: 
+
+## to do:
+- genre prediciton using machine learning 
+- want to read section. 
+
+
+## Interactivity dashboard:
 - date read filter. 
 - ratings select filter. 
 - poplarity filter. 
@@ -67,8 +85,12 @@ My read books - viz :
 - 0 rating should be changed to "not rated" in the ratings bar. 
 - text that explains how to interact with the figures. 
 - link to github / explainer of how the dashboard, api call collection works. 
+- align first two graphs
+- improve speed using client side callbacks 
+- improve api call, with await functions - improve the asyncronous, I syspect they are not really asyncronous now 
 
-#### What to read next section: 
+
+## What to read next section: 
 Want to read: 
 - top five rated books 
 - top five popular books based on rating count
@@ -78,47 +100,36 @@ WPF:
 - top five popular books based on rating count
 - books from your top authors
 
-#### Other visualisations: 
+
+# Genre categorisation ML 
+ML genre:
+- check why some books do not have description (api query not getting a hit?)
+Two approaches to genre prediction, with model predicting multiple genres or a single genre: 
+
+Multi-label classification: 
+    - source reference: https://www.analyticsvidhya.com/blog/2019/04/predicting-movie-genres-nlp-multi-label-classification/
+    - source reference: https://github.com/ernestng11/predicting-book-genre-with-lstm-model/blob/master/book%20genre%20prediction.ipynb
+    - source reference: https://towardsdatascience.com/keras-tell-me-the-genre-of-my-book-a417d213e3a1
+    - dataset: https://www.kaggle.com/datasets/meetnaren/goodreads-best-books/data
+
+Label classification: 
+    - dataset: https://github.com/uchidalab/book-dataset/tree/master and collect description from google books api
+    - dataset:  https://www.kaggle.com/datasets/athu1105/book-genre-prediction
+    - source reference: https://www.kaggle.com/code/majinx/nlp-book-genre-prediction-eda-and-modelling#Testing-Different-Models
 
 
-#### Genre categorisation AI
-- genre category AI, using genre shelfs on goodreads to trail AI. export from gr. 
-    https://www.kaggle.com/datasets/athu1105/book-genre-prediction
-    https://www.kaggle.com/code/iamhungundji/book-summary-genre-prediction/notebook
-    https://github.com/chikne97/Book-Genre-Prediction/blob/master/BookGenrePrediction.ipynb
+Vizualise genre: 
+    - show spider figure how often read genre, how well one rate genre
+    - show time plot with all different lines for genre to see certains times genre has been popular for one
+    - sunburst with other topics around 
 
-    using genre bookshelfs on gr: https://help.goodreads.com/s/article/Can-I-edit-a-shelf-for-multiple-books-at-once-1553870933542
 
-#### Segment analysis for what to read next 
+## ML Segment analysis for what to read next 
 - Ai recommend books want to read based on books read, segment analysis. 
 recommendations: 
     - WPF
     - Want-to-read section
     - Best books on good reads https://www.kaggle.com/datasets/jealousleopard/goodreadsbooks
 
-#### Other 
+## Other 
 - using ai to find male or female author, illustrate distribution 
-
-
-#### Not doable: 
-* similar books using https://www.gutenberg.org/ebooks/20194/also/ - didnt get any books when I did the api call.... 
-
-
-
-## to do:
-- align first two graphs
-- genre prediciton using machine learning 
-- improve speed using client side callbacks 
-- improve api call, with await functions - improve the asyncronous, I syspect they are not really asyncronous now 
-- want to read section. 
-
-ML genre:
-- check why some books do not have description (api query not getting a hit?)
-- use genre prediction using dataset: https://github.com/uchidalab/book-dataset/tree/master and collect description from google books api
-- 
-
-
-- with genre
-    - show spider figure how often read genre, how well one rate genre
-    - show time plot with all different lines for genre to see certains times genre has been popular for one
-    - sunburst with other topics around 
