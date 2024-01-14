@@ -25,6 +25,7 @@ matplotlib = "*"
 numpy = "*"
 ipykernel = "*"
 wordcloud = "*"
+statsmodels = "*"
 
 [dev-packages]
 ipykernel = "*"

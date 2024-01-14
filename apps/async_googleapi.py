@@ -8,6 +8,7 @@ import nest_asyncio
 import time
 
 async def get_book_info_async(session, book_name, author_name, api_key):
+    book_name = book_name
     base_url = 'https://www.googleapis.com/books/v1/volumes'
     params = {
         'q': f'intitle:{book_name}+inauthor:{author_name}',
@@ -35,7 +36,7 @@ async def book_info_add(df, api_key):
         book_name = row['Title']
         print(book_name)
         author_name = row['Author']
-        await asyncio.sleep(1)
+        await asyncio.sleep(2)
         return await get_book_info(book_name, author_name, api_key)
 
     # Run the asynchronous code
@@ -49,6 +50,7 @@ async def book_info_add(df, api_key):
     # Extract the actual results from the list
     for book_info in results:
         if book_info:
+            print(book_info)
             authors = book_info.get('authors', [np.nan])
             publish_date = book_info.get('publishedDate', np.nan)
             description = book_info.get('description', np.nan)
@@ -59,6 +61,7 @@ async def book_info_add(df, api_key):
             average_rating = book_info.get('averageRating', np.nan)
             rating_count = book_info.get('ratingsCount', np.nan)
             language = book_info.get('language', np.nan)
+
 
             book_info_df = pd.DataFrame({
                 'Title': [book_info.get('title', np.nan)],
