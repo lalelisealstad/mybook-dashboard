@@ -38,14 +38,14 @@ async def book_info_add(df, api_key):
         book_name = row['Title']
         print(book_name)
         author_name = row['Author']
-        await asyncio.sleep(2)
+        await asyncio.sleep(3)
         return await get_book_info(book_name, author_name, api_key)
 
     # Run the asynchronous code
     tasks = [get_book_info_wrapper(row) for _, row in df.iterrows()]
 
     # Run the asynchronous code
-    results = await asyncio.gather(*tasks)  # Corrected placement of await
+    results = await asyncio.gather(*tasks) 
 
     combined_book_info = pd.DataFrame()
 
