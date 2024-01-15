@@ -34,24 +34,6 @@ async def get_book_info(book_name, author_name, api_key):
         return await get_book_info_async(session, book_name, author_name, api_key)
 
 
-# ########
-# async def book_info_add(df, api_key):
-#     async def get_book_info_wrapper(row):
-#         book_name = row['Title']
-#         print(book_name)
-#         author_name = row['Author']
-#         await asyncio.sleep(3)
-#         return await get_book_info(book_name, author_name, api_key)
-
-#     # Run the asynchronous code
-#     tasks = [get_book_info_wrapper(row) for _, row in df.iterrows()]
-
-#     # Run the asynchronous code
-#     results = await asyncio.gather(*tasks) 
-
-    # combined_book_info = pd.DataFrame()
-########
-
 async def book_info_add(df, api_key):
     async def get_book_info_wrapper(row):
         book_name = row['Title']

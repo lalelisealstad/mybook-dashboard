@@ -1,3 +1,14 @@
+# set working dir to root
+
+# set working directory to same place ass app.py to import programs the same way as the app
+import os
+current_directory = os.getcwd()
+if 'notebooks' in current_directory:
+    parent_directory = os.path.abspath(os.path.join(current_directory, os.pardir))
+    os.chdir(parent_directory)
+os.getcwd()
+
+#################
 import asyncio
 import pandas as pd 
 from apps.async_googleapi import book_info_add, asyncio
@@ -12,10 +23,11 @@ mazondf_already_list = amazondf_already.Title.tolist()
 amazondfsample = amazondf.query('Title not in @mazondf_already_list')
 
 min_count = 80 #change to 80 
-# Use groupby and apply to sample each group equally
+#  sample each genre equally
 dfcall = amazondfsample.groupby('genre', group_keys=False).apply(lambda x: x.sample(min_count))
 
-n = 400
+n = 999
+
 dfcall_limit = dfcall.sample(n)
 filename = 'assets/amazon_books_description.pkl'
 
