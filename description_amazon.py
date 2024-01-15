@@ -15,7 +15,7 @@ min_count = 80 #change to 80
 # Use groupby and apply to sample each group equally
 dfcall = amazondfsample.groupby('genre', group_keys=False).apply(lambda x: x.sample(min_count))
 
-n = 99
+n = 400
 dfcall_limit = dfcall.sample(n)
 filename = 'assets/amazon_books_description.pkl'
 
