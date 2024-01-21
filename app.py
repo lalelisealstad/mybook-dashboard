@@ -318,7 +318,7 @@ def update_figure_gapi(contents, filename):
             create_rating_table(nmyreads),
             create_author_table(nmyreads),
             book_ratings(nmyreads, 'Top Rated Books', top_rated=True),
-            book_ratings(nmyreads, 'Bottom Rated Books',top_rated=False),
+            book_ratings(nmyreads, 'Lowest Rated Books',top_rated=False),
             'Upload success', 
             nmyreads_list, 
             True, 

@@ -125,8 +125,8 @@ def viz_pub_year(df):
 def viz_year_read(df):
     
     df = df.dropna(subset=['Year_Quarter'])
-    # Count the number of books read in each year and quarter
     
+    # Count the number of books read in each year and quarter
     year_quarter_counts = df.groupby('Year_Quarter',  observed=True).size().reset_index(name='Books Read')
     
     # Create the line chart
@@ -191,8 +191,6 @@ def viz_top_values(column, top_n=5):
 
     # Define the color theme
     colors = ['rgb(179,205,227)', 'rgb(204,235,197)', 'rgb(222,203,228)', 'rgb(254,217,166)', 'rgb(250,231,175)','rgb(251,180,174)', 'rgb(251,180,174)','#9DC8C8', '#84B1ED' ]
-
-    #['#84B1ED','#383A3F','#9DC8C8','#A593E0','#58C9B9', '#519D9E','#D1B6E1','#F6B352', ]  # Adding color for "Other"
 
     # Create the pie chart
     fig = go.Figure(data=[go.Pie(labels=labels, values=values)])
@@ -293,7 +291,7 @@ def create_rating_table(data):
     ratings = ['My Ratings - Average', 'Ratings (Google Books) - Average', 'Ratings (Goodreads) - Average']
 
     # Create a list of mean rating values
-    mean_values = np.round(mean_ratings.values.tolist(),3)
+    mean_values = np.round(mean_ratings.values.tolist(),2)
 
     # Create a Plotly table
     table = go.Figure(data=[go.Table(
@@ -309,7 +307,7 @@ def create_rating_table(data):
 
     # Set the table colors
     table.update_layout(
-        title = 'My ratings vs other peoples ratings',
+        title = 'My rating vs other people ratings',
         template='plotly_white',
         plot_bgcolor='white', 
         font=dict(size=12),  # Font size for the entire table
@@ -339,7 +337,7 @@ def create_author_table(data):
         'My_Rating': 'mean',
         'Average_Rating_Goodreads': 'mean',
         'Rating_Count': 'sum',
-    }).reset_index(),2)
+    }).reset_index(),1)
 
     # Sort the authors based on the mean rating in descending order
     sorted_authors = author_stats.sort_values('Read_Count', ascending=False)
@@ -352,7 +350,7 @@ def create_author_table(data):
         header=dict(values=['Author', 'Number of books read by author', 'My Average Rating'], #, 'Number of times rated on Goodreads', 'Average Goodreads Rating'],
                     fill_color='rgba(230,230,250, 1)',
                     align='center', 
-                    height=20),
+                    height=25),
         cells=dict(values=[top_authors['Author'],
                            top_authors['Read_Count'],
                            top_authors['My_Rating']],
@@ -360,17 +358,17 @@ def create_author_table(data):
                         #    top_authors['Average_Rating_Goodreads']], 
                            fill=dict(color=['rgba(230,230,250, 0.5)'] + ['rgba(248,248,255,0.5)'] * 2),  # Darker color for the first column
                            align='center',
-                           height=20)
+                           height=25)
     )])
 
 
     # Set the table colors and style
     table.update_layout(
-        title = 'My top authors - read books stats',
+        title = 'My most read authors',
         template='plotly_white',
         plot_bgcolor='white',
         paper_bgcolor='white',
-        font=dict(size=12),  # Font size for the entire table
+        font=dict(size=12),  
     )
 
     return table
