@@ -70,7 +70,8 @@ My read books - viz :
 # Developing: 
 
 ## to do:
-- genre prediciton using machine learning 
+- genre prediciton using machine learning.
+- mobile layout 
 - want to read section. 
 
 
