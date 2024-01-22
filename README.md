@@ -15,7 +15,7 @@ $ source .venv/bin/activate
 $ python "app.py"
 '''
 
-## Process, see notebooks: 
+## Process - see notebooks: 
 I first make the code in notebooks and then export the modules in python files to be used in the dahboard. 
 
 #### 1 wpf export
@@ -59,18 +59,33 @@ My read books - viz :
 - tree figures showing category and topics in books 
 - scatter pot to visualize if rating and populatity correlate 
 
+Vizualise genre: 
+    - show spider figure how often read genre, how well one rate genre
+    - show time plot with all different lines for genre to see certains times genre has been popular for one
+    - sunburst with other topics around 
 
-## Dashboard components: 
+
+## Dashboard components in app.py: 
 - upload component so user can upload their own Goodreads library and see it visualised
 - using a spinner for visual indication that file is being uploaded
 - created a datapipeline for uploaded data: cleaning data and collecting metadata
 - using asynronous programming for collecting metadata faster 
 
 
+# 5.2 Machine Learning model to predict genres of book
+Multi-label classification to predict multiple genres from book description
+- data exploration: most common words 
+- data cleaning, make all lower case, remove non alphabeth, non english text, 
+- vectorise description and binarize label
+- store models 
+- reuse model for my books dataet
+- create python program file to predict genre using stored models in the app!
+
+
 # Developing: 
 
 ## to do:
-- genre prediciton using machine learning.
+- genre visualisation
 - mobile layout 
 - want to read section. 
 
@@ -100,22 +115,6 @@ WPF:
 - top five rated books 
 - top five popular books based on rating count
 - books from your top authors
-
-
-# Genre categorisation ML 
-Multi-label classification to predict multiple genres from book description
-- data exploration: most common words 
-- data cleaning, make all lower case, remove non alphabeth, non english text, 
-- vectorise description and binarize label
-- store models 
-- reuse model for my books dataet
-- create python program file to predict genre using stored models in the app!
-
-
-Vizualise genre: 
-    - show spider figure how often read genre, how well one rate genre
-    - show time plot with all different lines for genre to see certains times genre has been popular for one
-    - sunburst with other topics around 
 
 
 ## ML Segment analysis for what to read next 
