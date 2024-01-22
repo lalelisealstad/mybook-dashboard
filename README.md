@@ -15,10 +15,10 @@ $ source .venv/bin/activate
 $ python "app.py"
 '''
 
-## Process - see notebooks: 
+# Process - see notebooks: 
 I first make the code in notebooks and then export the modules in python files to be used in the dahboard. 
 
-#### 1 wpf export
+## 1 wpf export
 Collect dataframe of Womens prize for fiction winners and finalists with Book Title, Author and year. 
 - Use webscraping to collect the table of finalists and winners of the WPF from all years
     - manipulate table to account for merged cells
@@ -72,7 +72,7 @@ Vizualise genre:
 - using asynronous programming for collecting metadata faster 
 
 
-# 5.2 Machine Learning model to predict genres of book
+## 5.2 Machine Learning model to predict genres of book
 Multi-label classification to predict multiple genres from book description
 - data exploration: most common words 
 - data cleaning, make all lower case, remove non alphabeth, non english text, 
@@ -88,7 +88,6 @@ Multi-label classification to predict multiple genres from book description
 - genre visualisation
 - mobile layout 
 - want to read section. 
-
 
 ## Interactivity dashboard:
 - date read filter. 
