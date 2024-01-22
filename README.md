@@ -103,20 +103,13 @@ WPF:
 
 
 # Genre categorisation ML 
-ML genre:
-- check why some books do not have description (api query not getting a hit?)
-Two approaches to genre prediction, with model predicting multiple genres or a single genre: 
-
-Multi-label classification: 
-    - source reference: https://www.analyticsvidhya.com/blog/2019/04/predicting-movie-genres-nlp-multi-label-classification/
-    - source reference: https://github.com/ernestng11/predicting-book-genre-with-lstm-model/blob/master/book%20genre%20prediction.ipynb
-    - source reference: https://towardsdatascience.com/keras-tell-me-the-genre-of-my-book-a417d213e3a1
-    - dataset: https://www.kaggle.com/datasets/meetnaren/goodreads-best-books/data
-
-Label classification: 
-    - dataset: https://github.com/uchidalab/book-dataset/tree/master and collect description from google books api
-    - dataset:  https://www.kaggle.com/datasets/athu1105/book-genre-prediction
-    - source reference: https://www.kaggle.com/code/majinx/nlp-book-genre-prediction-eda-and-modelling#Testing-Different-Models
+Multi-label classification to predict multiple genres from book description
+- data exploration: most common words 
+- data cleaning, make all lower case, remove non alphabeth, non english text, 
+- vectorise description and binarize label
+- store models 
+- reuse model for my books dataet
+- create python program file to predict genre using stored models in the app!
 
 
 Vizualise genre: 
