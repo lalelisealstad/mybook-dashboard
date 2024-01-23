@@ -26,6 +26,8 @@ numpy = "*"
 ipykernel = "*"
 wordcloud = "*"
 statsmodels = "*"
+pyarrow = "*"
+langdetect = "*"
 
 [dev-packages]
 ipykernel = "*"
