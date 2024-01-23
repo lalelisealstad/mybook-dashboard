@@ -1,3 +1,5 @@
+# I ran this program to collect desription of books for ML dataset but that is no longer necessary as i have another dataset using another approach 
+
 # set working dir to root
 
 # set working directory to same place ass app.py to import programs the same way as the app

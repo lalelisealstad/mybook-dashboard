@@ -1,22 +1,23 @@
 
+#### Run the app or the notebooks 
 Run first time: 
-'''
+```
 $ python3 -m venv .venv
 $ source .venv/bin/activate 
 $ pip install pipenv
-$ pipenv shell
 $ pipenv install ipykernel
 $ pipenv install 
-'''
+```
 
 run after installation: 
-'''
+```
 $ source .venv/bin/activate
 $ python "app.py"
-'''
+```
 
-# Process - see notebooks: 
+# Documentation of process: 
 I first make the code in notebooks and then export the modules in python files to be used in the dahboard. 
+See the notebooks as described below for the process. The notebooks can be run seperately from the app. 
 
 ## 1 wpf export
 Collect dataframe of Womens prize for fiction winners and finalists with Book Title, Author and year. 
