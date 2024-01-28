@@ -87,6 +87,7 @@ Multi-label classification to predict multiple genres from book description
 
 ## to do:
 - genre visualisation
+- ml model py file implement in app
 - mobile layout 
 - want to read section. 
 
