@@ -63,7 +63,7 @@ My read books - viz :
 Vizualise genre: 
     - show spider figure how often read genre, how well one rate genre
     - show time plot with all different lines for genre to see certains times genre has been popular for one
-    - sunburst with other topics around 
+    - most common genre combinations > sunburst figure perhaps 
 
 
 ## Dashboard components in app.py: 
