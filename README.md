@@ -64,7 +64,6 @@ Vizualise genre:
     - show spider figure how often read genre, how well one rate genre
     - bar and bubble combined
     - show stacked distribution plot, time plot with all different lines for genre to see certains times genre has been popular for one
-    - most common genre combinations > Chord Diagram figure perhaps 
 
 
 ## Dashboard components in app.py: 
