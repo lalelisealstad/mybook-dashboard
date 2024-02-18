@@ -461,25 +461,7 @@ def scatter_popularity(df):
 
 ## Genre lollipopp
 
-def lolli_fig(genredf):
-
-    from ast import literal_eval
-    genredf['genres'] = genredf['genres'].apply(literal_eval)
-    allgenredf = genredf.explode('genres')
-
-    tbl_genre = (
-        pd.DataFrame(
-            np.round(
-                (
-                allgenredf .query('Read_Count > 0 & My_Rating > 0')
-                .groupby('genres').aggregate({'genres':'count', 'My_Rating':'mean'})
-                )
-            ,2)
-        # remove fiction since there is too many and only count above 2
-        ).query('genres > 5 ').drop(['Fiction'])
-    )
-    
-    import numpy as np
+def lolli_fig(tbl_genre):
 
     fig = px.scatter(tbl_genre, 
         x=tbl_genre.index.tolist(), 
@@ -490,8 +472,7 @@ def lolli_fig(genredf):
         )
     fig.update_traces(hovertemplate='Genre: %{x} <br>My average rating of books with genre: %{y}<br>Number of read books with genre: %{marker.size:}') #
     
-    fig2 = px.bar(y = tbl_genre['My_Rating'], x = tbl_genre.index)
-    # fig2.update_traces(hovertemplate='Genre: %{x} <br>My average rating of books with genre: %{y}')
+    fig2 = px.bar(x=tbl_genre.index, y=tbl_genre['My_Rating'])
     
     fig2.update_traces(marker_color='rgb(158,202,225)', marker_line_color='rgb(158,202,225)',
                     marker_line_width=1.5, opacity=0.9, width=0.1)                  
@@ -520,7 +501,7 @@ def lolli_fig(genredf):
         font=dict(size=10),
     )
         
-    fig3.show()
+    return fig3
  
  
 # Spider figure - genre rating     
@@ -530,7 +511,7 @@ import plotly.express as px
 def spider_fig(tbl_genre):
     spider_fig = px.line_polar(tbl_genre, r=tbl_genre.My_Rating, theta=tbl_genre.index, line_close=True, range_r=[1, tbl_genre.My_Rating.max()+0.2]).update_traces(fill='tonext', fillcolor='rgba(167, 119, 241, 0.5)')
     spider_fig.update_layout(template='plotly_white')
-    spider_fig.show()
+    return spider_fig
     
     
     
@@ -538,7 +519,7 @@ def spider_fig(tbl_genre):
 
 import plotly.express as px
 
-def stack_fig(allgenredf):
+def stack_fig(allgenredf, tbl_genre):
     
     tbl_percent = (
         pd.DataFrame(
@@ -558,4 +539,4 @@ def stack_fig(allgenredf):
         legend_title="Genre",
         template="plotly_white")
 
-    fig.show()
+    return fig 

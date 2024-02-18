@@ -59,8 +59,7 @@ My read books - viz :
 - this year in books, total books and total pages. 
 - tree figures showing category and topics in books 
 - scatter pot to visualize if rating and populatity correlate 
-
-Vizualise genre: 
+- Vizualise genre: 
     - show spider figure how often read genre, how well one rate genre
     - bar and bubble combined
     - show stacked distribution plot, time plot with all different lines for genre to see certains times genre has been popular for one
@@ -86,8 +85,6 @@ Multi-label classification to predict multiple genres from book description
 # Developing: 
 
 ## to do:
-- genre visualisation
-- ml model py file implement in app
 - mobile layout 
 - want to read section. 
 
@@ -98,13 +95,15 @@ Multi-label classification to predict multiple genres from book description
 - find books based on word or topic: show a list of the books. 
 
 #### Improve performance / layout: 
+- - loading bar with percentage when uploading books with estimate of time left. 
+- remove prints and use logging instead. 
 - set up of topics in json not necessary in case of input
 - 0 rating should be changed to "not rated" in the ratings bar. 
 - text that explains how to interact with the figures. 
 - link to github / explainer of how the dashboard, api call collection works. 
 - align first two graphs
 - improve speed using client side callbacks 
-- improve api call, with await functions - improve the asyncronous, I syspect they are not really asyncronous now 
+
 
 
 ## What to read next section: 

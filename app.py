@@ -20,10 +20,11 @@ import pandas as pd
 import aiohttp
 import nest_asyncio
 import time
+import traceback
 
 from apps.async_googleapi import book_info_add, asyncio
 from apps.api import api_key
-from apps.prediction import genre_tbl,ml_genre
+from apps.prediction import make_genre_tbl, ml_genre
 
 
 #  Create a Dash web application
@@ -287,13 +288,17 @@ today_year = datetime.today().year
 def update_figure_gapi(contents, filename):
     global myreads
     global nmyreads
+    global genre_tbl
+    global ngenre_tbl
+    global allgenredf
+    global nallgenredf
     
     if contents is None:
         # Use the default data if no file is uploaded
         if uploaded_data.empty:
             # Load your default data
             mybooks= pd.read_pickle('assets/my_books_genres.pickle')
-            myreads = mybooks.loc[mybooks['Exclusive_Shelf'] == "read"]
+            myreads = mybooks.loc[mybooks['Exclusive_Shelf'] == "read"].copy()
             uploadtxt_sug1 = "See your reading stats by uploading your Goodreads library export here:"
             uploadtxt_sug2 =  """How to find and export Goodreads library:<br>
                             1. Go to [your Goodreads profile](https://www.goodreads.com/?target=_blank)<br>
@@ -302,13 +307,12 @@ def update_figure_gapi(contents, filename):
                             4. Click "Export Your Books" to download the export file"""
             year_text = f"This year I have read over {len(myreads.query('Year == @today_year'))} books. Totaling {f'{(myreads.query('Year == @today_year').Number_of_Pages.sum().astype(int)):,}'} pages read!"
             myreads_list = myreads[['Author','Title']].to_dict()
-            # genre table 
             
-            genredf = genredf.query('genres != "[]"').copy()
+            # genre table 
             from ast import literal_eval
-            genredf['genres'] = genredf['genres'].apply(literal_eval).copy()
-            allgenredf = genredf.explode('genres')
-            tbl_genre = genre_tbl(myreads)
+            myreads['genres'] = myreads['genres'].apply(literal_eval).copy()
+            allgenredf = myreads.query('genres != "[]"').copy().explode('genres')
+            genre_tbl = make_genre_tbl(allgenredf)
              
             return (
                 viz_pub_year(myreads), 
@@ -328,83 +332,92 @@ def update_figure_gapi(contents, filename):
                 myreads_list, 
                 False, 
                 scatter_popularity(myreads),
-                lolli_fig(tbl_genre),
-                spider_fig(tbl_genre),
-                stack_fig(allgenredf), 
+                lolli_fig(genre_tbl),
+                spider_fig(genre_tbl),
+                stack_fig(allgenredf, genre_tbl)
             )
 
-        content_type, content_string = contents.split(',')
-        decoded = base64.b64decode(content_string)
-    else: 
-        try:
-            new_data = pd.read_csv(io.StringIO(decoded.decode('utf-8')))
-            print(new_data)
-            nmyreads = new_data.loc[new_data['Exclusive Shelf'] == "read"].copy()
-            print('almost async')
-            nmyreadsgg = asyncio.run(book_info_add(nmyreads, api_key))
-            print(nmyreads)
-            nmyreads = dataprep(nmyreads, nmyreadsgg)
-            print('dataprep completed')
-            uploadtxt_suc = "Success, your data have been uploaded and the figures updated!"
-            nyear_text = f"This year I have read over {len(nmyreads.query('Year == @today_year'))} books. Totaling {(nmyreads.query('Year == @today_year').Number_of_Pages.sum().astype(int))} pages read!"
-            nmyreads_list = nmyreads[['Author','Title']].to_dict()
-            
-            # predict genre 
-            nmyreads = ml_genre(nmyreads)
-            nallgenredf, ntbl_genre = genre_tbl(nmyreads)
-            
-            return(
-                viz_pub_year(nmyreads), 
-                uploadtxt_suc, 
-                "", 
-                viz_year_read(nmyreads), 
-                nyear_text, 
-                visualize_categories(nmyreads, 'My_Rating', 'How do I rate my books?<br><span style="font-size: 8px;">Number of books per Ratings category</span>', 'Goodreads rating'),
-                visualize_categories(nmyreads, 'Page_Cat', 'How long are the books I read?<br><span style="font-size: 8px;">Number of books per Page Count Category</span>', 'Page Count Category'),
-                viz_top_values(nmyreads['Language'], top_n=7),
-                viz_top_values(nmyreads['Categories'], top_n=7),
-                create_rating_table(nmyreads),
-                create_author_table(nmyreads),
-                book_ratings(nmyreads, 'Top Rated Books', top_rated=True),
-                book_ratings(nmyreads, 'Lowest Rated Books',top_rated=False),
-                'Upload success', 
-                nmyreads_list, 
-                True, 
-                scatter_popularity(nmyreads), 
-                lolli_fig(ntbl_genre),
-                spider_fig(ntbl_genre),
-                stack_fig(nallgenredf), 
-            )
+    content_type, content_string = contents.split(',')
+    decoded = base64.b64decode(content_string)
+    
+    try:
+        new_data = pd.read_csv(io.StringIO(decoded.decode('utf-8')))
+        print(new_data)
+        nmyreads = new_data.loc[new_data['Exclusive Shelf'] == "read"].copy()
+        print('almost async')
+        nmyreadsgg = asyncio.run(book_info_add(nmyreads, api_key))
+        print(nmyreads)
+        nmyreads = dataprep(nmyreads, nmyreadsgg)
+        print('dataprep completed')
+        uploadtxt_suc = "Success, your data have been uploaded and the figures updated!"
+        nyear_text = f"This year I have read over {len(nmyreads.query('Year == @today_year'))} books. Totaling {(nmyreads.query('Year == @today_year').Number_of_Pages.sum().astype(int))} pages read!"
+        nmyreads_list = nmyreads[['Author','Title']].to_dict()
         
-        except Exception as e:
-            print(str(e))
-            uploadtxt_fail = f"Upload failiure...Are you using the csv file from Goodreads export? {str(e)}"
-            year_text = f"This year I have read over {len(myreads.query('Year == @today_year'))} books. Totaling {(myreads.query('Year == @today_year').Number_of_Pages.sum().astype(int))} pages read!"
-            myreads_list = myreads[['Author','Title']].to_dict()
-            
-            return (
-                viz_pub_year(myreads), 
-                uploadtxt_fail, 
-                "", 
-                viz_year_read(myreads), 
-                year_text, 
-                visualize_categories(myreads, 'My_Rating', 'How do I rate my books?<br><span style="font-size: 8px;">Number of books per Ratings category</span>', 'Goodreads rating'),
-                visualize_categories(myreads, 'Page_Cat', 'How long are the books I read?<br><span style="font-size: 8px;">Number of books per Page Count Category</span>', 'Page Count Category'),
-                viz_top_values(myreads['Language'], top_n=7),
-                viz_top_values(myreads['Categories'], top_n=7),
-                create_rating_table(myreads),
-                create_author_table(myreads),
-                book_ratings(myreads, 'Top Rated Books', top_rated=True),
-                book_ratings(myreads, 'Bottom Rated Books',top_rated=False),
-                'upload fail', 
-                myreads_list, 
-                False, 
-                scatter_popularity(myreads), 
-                lolli_fig(tbl_genre),
-                spider_fig(tbl_genre),
-                stack_fig(allgenredf), 
-                
-            )
+        # predict genre 
+        nmyreads = ml_genre(nmyreads)
+        print('prediction complete')
+        
+        # genre table 
+        from ast import literal_eval
+        nmyreads['genres'] = nmyreads['genres'].apply(literal_eval)
+        pd.to_pickle(nmyreads,'assets/test.pkl')
+        nallgenredf = nmyreads.query('genres != "[]"').copy().explode('genres')
+        
+        print('table below')
+        print(nallgenredf)
+        ngenre_tbl = make_genre_tbl(nallgenredf)
+        
+        return(
+            viz_pub_year(nmyreads), 
+            uploadtxt_suc, 
+            "", 
+            viz_year_read(nmyreads), 
+            nyear_text, 
+            visualize_categories(nmyreads, 'My_Rating', 'How do I rate my books?<br><span style="font-size: 8px;">Number of books per Ratings category</span>', 'Goodreads rating'),
+            visualize_categories(nmyreads, 'Page_Cat', 'How long are the books I read?<br><span style="font-size: 8px;">Number of books per Page Count Category</span>', 'Page Count Category'),
+            viz_top_values(nmyreads['Language'], top_n=7),
+            viz_top_values(nmyreads['Categories'], top_n=7),
+            create_rating_table(nmyreads),
+            create_author_table(nmyreads),
+            book_ratings(nmyreads, 'Top Rated Books', top_rated=True),
+            book_ratings(nmyreads, 'Lowest Rated Books',top_rated=False),
+            'Upload success', 
+            nmyreads_list, 
+            True, 
+            scatter_popularity(nmyreads), 
+            lolli_fig(ngenre_tbl),
+            spider_fig(ngenre_tbl),
+            stack_fig(nallgenredf, ngenre_tbl) 
+        )
+    
+    except Exception as e:
+        print(str(e))
+        uploadtxt_fail = f"{str(e)}Upload failiure...Are you using the csv file from Goodreads export? {str(e)}. Error message:{traceback.print_exc()}"
+        year_text = f"This year I have read over {len(myreads.query('Year == @today_year'))} books. Totaling {(myreads.query('Year == @today_year').Number_of_Pages.sum().astype(int))} pages read!"
+        myreads_list = myreads[['Author','Title']].to_dict()
+        
+        return (
+            viz_pub_year(myreads), 
+            uploadtxt_fail, 
+            "", 
+            viz_year_read(myreads), 
+            year_text, 
+            visualize_categories(myreads, 'My_Rating', 'How do I rate my books?<br><span style="font-size: 8px;">Number of books per Ratings category</span>', 'Goodreads rating'),
+            visualize_categories(myreads, 'Page_Cat', 'How long are the books I read?<br><span style="font-size: 8px;">Number of books per Page Count Category</span>', 'Page Count Category'),
+            viz_top_values(myreads['Language'], top_n=7),
+            viz_top_values(myreads['Categories'], top_n=7),
+            create_rating_table(myreads),
+            create_author_table(myreads),
+            book_ratings(myreads, 'Top Rated Books', top_rated=True),
+            book_ratings(myreads, 'Bottom Rated Books',top_rated=False),
+            'upload fail', 
+            myreads_list, 
+            False, 
+            scatter_popularity(myreads), 
+            lolli_fig(genre_tbl),
+            spider_fig(genre_tbl),
+            stack_fig(allgenredf, genre_tbl), 
+        )
 
 
 # # app call back for the three figure using open library api

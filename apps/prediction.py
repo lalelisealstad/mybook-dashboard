@@ -28,9 +28,9 @@ def ml_genre(df):
 
     # load pre-trained vectoriser, multilabel Binarizer and the model 
     import pickle
-    tfidf_vectorizer = pickle.load(open("../assets/ml_model/tfidf_vectorizer.pickle", "rb"))
-    loaded_model = pickle.load(open("../assets/ml_model/ML2", "rb"))
-    multilabel_binarizer = pickle.load(open("../assets/ml_model/multilabel_binarizer.pickle", "rb"))
+    tfidf_vectorizer = pickle.load(open("assets/ml_model/tfidf_vectorizer.pickle", "rb"))
+    loaded_model = pickle.load(open("assets/ml_model/ML2", "rb"))
+    multilabel_binarizer = pickle.load(open("assets/ml_model/multilabel_binarizer.pickle", "rb"))
     
     
     # predict genre and add it to a new column "genres"
@@ -63,19 +63,17 @@ def ml_genre(df):
 import pandas as pd
 import numpy as np 
 
-
-def genre_tbl(allgenredf):
-
+def make_genre_tbl(df_genres):
+    import numpy as np 
     tbl_genre = (
         pd.DataFrame(
             np.round(
                 (
-                allgenredf .query('Read_Count > 0 & My_Rating > 0')
+                df_genres.query('Read_Count > 0 & My_Rating > 0')
                 .groupby('genres').aggregate({'genres':'count', 'My_Rating':'mean'})
                 )
             ,2)
-        # remove fiction since there is too many and only count above 2
-        ).query('genres > 5 ')
-        .drop(['Fiction'])
+        # only count above 5
+        ).query('genres > genres.quantile(0.07)')
     )
     return tbl_genre
