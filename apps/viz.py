@@ -457,3 +457,105 @@ def scatter_popularity(df):
         )
     )
     return fig
+
+
+## Genre lollipopp
+
+def lolli_fig(genredf):
+
+    from ast import literal_eval
+    genredf['genres'] = genredf['genres'].apply(literal_eval)
+    allgenredf = genredf.explode('genres')
+
+    tbl_genre = (
+        pd.DataFrame(
+            np.round(
+                (
+                allgenredf .query('Read_Count > 0 & My_Rating > 0')
+                .groupby('genres').aggregate({'genres':'count', 'My_Rating':'mean'})
+                )
+            ,2)
+        # remove fiction since there is too many and only count above 2
+        ).query('genres > 5 ').drop(['Fiction'])
+    )
+    
+    import numpy as np
+
+    fig = px.scatter(tbl_genre, 
+        x=tbl_genre.index.tolist(), 
+        y="My_Rating",
+        size="genres", 
+        color=tbl_genre.index.tolist(),
+        size_max=80, 
+        )
+    fig.update_traces(hovertemplate='Genre: %{x} <br>My average rating of books with genre: %{y}<br>Number of read books with genre: %{marker.size:}') #
+    
+    fig2 = px.bar(y = tbl_genre['My_Rating'], x = tbl_genre.index)
+    # fig2.update_traces(hovertemplate='Genre: %{x} <br>My average rating of books with genre: %{y}')
+    
+    fig2.update_traces(marker_color='rgb(158,202,225)', marker_line_color='rgb(158,202,225)',
+                    marker_line_width=1.5, opacity=0.9, width=0.1)                  
+
+    fig3 = go.Figure(data=fig.data + fig2.data)
+    
+    fig3.update_layout(
+        title={
+            'text': 'My average rating and Number of books read with genre',
+            'y': 0.9,
+            'x': 0.5,
+            'xanchor': 'center',
+            'yanchor': 'top'},
+        yaxis_range=[1,5],
+        template="plotly_white",  
+        showlegend = False, 
+        )
+    
+    fig3.add_annotation(
+        x=0.5,
+        y=1.11,
+        xref='paper',
+        yref='paper',
+        text="The size of the bubble represent the number of books read within genre. <br> The position of the bubble along the y-axis represent how well books within the genre have been rated.",
+        showarrow=False,
+        font=dict(size=10),
+    )
+        
+    fig3.show()
+ 
+ 
+# Spider figure - genre rating     
+    
+import plotly.express as px
+
+def spider_fig(tbl_genre):
+    spider_fig = px.line_polar(tbl_genre, r=tbl_genre.My_Rating, theta=tbl_genre.index, line_close=True, range_r=[1, tbl_genre.My_Rating.max()+0.2]).update_traces(fill='tonext', fillcolor='rgba(167, 119, 241, 0.5)')
+    spider_fig.update_layout(template='plotly_white')
+    spider_fig.show()
+    
+    
+    
+# Genre - year quarter timeline
+
+import plotly.express as px
+
+def stack_fig(allgenredf):
+    
+    tbl_percent = (
+        pd.DataFrame(
+            allgenredf.query('Read_Count > 0 & genres in @tbl_genre.index.tolist()')
+            .groupby('Year_Quarter')['genres'].value_counts(normalize = True)
+            )
+        .reset_index()
+        .query('Year_Quarter != "" and proportion > 0.01')
+    )
+    
+    fig = px.area(tbl_percent, x='Year_Quarter',y='proportion', color='genres', line_group='genres',
+                title='Do I go through periods were I read more of the same genres?<span style="font-size: 10px;"><br>Figure shows the proportion of books in each genre read in that year-quarter. A book can have multiple genres.</span>')
+        
+    fig.update_layout( 
+        xaxis_title='Year quarter',
+        yaxis_title='Proportion of books read with genre',
+        legend_title="Genre",
+        template="plotly_white")
+
+    fig.show()

@@ -23,6 +23,7 @@ import time
 
 from apps.async_googleapi import book_info_add, asyncio
 from apps.api import api_key
+from apps.prediction import genre_tbl,ml_genre
 
 
 #  Create a Dash web application
@@ -200,6 +201,36 @@ app.layout = html.Div([
                 ),
             ], className="mt-4", justify="center"),  
             
+            # 9th row with scatter plot popularity
+            dbc.Row([
+                dbc.Col(
+                    dcc.Graph(
+                        id='lolli-fig'
+                    ),
+                    width=10,  
+                ),
+            ], className="mt-4", justify="center"),   
+            
+            # 10th row with scatter plot popularity
+            dbc.Row([
+                dbc.Col(
+                    dcc.Graph(
+                        id='spider-fig'
+                    ),
+                    width=10,  
+                ),
+            ], className="mt-4", justify="center"),   
+            
+            # 11th row with scatter plot popularity
+            dbc.Row([
+                dbc.Col(
+                    dcc.Graph(
+                        id='genre-timeline-fig'
+                    ),
+                    width=10,  
+                ),
+            ], className="mt-4", justify="center"),   
+            
             html.Div([
                 # dcc.Store inside the user's current browser session
                 dcc.Store(id='store-data', data=[], storage_type='session'), # store of the list of read books
@@ -243,7 +274,10 @@ today_year = datetime.today().year
         Output('upload-text', 'children'),
         Output('store-data', 'data'), 
         Output('is-uploaded-data', 'data'),
-        Output('scatter-fig', 'figure')],
+        Output('scatter-fig', 'figure'),
+        Output('lolli-fig', 'figure'),
+        Output('spider-fig', 'figure'),
+        Output('genre-timeline-fig', 'figure')],
     [Input('upload-data', 'contents')],
     [State('upload-data', 'filename')]
 )
@@ -258,7 +292,7 @@ def update_figure_gapi(contents, filename):
         # Use the default data if no file is uploaded
         if uploaded_data.empty:
             # Load your default data
-            mybooks = pd.read_pickle("assets/my_books.pkl")
+            mybooks= pd.read_pickle('assets/my_books_genres.pickle')
             myreads = mybooks.loc[mybooks['Exclusive_Shelf'] == "read"]
             uploadtxt_sug1 = "See your reading stats by uploading your Goodreads library export here:"
             uploadtxt_sug2 =  """How to find and export Goodreads library:<br>
@@ -268,6 +302,13 @@ def update_figure_gapi(contents, filename):
                             4. Click "Export Your Books" to download the export file"""
             year_text = f"This year I have read over {len(myreads.query('Year == @today_year'))} books. Totaling {f'{(myreads.query('Year == @today_year').Number_of_Pages.sum().astype(int)):,}'} pages read!"
             myreads_list = myreads[['Author','Title']].to_dict()
+            # genre table 
+            
+            genredf = genredf.query('genres != "[]"').copy()
+            from ast import literal_eval
+            genredf['genres'] = genredf['genres'].apply(literal_eval).copy()
+            allgenredf = genredf.explode('genres')
+            tbl_genre = genre_tbl(myreads)
              
             return (
                 viz_pub_year(myreads), 
@@ -286,71 +327,84 @@ def update_figure_gapi(contents, filename):
                 ' ', 
                 myreads_list, 
                 False, 
-                scatter_popularity(myreads)
+                scatter_popularity(myreads),
+                lolli_fig(tbl_genre),
+                spider_fig(tbl_genre),
+                stack_fig(allgenredf), 
             )
 
-    content_type, content_string = contents.split(',')
-    decoded = base64.b64decode(content_string)
-    
-    try:
-        new_data = pd.read_csv(io.StringIO(decoded.decode('utf-8')))
-        print(new_data)
-        nmyreads = new_data.loc[new_data['Exclusive Shelf'] == "read"]
-        print('almost async')
-        nmyreadsgg = asyncio.run(book_info_add(nmyreads, api_key))
-        print(nmyreads)
-        nmyreads = dataprep(nmyreads, nmyreadsgg)
-        print('dataprep completed')
-        uploadtxt_suc = "Success, your data have been uploaded and the figures updated!"
-        nyear_text = f"This year I have read over {len(nmyreads.query('Year == @today_year'))} books. Totaling {(nmyreads.query('Year == @today_year').Number_of_Pages.sum().astype(int))} pages read!"
-        nmyreads_list = nmyreads[['Author','Title']].to_dict()
-        
-        return(
-            viz_pub_year(nmyreads), 
-            uploadtxt_suc, 
-            "", 
-            viz_year_read(nmyreads), 
-            nyear_text, 
-            visualize_categories(nmyreads, 'My_Rating', 'How do I rate my books?<br><span style="font-size: 8px;">Number of books per Ratings category</span>', 'Goodreads rating'),
-            visualize_categories(nmyreads, 'Page_Cat', 'How long are the books I read?<br><span style="font-size: 8px;">Number of books per Page Count Category</span>', 'Page Count Category'),
-            viz_top_values(nmyreads['Language'], top_n=7),
-            viz_top_values(nmyreads['Categories'], top_n=7),
-            create_rating_table(nmyreads),
-            create_author_table(nmyreads),
-            book_ratings(nmyreads, 'Top Rated Books', top_rated=True),
-            book_ratings(nmyreads, 'Lowest Rated Books',top_rated=False),
-            'Upload success', 
-            nmyreads_list, 
-            True, 
-            scatter_popularity(nmyreads)
-        )
-    
-    except Exception as e:
-        print(str(e))
-        uploadtxt_fail = f"Upload failiure...Are you using the csv file from Goodreads export? {str(e)}"
-        year_text = f"This year I have read over {len(myreads.query('Year == @today_year'))} books. Totaling {(myreads.query('Year == @today_year').Number_of_Pages.sum().astype(int))} pages read!"
-        myreads_list = myreads[['Author','Title']].to_dict()
-        
-        return (
-            viz_pub_year(myreads), 
-            uploadtxt_fail, 
-            "", 
-            viz_year_read(myreads), 
-            year_text, 
-            visualize_categories(myreads, 'My_Rating', 'How do I rate my books?<br><span style="font-size: 8px;">Number of books per Ratings category</span>', 'Goodreads rating'),
-            visualize_categories(myreads, 'Page_Cat', 'How long are the books I read?<br><span style="font-size: 8px;">Number of books per Page Count Category</span>', 'Page Count Category'),
-            viz_top_values(myreads['Language'], top_n=7),
-            viz_top_values(myreads['Categories'], top_n=7),
-            create_rating_table(myreads),
-            create_author_table(myreads),
-            book_ratings(myreads, 'Top Rated Books', top_rated=True),
-            book_ratings(myreads, 'Bottom Rated Books',top_rated=False),
-            'upload fail', 
-            myreads_list, 
-            False, 
-            scatter_popularity(myreads)
+        content_type, content_string = contents.split(',')
+        decoded = base64.b64decode(content_string)
+    else: 
+        try:
+            new_data = pd.read_csv(io.StringIO(decoded.decode('utf-8')))
+            print(new_data)
+            nmyreads = new_data.loc[new_data['Exclusive Shelf'] == "read"].copy()
+            print('almost async')
+            nmyreadsgg = asyncio.run(book_info_add(nmyreads, api_key))
+            print(nmyreads)
+            nmyreads = dataprep(nmyreads, nmyreadsgg)
+            print('dataprep completed')
+            uploadtxt_suc = "Success, your data have been uploaded and the figures updated!"
+            nyear_text = f"This year I have read over {len(nmyreads.query('Year == @today_year'))} books. Totaling {(nmyreads.query('Year == @today_year').Number_of_Pages.sum().astype(int))} pages read!"
+            nmyreads_list = nmyreads[['Author','Title']].to_dict()
             
-        )
+            # predict genre 
+            nmyreads = ml_genre(nmyreads)
+            nallgenredf, ntbl_genre = genre_tbl(nmyreads)
+            
+            return(
+                viz_pub_year(nmyreads), 
+                uploadtxt_suc, 
+                "", 
+                viz_year_read(nmyreads), 
+                nyear_text, 
+                visualize_categories(nmyreads, 'My_Rating', 'How do I rate my books?<br><span style="font-size: 8px;">Number of books per Ratings category</span>', 'Goodreads rating'),
+                visualize_categories(nmyreads, 'Page_Cat', 'How long are the books I read?<br><span style="font-size: 8px;">Number of books per Page Count Category</span>', 'Page Count Category'),
+                viz_top_values(nmyreads['Language'], top_n=7),
+                viz_top_values(nmyreads['Categories'], top_n=7),
+                create_rating_table(nmyreads),
+                create_author_table(nmyreads),
+                book_ratings(nmyreads, 'Top Rated Books', top_rated=True),
+                book_ratings(nmyreads, 'Lowest Rated Books',top_rated=False),
+                'Upload success', 
+                nmyreads_list, 
+                True, 
+                scatter_popularity(nmyreads), 
+                lolli_fig(ntbl_genre),
+                spider_fig(ntbl_genre),
+                stack_fig(nallgenredf), 
+            )
+        
+        except Exception as e:
+            print(str(e))
+            uploadtxt_fail = f"Upload failiure...Are you using the csv file from Goodreads export? {str(e)}"
+            year_text = f"This year I have read over {len(myreads.query('Year == @today_year'))} books. Totaling {(myreads.query('Year == @today_year').Number_of_Pages.sum().astype(int))} pages read!"
+            myreads_list = myreads[['Author','Title']].to_dict()
+            
+            return (
+                viz_pub_year(myreads), 
+                uploadtxt_fail, 
+                "", 
+                viz_year_read(myreads), 
+                year_text, 
+                visualize_categories(myreads, 'My_Rating', 'How do I rate my books?<br><span style="font-size: 8px;">Number of books per Ratings category</span>', 'Goodreads rating'),
+                visualize_categories(myreads, 'Page_Cat', 'How long are the books I read?<br><span style="font-size: 8px;">Number of books per Page Count Category</span>', 'Page Count Category'),
+                viz_top_values(myreads['Language'], top_n=7),
+                viz_top_values(myreads['Categories'], top_n=7),
+                create_rating_table(myreads),
+                create_author_table(myreads),
+                book_ratings(myreads, 'Top Rated Books', top_rated=True),
+                book_ratings(myreads, 'Bottom Rated Books',top_rated=False),
+                'upload fail', 
+                myreads_list, 
+                False, 
+                scatter_popularity(myreads), 
+                lolli_fig(tbl_genre),
+                spider_fig(tbl_genre),
+                stack_fig(allgenredf), 
+                
+            )
 
 
 # # app call back for the three figure using open library api
