@@ -117,7 +117,6 @@ def viz_pub_year(df):
         showlegend=False,
         template = "plotly_white"
     )
-    
     return fig
 
 
@@ -139,8 +138,6 @@ def viz_year_read(df):
         yaxis=dict(title='Number of Books Read'),
         showlegend=False
     )
-    
-    # Return the figure
     return fig
 
 ### Page count 
@@ -166,8 +163,7 @@ def visualize_categories(myreads, column, title, xtitle):
         yaxis=dict(title='Number of Books'),
         template = "plotly_white"
     )
-
-    # Display the chart
+    
     return fig
 
 
@@ -198,16 +194,16 @@ def viz_top_values(column, top_n=5):
     # Set the colors using the color theme
     fig.update_traces(marker=dict(colors=colors))
 
-    # Set the chart title
     fig.update_layout(title=f'Top {top_n} {column.name}')
 
-    # Display the chart
     return fig
 
 
 #### highest and lowest rated books
 
-def book_ratings(data, title, top_rated=True):
+#### highest and lowest rated books
+
+def book_ratings_bottom(data, title_txt):
     # Define custom colors
     my_rating_color = 'rgb(180,151,231)'
     google_books_color = '#34A853'
@@ -217,10 +213,73 @@ def book_ratings(data, title, top_rated=True):
     filtered_data = data[data['My_Rating'] > 0]
 
     # Sort the filtered data by your own rating in ascending order for bottom-rated books
-    if top_rated == True:
-        filtered_data = filtered_data.sort_values(['My_Rating', 'Date_Read'], ascending=False)
-    else: 
-        filtered_data = filtered_data.sort_values(['My_Rating', 'Date_Read'], ascending=True)
+    filtered_data = filtered_data.sort_values(['My_Rating', 'Date_Read'], ascending=True)
+
+    # Select the top 10 books based on your own rating
+    top_books = filtered_data.tail(15)
+
+    # Create the figure object
+    fig = px.scatter(template = "plotly_white")
+
+    # Add trace for My Rating as dots
+    fig.add_trace(go.Scatter(
+        x=top_books['My_Rating'],
+        y=top_books['Title'],
+        mode='markers',
+        name='My Rating',
+        marker=dict(color=my_rating_color, symbol='circle', size=15),
+    ))
+
+    # Add trace for Average_Rating_GoogleBooks as dots with a different color and shape
+    fig.add_trace(go.Scatter(
+        x=top_books['Average_Rating_GoogleBooks'],
+        y=top_books['Title'],
+        mode='markers',
+        name=f"Average Rating Google Books",
+        marker=dict(color=google_books_color, symbol='square', size=15),
+    ))
+
+    # Add trace for Average_Rating_Goodreads as dots with a different color and shape
+    fig.add_trace(go.Scatter(
+        x=top_books['Average_Rating_Goodreads'],
+        y=top_books['Title'],
+        mode='markers',
+        name='Average Rating Goodreads',
+        marker=dict(color=goodreads_color, symbol='diamond', size=15),
+    ))
+
+    # Update the layout
+    fig.update_layout(
+        title= f'{title_txt}<br><span style="font-size: 11px;">*Showing only 15 latest read books</span>',
+        # font=dict(size=12),
+        yaxis=dict(title='Title', side='top', showticklabels=True),
+        xaxis=dict(
+            title='Rating',
+            tickmode='array',
+            tickvals=[1, 2, 3, 4, 5],
+            range=[0.5, 5.5],  # Set the X-axis range from 0 to 5, 
+            showgrid=True),
+        legend=dict(
+            title='Rating',  # Set legend title
+            orientation='h',  # Set legend orientation (horizontal)
+            x=0.01,  # Adjust x position of the legend
+            y=1.2,  # Adjust y position of the legend
+        )
+        )
+    return fig
+
+
+def book_ratings_top(data, title_txt):
+    # Define custom colors
+    my_rating_color = 'rgb(180,151,231)'
+    google_books_color = '#34A853'
+    goodreads_color = '#e9e5cd'
+
+    # Filter the data where My_Rating > 0 since this would include non-rated books
+    filtered_data = data[data['My_Rating'] > 0]
+
+    # Sort the filtered data by your own rating in ascending order for bottom-rated books
+    filtered_data = filtered_data.sort_values(['My_Rating', 'Date_Read'], ascending=True)
 
     # Select the top 10 books based on your own rating
     top_books = filtered_data.head(15)
@@ -257,17 +316,17 @@ def book_ratings(data, title, top_rated=True):
 
     # Update the layout
     fig.update_layout(
-        title= f'{title}<br><span style="font-size: 11px;">*Showing only 15 latest read books</span>',
-        font=dict(size=12),
+        title= f'{title_txt}<br><span style="font-size: 11px;">*Showing only 15 latest read books</span>',
+        # font=dict(size=12),
         yaxis=dict(title='Title', side='top', showticklabels=True),
         xaxis=dict(
-            title='Ratings:',
+            title='Rating',
             tickmode='array',
             tickvals=[1, 2, 3, 4, 5],
             range=[0.5, 5.5],  # Set the X-axis range from 0 to 5, 
             showgrid=True),
         legend=dict(
-            title='Ratings:',  # Set legend title
+            title='Rating',  # Set legend title
             orientation='h',  # Set legend orientation (horizontal)
             x=0.01,  # Adjust x position of the legend
             y=1.2,  # Adjust y position of the legend
@@ -297,20 +356,17 @@ def create_rating_table(data):
     table = go.Figure(data=[go.Table(
         header=dict(values=['Rating', 'Mean Rating'],
                     fill_color='rgba(230,230,250, 1)',
-                    align=['left', 'center'], 
-                    height=25),
+                    align=['left', 'center']),
         cells=dict(values=[ratings, mean_values],
                    fill_color='rgba(248,248,255,0.5)',
-                   align=['left', 'center'], 
-                   height=25)
+                   align=['left', 'center'])
     )])
 
     # Set the table colors
     table.update_layout(
         title = 'My rating vs other people ratings',
         template='plotly_white',
-        plot_bgcolor='white', 
-        font=dict(size=12),  # Font size for the entire table
+        plot_bgcolor='white'
     )
 
     return table
@@ -347,18 +403,16 @@ def create_author_table(data):
 
     # Create a Plotly table
     table = go.Figure(data=[go.Table(
-        header=dict(values=['Author', 'Number of books read by author', 'My Average Rating'], #, 'Number of times rated on Goodreads', 'Average Goodreads Rating'],
+        header=dict(values=['Author', 'Read count', 'My Average Rating'], #, 'Number of times rated on Goodreads', 'Average Goodreads Rating'],
                     fill_color='rgba(230,230,250, 1)',
-                    align='center', 
-                    height=25),
+                    align='center'),
         cells=dict(values=[top_authors['Author'],
                            top_authors['Read_Count'],
                            top_authors['My_Rating']],
                         #    top_authors['Rating_Count'],
                         #    top_authors['Average_Rating_Goodreads']], 
                            fill=dict(color=['rgba(230,230,250, 0.5)'] + ['rgba(248,248,255,0.5)'] * 2),  # Darker color for the first column
-                           align='center',
-                           height=25)
+                           align='center')
     )])
 
 
@@ -368,7 +422,7 @@ def create_author_table(data):
         template='plotly_white',
         plot_bgcolor='white',
         paper_bgcolor='white',
-        font=dict(size=12),  
+        # font=dict(size=12),  
     )
 
     return table
@@ -401,14 +455,14 @@ def desc_tree(Description):
             'x': 0.5,
             'xanchor': 'center',
             'yanchor': 'top',
-            'font': dict(
-                size=22
-            )
+            # 'font': dict(
+            #     size=22
+            # )
         },
-        uniformtext=dict(minsize=16),  # Increase the minimum text size to 70
-        font=dict(
-            size=16  # Adjust the font size for the entire figure
-        )
+        # uniformtext=dict(minsize=16),  # Increase the minimum text size to 70
+        # font=dict(
+        #     size=16  # Adjust the font size for the entire figure
+        # )
     )
 
     fig.update_traces(
@@ -468,7 +522,7 @@ def lolli_fig(tbl_genre):
         y="My_Rating",
         size="genres", 
         color=tbl_genre.index.tolist(),
-        size_max=80, 
+        size_max=50, 
         )
     fig.update_traces(hovertemplate='Genre: %{x} <br>My average rating of books with genre: %{y}<br>Number of read books with genre: %{marker.size:}') #
     
@@ -498,7 +552,7 @@ def lolli_fig(tbl_genre):
         yref='paper',
         text="The size of the bubble represent the number of books read within genre. <br> The position of the bubble along the y-axis represent how well books within the genre have been rated.",
         showarrow=False,
-        font=dict(size=10),
+        # font=dict(size=10),
     )
         
     return fig3

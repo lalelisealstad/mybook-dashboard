@@ -28,7 +28,10 @@ from apps.prediction import make_genre_tbl, ml_genre
 
 
 #  Create a Dash web application
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.LUX])
+app = dash.Dash(__name__, 
+                external_stylesheets=[dbc.themes.LUX], # 'assets/bWLwgP.css'
+                meta_tags=[{'name': 'viewport',
+                            'content': 'width=device-width, initial-scale=1, maximum-scale=1.2, minimum-scale=0.5,'}])
 
 # Define the layout of the app with rows and columns using Bootstrap grid system
 app.layout = html.Div([
@@ -37,11 +40,10 @@ app.layout = html.Div([
                 dbc.Row(
                     dbc.Col(
                         [
-                            html.H1("Visualising my read books", className="my-4 text-center",style={'color': '#2B2B35', 'text-align': 'center'},),
-                            html.H6("Using Goodreads library export with Open Library API and Google Books API", style={'color': '#2B2B35', 'text-align': 'center'},),
+                            html.H1("Book dashboard", className="my-4 text-center",style={'color': '#2B2B35', 'text-align': 'center'},),
+                            html.H6("Visualising statistics of read books", style={'color': '#2B2B35', 'text-align': 'center'},),
                         ],
-                    style={'background-color': '#D6C9F2', 'size':10},
-                width=10)
+                    style={'background-color': '#D6C9F2'}, className='five columns')
             ,justify="center"),
             
             # row to upload books 
@@ -50,8 +52,7 @@ app.layout = html.Div([
                     [
                         dcc.Markdown(id='data-info-text1', dangerously_allow_html=True, style={'font-size': '16px'}),
                         dcc.Markdown(id='data-info-text2', dangerously_allow_html=True, style={'font-size': '11px'}),
-                    ], 
-                    width=5  # Width for the second column
+                    ],xs=10, sm=10, md=10, lg=5, xl=5
                 ),
                 dbc.Col([
                     dbc.Spinner(children=[
@@ -75,19 +76,19 @@ app.layout = html.Div([
                         dcc.Markdown(id='upload-text', dangerously_allow_html=True, style={'font-size': '11px',  'textAlign': 'center'}),
                     ]), 
                     dcc.Markdown('''Upload may take a while depending on library size. Large libraries may take up to 15 minutes..''', style={'font-size': '11px',  'textAlign': 'center'})]
-                    ,width=5 
+                    ,xs=10, sm=10, md=10, lg=5, xl=5
                 )
-            ], className="mt-2", style={'color': '#2B2B35', 'height': '160px'}, justify="center"), 
+            ], className="mt-2", style={'color': '#2B2B35'}, justify="center"), 
             
             # row with text summarising year in books
 
-            dbc.Row([
-                dbc.Col(
-                        html.Div(id='data-info-text3'),
-                        # (f"This year I have read over {len(myreads.query('Year == @today_year'))} books. Totaling {f'{(myreads.Number_of_Pages.sum().astype(int)):,}'} pages read!", style={'color': '#2B2B35', 'text-align': 'center'}),
-                    width=10 
-                ),
-            ], className="mt-6", style={'height': '30px', 'font-size': '16px'}, justify="center"), 
+            # dbc.Row([
+            #     dbc.Col(
+            #             html.Div(id='data-info-text3'),
+            #             # (f"This year I have read over {len(myreads.query('Year == @today_year'))} books. Totaling {f'{(myreads.Number_of_Pages.sum().astype(int)):,}'} pages read!", style={'color': '#2B2B35', 'text-align': 'center'}),
+            #         xs=10, sm=10, md=10, lg=5, xl=5
+            #     ),
+            # ], className="mt-6", style={'height': '40px', 'font-size': '16px'}, justify="center"), 
 
             # First row with figures
             dbc.Row([
@@ -96,13 +97,13 @@ app.layout = html.Div([
                         id='fig1'
                         # figure=viz_pub_year(myreads),
                     ),
-                    width=5  # Width for the first column
+                    xs=10, sm=10, md=10, lg=5, xl=5 
                 ),
                 dbc.Col(
                     dcc.Graph(
                         id='fig2'
                     ),
-                    width=5  
+                    xs=10, sm=10, md=10, lg=5, xl=5 
                 ),
             ],className="mt-2", justify="center"),
 
@@ -111,14 +112,14 @@ app.layout = html.Div([
                 dbc.Col(
                     dcc.Graph(
                         id='fig3'
-                    ),
-                    width=5  
+                    )
+                    ,xs=10, sm=10, md=10, lg=5, xl=5
                 ),
                 dbc.Col(
                     dcc.Graph(
                         id='fig4'
-                    ),
-                    width=5 
+                    )
+                    ,xs=10, sm=10, md=10, lg=5, xl=5
                 ),
             ], className="mt-4", justify="center"),  # Add margin top
 
@@ -127,14 +128,14 @@ app.layout = html.Div([
                 dbc.Col(
                     dcc.Graph(
                         id='viztop1',
-                    ),
-                    width=5  
+                    )
+                    ,xs=10, sm=10, md=10, lg=5, xl=5
                 ),
                 dbc.Col(
                     dcc.Graph(
                         id='viztop2',
-                    ),
-                    width=5  
+                    )
+                    ,xs=10, sm=10, md=10, lg=5, xl=5  
                 ),
             ], className="mt-4", justify="center"),  
 
@@ -143,14 +144,14 @@ app.layout = html.Div([
                 dbc.Col(
                     dcc.Graph(
                         id='tbl1',
-                    ),
-                    width=5 
+                    )
+                    ,xs=10, sm=10, md=10, lg=5, xl=5
                     ),
                 dbc.Col(
                     dcc.Graph(
                         id='tbl2',
-                    ),
-                    width=5  
+                    )
+                   ,xs=10, sm=10, md=10, lg=5, xl=5
                 ),
             ], className="mt-4", justify="center"),   
 
@@ -159,16 +160,16 @@ app.layout = html.Div([
                 dbc.Col(
                     dcc.Graph(
                         id='figr1',
-                    ),
-                    width=10 
+                    )
+                    ,xs=10, sm=10, md=10, lg=10, xl=10
                     ),
             ], className="mt-4", justify="center"), 
             dbc.Row([
                 dbc.Col(
                     dcc.Graph(
                         id='figr2',
-                    ),
-                    width=10  
+                    )
+                   ,xs=10, sm=10, md=10, lg=10, xl=10 
                 ),
             ], className="mt-4", justify="center"),  
             
@@ -263,7 +264,7 @@ today_year = datetime.today().year
         Output('data-info-text1', 'children'),
         Output('data-info-text2', 'children'),
         Output('fig2', 'figure'),
-        Output('data-info-text3', 'children'),
+        # Output('data-info-text3', 'children'),
         Output('fig3', 'figure'),
         Output('fig4', 'figure'),
         Output('viztop1', 'figure'),
@@ -319,15 +320,15 @@ def update_figure_gapi(contents, filename):
                 uploadtxt_sug1, 
                 uploadtxt_sug2, 
                 viz_year_read(myreads), 
-                year_text, 
+                # year_text, 
                 visualize_categories(myreads, 'My_Rating', 'How do I rate my books?<br><span style="font-size: 8px;">Number of books per Ratings category</span>', 'Goodreads rating'), 
                 visualize_categories(myreads, 'Page_Cat', 'How long are the books I read?<br><span style="font-size: 8px;">Number of books per Page Count Category</span>', 'Page Count Category'),
                 viz_top_values(myreads['Language'], top_n=7),
                 viz_top_values(myreads['Categories'], top_n=7),
                 create_rating_table(myreads),
                 create_author_table(myreads),
-                book_ratings(myreads, 'Top Rated Books', top_rated=True),
-                book_ratings(myreads, 'Bottom Rated Books',top_rated=False),
+                book_ratings_bottom(myreads, 'Bottom Rated Books'),
+                book_ratings_top(myreads, 'Top Rated Books'),
                 ' ', 
                 myreads_list, 
                 False, 
@@ -372,15 +373,15 @@ def update_figure_gapi(contents, filename):
             uploadtxt_suc, 
             "", 
             viz_year_read(nmyreads), 
-            nyear_text, 
+            # nyear_text, 
             visualize_categories(nmyreads, 'My_Rating', 'How do I rate my books?<br><span style="font-size: 8px;">Number of books per Ratings category</span>', 'Goodreads rating'),
             visualize_categories(nmyreads, 'Page_Cat', 'How long are the books I read?<br><span style="font-size: 8px;">Number of books per Page Count Category</span>', 'Page Count Category'),
             viz_top_values(nmyreads['Language'], top_n=7),
             viz_top_values(nmyreads['Categories'], top_n=7),
             create_rating_table(nmyreads),
             create_author_table(nmyreads),
-            book_ratings(nmyreads, 'Top Rated Books', top_rated=True),
-            book_ratings(nmyreads, 'Lowest Rated Books',top_rated=False),
+            book_ratings_bottom(nmyreads, 'Bottom Rated Books'),
+            book_ratings_top(nmyreads, 'Top Rated Books'),
             'Upload success', 
             nmyreads_list, 
             True, 
@@ -401,15 +402,15 @@ def update_figure_gapi(contents, filename):
             uploadtxt_fail, 
             "", 
             viz_year_read(myreads), 
-            year_text, 
+            # year_text, 
             visualize_categories(myreads, 'My_Rating', 'How do I rate my books?<br><span style="font-size: 8px;">Number of books per Ratings category</span>', 'Goodreads rating'),
             visualize_categories(myreads, 'Page_Cat', 'How long are the books I read?<br><span style="font-size: 8px;">Number of books per Page Count Category</span>', 'Page Count Category'),
             viz_top_values(myreads['Language'], top_n=7),
             viz_top_values(myreads['Categories'], top_n=7),
             create_rating_table(myreads),
             create_author_table(myreads),
-            book_ratings(myreads, 'Top Rated Books', top_rated=True),
-            book_ratings(myreads, 'Bottom Rated Books',top_rated=False),
+            book_ratings_bottom(myreads, 'Bottom Rated Books'),
+            book_ratings_top(myreads, 'Top Rated Books'),
             'upload fail', 
             myreads_list, 
             False, 

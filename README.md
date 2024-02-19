@@ -70,6 +70,7 @@ My read books - viz :
 - using a spinner for visual indication that file is being uploaded
 - created a datapipeline for uploaded data: cleaning data and collecting metadata
 - using asynronous programming for collecting metadata faster 
+- mobile responsive layout. 
 
 
 ## 5.2 Machine Learning model to predict genres of book
@@ -84,18 +85,17 @@ Multi-label classification to predict multiple genres from book description
 
 # Developing: 
 
-## to do:
-- mobile layout 
-- want to read section. 
-
 ## Interactivity dashboard:
 - date read filter. 
 - ratings select filter. 
 - poplarity filter. 
 - find books based on word or topic: show a list of the books. 
 
-#### Improve performance / layout: 
-- - loading bar with percentage when uploading books with estimate of time left. 
+#### Improve performance / layout:
+- add box with info to first column and switch the first fig to be next to spider fig.  
+- mobile layout improve! 
+    press comand option C to see mobile layout. 
+- loading bar with percentage when uploading books with estimate of time left. 
 - remove prints and use logging instead. 
 - set up of topics in json not necessary in case of input
 - 0 rating should be changed to "not rated" in the ratings bar. 
