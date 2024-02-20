@@ -15,6 +15,10 @@ $ source .venv/bin/activate
 $ python "app.py"
 ```
 
+
+Docker deployment in gcp: 
+gcr.io//mybookdashboard/mybook-dash:1.0 . 
+
 # Documentation of process: 
 I first make the code in notebooks and then export the modules in python files to be used in the dahboard. 
 See the notebooks as described below for the process. The notebooks can be run seperately from the app. 
@@ -84,6 +88,11 @@ Multi-label classification to predict multiple genres from book description
 
 
 # Developing: 
+- add box with info to first column and switch the first fig to be next to spider fig.  
+- loading bar with percentage when uploading books with estimate of time left. 
+- 0 rating should be changed to "not rated" in the ratings bar. 
+- text that explains how to interact with the figures. 
+
 
 ## Interactivity dashboard:
 - date read filter. 
@@ -92,18 +101,12 @@ Multi-label classification to predict multiple genres from book description
 - find books based on word or topic: show a list of the books. 
 
 #### Improve performance / layout:
-- add box with info to first column and switch the first fig to be next to spider fig.  
-- mobile layout improve! 
-    press comand option C to see mobile layout. 
-- loading bar with percentage when uploading books with estimate of time left. 
 - remove prints and use logging instead. 
 - set up of topics in json not necessary in case of input
-- 0 rating should be changed to "not rated" in the ratings bar. 
-- text that explains how to interact with the figures. 
 - link to github / explainer of how the dashboard, api call collection works. 
-- align first two graphs
 - improve speed using client side callbacks 
-
+- store data in google cloud
+- store inputted data in google cloud. 
 
 
 ## What to read next section: 
@@ -111,6 +114,8 @@ Want to read:
 - top five rated books 
 - top five popular books based on rating count
 - books from your top authors
+- top books in most liked genres. 
+
 WPF: 
 - top five rated books 
 - top five popular books based on rating count

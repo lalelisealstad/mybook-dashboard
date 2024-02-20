@@ -306,7 +306,7 @@ def update_figure_gapi(contents, filename):
                             2. Click on "My Books"<br>
                             3. Scroll down and click on "Import/Export" under "Tools" on the left sidebar<br>
                             4. Click "Export Your Books" to download the export file"""
-            year_text = f"This year I have read over {len(myreads.query('Year == @today_year'))} books. Totaling {f'{(myreads.query('Year == @today_year').Number_of_Pages.sum().astype(int)):,}'} pages read!"
+            year_text = f"This year I have read over {len(myreads.query('Year == @today_year'))} books. Totaling {(myreads.query('Year == @today_year').Number_of_Pages.sum().astype(int))} pages read!"
             myreads_list = myreads[['Author','Title']].to_dict()
             
             # genre table 

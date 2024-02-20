@@ -28,6 +28,7 @@ wordcloud = "*"
 statsmodels = "*"
 pyarrow = "*"
 langdetect = "*"
+dash-tools = "*"
 
 [dev-packages]
 ipykernel = "*"
