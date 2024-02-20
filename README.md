@@ -17,6 +17,9 @@ $ python "app.py"
 
 
 Docker deployment in gcp: 
+
+not working! 
+Try and clean up requirements file with only necessary files. test app on own oc 
 gcr.io//mybookdashboard/mybook-dash:1.0 . 
 
 # Documentation of process: 
