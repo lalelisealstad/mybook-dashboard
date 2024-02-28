@@ -4,7 +4,6 @@ import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
 from collections import Counter
-import plotly.io as pio
 import numpy as np
 import re
 
@@ -133,7 +132,7 @@ def viz_year_read(df):
     fig['data'][0]['line']['color']='#A777F1'
     # Customize the plot layout
     fig.update_layout(
-        title='Number of Books Read per Year and Quarter<span style="font-size: 10px;"><br>Based on when you set the book to read in Goodreads, if no date read, date added is used</span>',
+        title='Number of Books Read per Year and Quarter<span style="font-size: 8px;"><br>Based on when you set the book to read in Goodreads, <br>if no date read, date added is used</span>',
         xaxis=dict(title='Year and Quarter'),
         yaxis=dict(title='Number of Books Read'),
         showlegend=False
@@ -221,15 +220,6 @@ def book_ratings_bottom(data, title_txt):
     # Create the figure object
     fig = px.scatter(template = "plotly_white")
 
-    # Add trace for My Rating as dots
-    fig.add_trace(go.Scatter(
-        x=top_books['My_Rating'],
-        y=top_books['Title'],
-        mode='markers',
-        name='My Rating',
-        marker=dict(color=my_rating_color, symbol='circle', size=15),
-    ))
-
     # Add trace for Average_Rating_GoogleBooks as dots with a different color and shape
     fig.add_trace(go.Scatter(
         x=top_books['Average_Rating_GoogleBooks'],
@@ -246,6 +236,15 @@ def book_ratings_bottom(data, title_txt):
         mode='markers',
         name='Average Rating Goodreads',
         marker=dict(color=goodreads_color, symbol='diamond', size=15),
+    ))
+
+    # Add trace for My Rating as dots
+    fig.add_trace(go.Scatter(
+        x=top_books['My_Rating'],
+        y=top_books['Title'],
+        mode='markers',
+        name='My Rating',
+        marker=dict(color=my_rating_color, symbol='circle', size=15),
     ))
 
     # Update the layout
@@ -377,7 +376,7 @@ def create_rating_table(data):
 
 def create_author_table(data):
     # Filter the data to include only the books you've read
-    data = data[data['Author'].isin(data['Author'].value_counts().nlargest(7).index)].copy()
+    data = data[data['Author'].isin(data['Author'].value_counts().nlargest(5).index)].copy()
 
     # Replace 0 by np.nan so its not included in the mean (Usally 0 rating means it is not rated) 
     data['My_Rating'] = data['My_Rating'].replace(0, np.nan)
@@ -399,7 +398,7 @@ def create_author_table(data):
     sorted_authors = author_stats.sort_values('Read_Count', ascending=False)
 
     # Select the top five authors
-    top_authors = sorted_authors.head(7)
+    top_authors = sorted_authors.head(5)
 
     # Create a Plotly table
     table = go.Figure(data=[go.Table(
@@ -503,7 +502,7 @@ def scatter_popularity(df):
         ),
         
         xaxis=dict(
-            title='Number of times the book has been rates in Google Books',  
+            title='Number of times the book has been rated in Google Books',  
         ),
         
         yaxis=dict(
@@ -578,7 +577,7 @@ def stack_fig(allgenredf, tbl_genre):
     tbl_percent = (
         pd.DataFrame(
             allgenredf.query('Read_Count > 0 & genres in @tbl_genre.index.tolist()')
-            .groupby('Year_Quarter')['genres'].value_counts(normalize = True)
+            .groupby('Year_Quarter',observed=True)['genres'].value_counts(normalize = True)
             )
         .reset_index()
         .query('Year_Quarter != "" and proportion > 0.01')

@@ -1,6 +1,5 @@
 # Improt packages
 import pandas as pd
-import json 
 import numpy as np
 
 # Import functions from apps folder

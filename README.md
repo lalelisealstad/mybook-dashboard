@@ -91,7 +91,8 @@ Multi-label classification to predict multiple genres from book description
 
 
 # Developing: 
-- add box with info to first column and switch the first fig to be next to spider fig.  
+- add row w a panel with incons showing some quick stats over books read the last year or month.
+- warning for user when max capasity in Google books api quota is reached 
 - loading bar with percentage when uploading books with estimate of time left. 
 - 0 rating should be changed to "not rated" in the ratings bar. 
 - text that explains how to interact with the figures. 

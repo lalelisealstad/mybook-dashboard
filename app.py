@@ -3,8 +3,8 @@ from dash import dcc
 from dash import html
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
-import plotly.express as px
-import plotly.graph_objs as go
+# import plotly.express as px
+# import plotly.graph_objs as go
 import pandas as pd 
 import json
 import numpy as np
@@ -12,15 +12,11 @@ from apps.viz import *
 from apps.dataimport import *
 from apps.collect_data import *
 from datetime import datetime
-import pickle 
 import base64
 import io
-import requests
 import pandas as pd
-import aiohttp
-import nest_asyncio
-import time
-import traceback
+# import aiohttp
+# import nest_asyncio
 
 from apps.async_googleapi import book_info_add, asyncio
 from apps.api import api_key
@@ -31,7 +27,7 @@ from apps.prediction import make_genre_tbl, ml_genre
 app = dash.Dash(__name__, 
                 external_stylesheets=[dbc.themes.LUX], # 'assets/bWLwgP.css'
                 meta_tags=[{'name': 'viewport',
-                            'content': 'width=device-width, initial-scale=1, maximum-scale=1.2, minimum-scale=0.5,'}])
+                            'content': 'width=device-width, initial-scale=0.9, maximum-scale=1.2, minimum-scale=0.5,'}])
 
 # Define the layout of the app with rows and columns using Bootstrap grid system
 app.layout = html.Div([
@@ -97,13 +93,13 @@ app.layout = html.Div([
                         id='fig1'
                         # figure=viz_pub_year(myreads),
                     ),
-                    xs=10, sm=10, md=10, lg=5, xl=5 
+                    xs=12, sm=12, md=12, lg=6, xl=6
                 ),
                 dbc.Col(
                     dcc.Graph(
                         id='fig2'
                     ),
-                    xs=10, sm=10, md=10, lg=5, xl=5 
+                    xs=12, sm=12, md=12, lg=6, xl=6 
                 ),
             ],className="mt-2", justify="center"),
 
@@ -113,13 +109,13 @@ app.layout = html.Div([
                     dcc.Graph(
                         id='fig3'
                     )
-                    ,xs=10, sm=10, md=10, lg=5, xl=5
+                    ,xs=12, sm=12, md=12, lg=6, xl=6
                 ),
                 dbc.Col(
                     dcc.Graph(
                         id='fig4'
                     )
-                    ,xs=10, sm=10, md=10, lg=5, xl=5
+                    ,xs=12, sm=12, md=12, lg=6, xl=6
                 ),
             ], className="mt-4", justify="center"),  # Add margin top
 
@@ -129,13 +125,13 @@ app.layout = html.Div([
                     dcc.Graph(
                         id='viztop1',
                     )
-                    ,xs=10, sm=10, md=10, lg=5, xl=5
+                    ,xs=12, sm=12, md=12, lg=6, xl=6
                 ),
                 dbc.Col(
                     dcc.Graph(
                         id='viztop2',
                     )
-                    ,xs=10, sm=10, md=10, lg=5, xl=5  
+                    ,xs=12, sm=12, md=12, lg=6, xl=6
                 ),
             ], className="mt-4", justify="center"),  
 
@@ -145,13 +141,13 @@ app.layout = html.Div([
                     dcc.Graph(
                         id='tbl1',
                     )
-                    ,xs=10, sm=10, md=10, lg=5, xl=5
+                    ,xs=12, sm=12, md=12, lg=6, xl=6
                     ),
                 dbc.Col(
                     dcc.Graph(
                         id='tbl2',
                     )
-                   ,xs=10, sm=10, md=10, lg=5, xl=5
+                   ,xs=12, sm=12, md=12, lg=6, xl=6
                 ),
             ], className="mt-4", justify="center"),   
 
@@ -161,7 +157,7 @@ app.layout = html.Div([
                     dcc.Graph(
                         id='figr1',
                     )
-                    ,xs=10, sm=10, md=10, lg=10, xl=10
+                    ,xs=12, sm=12, md=12, lg=6, xl=6
                     ),
             ], className="mt-4", justify="center"), 
             dbc.Row([
@@ -169,7 +165,7 @@ app.layout = html.Div([
                     dcc.Graph(
                         id='figr2',
                     )
-                   ,xs=10, sm=10, md=10, lg=10, xl=10 
+                   ,xs=12, sm=12, md=12, lg=6, xl=6
                 ),
             ], className="mt-4", justify="center"),  
             
@@ -179,7 +175,7 @@ app.layout = html.Div([
                     dcc.Graph(
                         id='tree',
                     ),
-                    width=10,
+                    width=12,
                 ), 
             ], className="mt-4", justify="center"), 
 
@@ -189,7 +185,7 @@ app.layout = html.Div([
                     dcc.Graph(
                         id='tree2'
                     ),
-                    width=10,  
+                    width=12,  
                 ),
             ], className="mt-4", justify="center"),  
             
@@ -199,7 +195,7 @@ app.layout = html.Div([
                     dcc.Graph(
                         id='scatter-fig'
                     ),
-                    width=10,  
+                    width=12,  
                 ),
             ], className="mt-4", justify="center"),  
             
@@ -209,7 +205,7 @@ app.layout = html.Div([
                     dcc.Graph(
                         id='lolli-fig'
                     ),
-                    width=10,  
+                    width=12,  
                 ),
             ], className="mt-4", justify="center"),   
             
@@ -219,7 +215,7 @@ app.layout = html.Div([
                     dcc.Graph(
                         id='spider-fig'
                     ),
-                    width=10,  
+                    width=12,  
                 ),
             ], className="mt-4", justify="center"),   
             
@@ -229,7 +225,7 @@ app.layout = html.Div([
                     dcc.Graph(
                         id='genre-timeline-fig'
                     ),
-                    width=10,  
+                    width=12,  
                 ),
             ], className="mt-4", justify="center"),   
             
@@ -244,11 +240,14 @@ app.layout = html.Div([
                                  'background-color': '#fcfcfc',
                                  'padding': '10px',
                                  'align':"center"
-
                                  }),  
 ])
 
 
+# Adjust padding for mobile devices
+app.layout.children[0].style['padding'] = '3px'
+
+server = app.server  # Get the underlying Flask server instance
 
 ### CALLBACKS
 
@@ -321,7 +320,7 @@ def update_figure_gapi(contents, filename):
                 uploadtxt_sug2, 
                 viz_year_read(myreads), 
                 # year_text, 
-                visualize_categories(myreads, 'My_Rating', 'How do I rate my books?<br><span style="font-size: 8px;">Number of books per Ratings category</span>', 'Goodreads rating'), 
+                visualize_categories(myreads.query('My_Rating >0 '), 'My_Rating', 'How do I rate my books?<br><span style="font-size: 8px;">Number of books per Ratings category</span>', 'Goodreads rating'), 
                 visualize_categories(myreads, 'Page_Cat', 'How long are the books I read?<br><span style="font-size: 8px;">Number of books per Page Count Category</span>', 'Page Count Category'),
                 viz_top_values(myreads['Language'], top_n=7),
                 viz_top_values(myreads['Categories'], top_n=7),
@@ -374,7 +373,7 @@ def update_figure_gapi(contents, filename):
             "", 
             viz_year_read(nmyreads), 
             # nyear_text, 
-            visualize_categories(nmyreads, 'My_Rating', 'How do I rate my books?<br><span style="font-size: 8px;">Number of books per Ratings category</span>', 'Goodreads rating'),
+            visualize_categories(nmyreads.query('My_Rating > 0'), 'My_Rating', 'How do I rate my books?<br><span style="font-size: 8px;">Number of books per Ratings category</span>', 'Goodreads rating'),
             visualize_categories(nmyreads, 'Page_Cat', 'How long are the books I read?<br><span style="font-size: 8px;">Number of books per Page Count Category</span>', 'Page Count Category'),
             viz_top_values(nmyreads['Language'], top_n=7),
             viz_top_values(nmyreads['Categories'], top_n=7),
@@ -393,7 +392,7 @@ def update_figure_gapi(contents, filename):
     
     except Exception as e:
         print(str(e))
-        uploadtxt_fail = f"{str(e)}Upload failiure...Are you using the csv file from Goodreads export? {str(e)}. Error message:{traceback.print_exc()}"
+        uploadtxt_fail = f"{str(e)}Upload failiure...Are you using the csv file from Goodreads export? {str(e)}"
         year_text = f"This year I have read over {len(myreads.query('Year == @today_year'))} books. Totaling {(myreads.query('Year == @today_year').Number_of_Pages.sum().astype(int))} pages read!"
         myreads_list = myreads[['Author','Title']].to_dict()
         
@@ -403,7 +402,7 @@ def update_figure_gapi(contents, filename):
             "", 
             viz_year_read(myreads), 
             # year_text, 
-            visualize_categories(myreads, 'My_Rating', 'How do I rate my books?<br><span style="font-size: 8px;">Number of books per Ratings category</span>', 'Goodreads rating'),
+            visualize_categories(myreads.query('My_Rating > 0'), 'My_Rating', 'How do I rate my books?<br><span style="font-size: 8px;">Number of books per Ratings category</span>', 'Goodreads rating'),
             visualize_categories(myreads, 'Page_Cat', 'How long are the books I read?<br><span style="font-size: 8px;">Number of books per Page Count Category</span>', 'Page Count Category'),
             viz_top_values(myreads['Language'], top_n=7),
             viz_top_values(myreads['Categories'], top_n=7),
@@ -456,4 +455,4 @@ def update_figure_ol_api(isuploaded):
     return desctree
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False, host="0.0.0.0", port=8080, use_reloader=False)

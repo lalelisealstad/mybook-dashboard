@@ -1,11 +1,8 @@
 
-import requests
 import pandas as pd
 import numpy as np
 import aiohttp
 import asyncio
-import nest_asyncio
-import time
 
 async def get_book_info_async(session, book_name, author_name, api_key):
     book_name = book_name
