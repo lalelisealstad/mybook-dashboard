@@ -5,8 +5,6 @@ WORKDIR /app
 
 COPY . .
 
-EXPOSE 8080
-
 # Create a virtual environment and activate it
 RUN python -m venv venv
 ENV PATH="/app/venv/bin:$PATH"
@@ -15,4 +13,6 @@ ENV PATH="/app/venv/bin:$PATH"
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Specify the command to run the app
-CMD ["python" , "app.py", "--host=0.0.0.0", "--port=8080"]
+CMD ["python" , "app.py", "--host=0.0.0.0", "--port=8040"]
+
+EXPOSE 8040

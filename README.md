@@ -92,17 +92,19 @@ Multi-label classification to predict multiple genres from book description
 
 # Developing: 
 - add row w a panel with incons showing some quick stats over books read the last year or month.
-- warning for user when max capasity in Google books api quota is reached 
-- loading bar with percentage when uploading books with estimate of time left. 
+- change tables to, box plot and top authors to side bar chart like story graph
+- check all text, make similar to story graph
 - 0 rating should be changed to "not rated" in the ratings bar. 
 - text that explains how to interact with the figures. 
 
 
 ## Interactivity dashboard:
-- date read filter. 
-- ratings select filter. 
-- poplarity filter. 
+- dates to view 
+what to read next: 
+- ratings select filter.  
 - find books based on word or topic: show a list of the books. 
+- genre
+- top authors filter, or author select 
 
 #### Improve performance / layout:
 - remove prints and use logging instead. 
@@ -111,6 +113,8 @@ Multi-label classification to predict multiple genres from book description
 - improve speed using client side callbacks 
 - store data in google cloud
 - store inputted data in google cloud. 
+- warning for user when max capasity in Google books api quota is reached 
+- loading bar with percentage when uploading books with estimate of time left. 
 
 
 ## What to read next section: 

@@ -92,14 +92,14 @@ app.layout = html.Div([
                     dcc.Graph(
                         id='fig1'
                         # figure=viz_pub_year(myreads),
-                    ),
-                    xs=12, sm=12, md=12, lg=6, xl=6
+                    )
+                    ,xs=12, sm=12, md=12, lg=5, xl=5
                 ),
                 dbc.Col(
                     dcc.Graph(
                         id='fig2'
-                    ),
-                    xs=12, sm=12, md=12, lg=6, xl=6 
+                    )
+                    ,xs=12, sm=12, md=12, lg=5, xl=5
                 ),
             ],className="mt-2", justify="center"),
 
@@ -109,15 +109,15 @@ app.layout = html.Div([
                     dcc.Graph(
                         id='fig3'
                     )
-                    ,xs=12, sm=12, md=12, lg=6, xl=6
+                    ,xs=12, sm=12, md=12, lg=5, xl=5
                 ),
                 dbc.Col(
                     dcc.Graph(
                         id='fig4'
                     )
-                    ,xs=12, sm=12, md=12, lg=6, xl=6
+                    ,xs=12, sm=12, md=12, lg=5, xl=5
                 ),
-            ], className="mt-4", justify="center"),  # Add margin top
+            ], className="mt-4", justify="center"),  
 
             # Third row - pie charts
             dbc.Row([
@@ -125,13 +125,13 @@ app.layout = html.Div([
                     dcc.Graph(
                         id='viztop1',
                     )
-                    ,xs=12, sm=12, md=12, lg=6, xl=6
+                    ,xs=12, sm=12, md=12, lg=5, xl=5
                 ),
                 dbc.Col(
                     dcc.Graph(
                         id='viztop2',
                     )
-                    ,xs=12, sm=12, md=12, lg=6, xl=6
+                    ,xs=12, sm=12, md=12, lg=5, xl=5
                 ),
             ], className="mt-4", justify="center"),  
 
@@ -141,13 +141,13 @@ app.layout = html.Div([
                     dcc.Graph(
                         id='tbl1',
                     )
-                    ,xs=12, sm=12, md=12, lg=6, xl=6
+                    ,xs=12, sm=12, md=12, lg=5, xl=5
                     ),
                 dbc.Col(
                     dcc.Graph(
                         id='tbl2',
                     )
-                   ,xs=12, sm=12, md=12, lg=6, xl=6
+                   ,xs=12, sm=12, md=12, lg=5, xl=5
                 ),
             ], className="mt-4", justify="center"),   
 
@@ -157,7 +157,7 @@ app.layout = html.Div([
                     dcc.Graph(
                         id='figr1',
                     )
-                    ,xs=12, sm=12, md=12, lg=6, xl=6
+                    ,xs=12, sm=12, md=12, lg=10, xl=10
                     ),
             ], className="mt-4", justify="center"), 
             dbc.Row([
@@ -165,7 +165,7 @@ app.layout = html.Div([
                     dcc.Graph(
                         id='figr2',
                     )
-                   ,xs=12, sm=12, md=12, lg=6, xl=6
+                   ,xs=12, sm=12, md=12, lg=10, xl=10
                 ),
             ], className="mt-4", justify="center"),  
             
@@ -174,8 +174,8 @@ app.layout = html.Div([
                 dbc.Col(
                     dcc.Graph(
                         id='tree',
-                    ),
-                    width=12,
+                    )
+                    ,xs=12, sm=12, md=12, lg=10, xl=10
                 ), 
             ], className="mt-4", justify="center"), 
 
@@ -184,8 +184,8 @@ app.layout = html.Div([
                 dbc.Col(
                     dcc.Graph(
                         id='tree2'
-                    ),
-                    width=12,  
+                    )
+                    ,xs=12, sm=12, md=12, lg=10, xl=10  
                 ),
             ], className="mt-4", justify="center"),  
             
@@ -194,28 +194,28 @@ app.layout = html.Div([
                 dbc.Col(
                     dcc.Graph(
                         id='scatter-fig'
-                    ),
-                    width=12,  
+                    )
+                    ,xs=12, sm=12, md=12, lg=10, xl=10
                 ),
             ], className="mt-4", justify="center"),  
             
-            # 9th row with scatter plot popularity
+            # 9th row with lollipop
             dbc.Row([
                 dbc.Col(
                     dcc.Graph(
                         id='lolli-fig'
-                    ),
-                    width=12,  
+                    )
+                    ,xs=12, sm=12, md=12, lg=10, xl=10
                 ),
             ], className="mt-4", justify="center"),   
             
-            # 10th row with scatter plot popularity
+            # 10th row with spider
             dbc.Row([
                 dbc.Col(
                     dcc.Graph(
                         id='spider-fig'
-                    ),
-                    width=12,  
+                    )
+                    ,xs=12, sm=12, md=12, lg=10, xl=10 
                 ),
             ], className="mt-4", justify="center"),   
             
@@ -224,8 +224,8 @@ app.layout = html.Div([
                 dbc.Col(
                     dcc.Graph(
                         id='genre-timeline-fig'
-                    ),
-                    width=12,  
+                    )
+                    ,xs=12, sm=12, md=12, lg=10, xl=10 
                 ),
             ], className="mt-4", justify="center"),   
             
@@ -238,14 +238,12 @@ app.layout = html.Div([
     ], style={'width': '100%', 'display': 'inline-block',
                                  'box-shadow': '2px 2px 2px lightgrey',
                                  'background-color': '#fcfcfc',
-                                 'padding': '10px',
+                                 'padding': '20px',
                                  'align':"center"
                                  }),  
 ])
 
 
-# Adjust padding for mobile devices
-app.layout.children[0].style['padding'] = '3px'
 
 server = app.server  # Get the underlying Flask server instance
 
@@ -455,4 +453,4 @@ def update_figure_ol_api(isuploaded):
     return desctree
 
 if __name__ == '__main__':
-    app.run_server(debug=False, host="0.0.0.0", port=8080, use_reloader=False)
+    app.run_server(debug=False, host="0.0.0.0", port=8040, use_reloader=False) # debug False in deployment
