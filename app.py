@@ -27,7 +27,8 @@ from apps.prediction import make_genre_tbl, ml_genre
 app = dash.Dash(__name__, 
                 external_stylesheets=[dbc.themes.LUX], # 'assets/bWLwgP.css'
                 meta_tags=[{'name': 'viewport',
-                            'content': 'width=device-width, initial-scale=0.9, maximum-scale=1.2, minimum-scale=0.5,'}])
+                            'content': 'width=device-width, initial-scale=0.9, maximum-scale=1.2, minimum-scale=0.5,'}]
+                            ,external_scripts=['https://cdn.plot.ly/plotly-basic-2.12.1.min.js'])
 
 # Define the layout of the app with rows and columns using Bootstrap grid system
 app.layout = html.Div([

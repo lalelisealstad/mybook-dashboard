@@ -17,13 +17,13 @@ $ python "app.py"
 
 Docker deploy locally: 
 $ docker build -t mybook-dashboard . 
-$ docker run -p 8050:8050 mybook-dashboard 
+$ docker run -p 8080:8080 mybook-dashboard 
 
 Docker deployment in gcp: 
 ```
 $ gcloud auth login
 $ gcloud auth configure-docker
-$ docker build -f Dockerfile -t gcr.io/mybookdashboard/mybook-dashboard .
+$ docker build --platform linux/amd64 -t gcr.io/mybookdashboard/mybook-dashboard .
 $ docker tag mybook-dashboard gcr.io/mybookdashboard/mybook-dashboard:1.0
 $ docker push gcr.io/mybookdashboard/mybook-dashboard:1.0
 
@@ -37,6 +37,8 @@ $ gcloud run deploy mybook-dashboard \
       --memory=256Mi \
       --max-instances=10 \
       --allow-unauthenticated
+
+increased memory - now it is working! 
 
 # Documentation of process: 
 I first make the code in notebooks and then export the modules in python files to be used in the dahboard. 
@@ -107,7 +109,16 @@ Multi-label classification to predict multiple genres from book description
 
 
 # Developing: 
-- fix stopwords import and use 
+- make px padding smaller 
+- adjust legends on the top and bottom rated authors, not nice on mobile 
+- bok description three fig title should be shorter 
+- adjust legends for popularity fig too, title not showing
+- adjust text size for lgends and maybe even ledengs to be below for time genre fig, and title and subtitle too long 
+- try and remove whitespace on figures mobile: fig.update_layout(
+    margin=dict(l=20, r=20, t=20, b=20),
+)
+
+
 - add row w a panel with incons showing some quick stats over books read the last year or month.
 - change tables to, horisontal figure, one with mean rating top and count of read books by authors. 
 - check all text, make similar to story graph
