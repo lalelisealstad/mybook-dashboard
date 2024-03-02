@@ -324,8 +324,8 @@ def update_figure_gapi(contents, filename):
                 viz_top_values(myreads['Categories'], top_n=7),
                 create_rating_table(myreads),
                 create_author_table(myreads),
-                book_ratings_bottom(myreads, 'Bottom Rated Books'),
                 book_ratings_top(myreads, 'Top Rated Books'),
+                book_ratings_bottom(myreads, 'Lowest Rated Books'),
                 ' ', 
                 myreads_list, 
                 False, 
@@ -377,8 +377,8 @@ def update_figure_gapi(contents, filename):
             viz_top_values(nmyreads['Categories'], top_n=7),
             create_rating_table(nmyreads),
             create_author_table(nmyreads),
-            book_ratings_bottom(nmyreads, 'Bottom Rated Books'),
             book_ratings_top(nmyreads, 'Top Rated Books'),
+            book_ratings_bottom(nmyreads, 'Lowest Rated Books'),
             'Upload success', 
             nmyreads_list, 
             True, 
@@ -406,8 +406,8 @@ def update_figure_gapi(contents, filename):
             viz_top_values(myreads['Categories'], top_n=7),
             create_rating_table(myreads),
             create_author_table(myreads),
-            book_ratings_bottom(myreads, 'Bottom Rated Books'),
             book_ratings_top(myreads, 'Top Rated Books'),
+            book_ratings_bottom(myreads, 'Lowest Rated Books'),
             'upload fail', 
             myreads_list, 
             False, 
@@ -453,4 +453,4 @@ def update_figure_ol_api(isuploaded):
     return desctree
 
 if __name__ == '__main__':
-    app.run_server(debug=False, host="0.0.0.0", port=8040, use_reloader=False) # debug False in deployment
+    app.run_server(debug=False, host="0.0.0.0", port=8080, use_reloader=False) # debug False in deployment

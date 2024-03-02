@@ -17,8 +17,8 @@ def ml_genre(df):
         return text
 
     # remove stopwords
-    from nltk.corpus import stopwords
-    stop_words = set(stopwords.words('english'))
+    from apps.english_stopwords import stopwords
+    stop_words = set(stopwords)
 
     # function to remove stopwords
     def remove_stopwords(text):

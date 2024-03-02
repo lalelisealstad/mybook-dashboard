@@ -15,12 +15,28 @@ $ source .venv/bin/activate
 $ python "app.py"
 ```
 
+Docker deploy locally: 
+$ docker build -t mybook-dashboard . 
+$ docker run -p 8050:8050 mybook-dashboard 
 
 Docker deployment in gcp: 
+```
+$ gcloud auth login
+$ gcloud auth configure-docker
+$ docker build -f Dockerfile -t gcr.io/mybookdashboard/mybook-dashboard .
+$ docker tag mybook-dashboard gcr.io/mybookdashboard/mybook-dashboard:1.0
+$ docker push gcr.io/mybookdashboard/mybook-dashboard:1.0
 
-not working! 
-Try and clean up requirements file with only necessary files. test app on own oc 
-gcr.io//mybookdashboard/mybook-dash:1.0 . 
+$ gcloud run deploy mybook-dashboard \
+      --image=gcr.io/mybookdashboard/mybook-dashboard:1.0 \
+      --platform=managed \
+      --region=europe-north1 \
+      --timeout=60 \
+      --concurrency=80 \
+      --cpu=1 \
+      --memory=256Mi \
+      --max-instances=10 \
+      --allow-unauthenticated
 
 # Documentation of process: 
 I first make the code in notebooks and then export the modules in python files to be used in the dahboard. 
@@ -91,11 +107,13 @@ Multi-label classification to predict multiple genres from book description
 
 
 # Developing: 
+- fix stopwords import and use 
 - add row w a panel with incons showing some quick stats over books read the last year or month.
-- change tables to, box plot and top authors to side bar chart like story graph
+- change tables to, horisontal figure, one with mean rating top and count of read books by authors. 
 - check all text, make similar to story graph
 - 0 rating should be changed to "not rated" in the ratings bar. 
 - text that explains how to interact with the figures. 
+- number of books read in year querter have subtext going into the graph
 
 
 ## Interactivity dashboard:

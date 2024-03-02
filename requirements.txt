@@ -4,7 +4,6 @@ gunicorn
 dash-bootstrap-components
 dash-core-components
 dash-html-components
-nltk
 numpy
 pandas
 plotly
@@ -15,3 +14,4 @@ statsmodels
 asyncio
 aiohttp
 scikit-learn == 1.4.0
+langdetect

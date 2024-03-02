@@ -132,7 +132,7 @@ def viz_year_read(df):
     fig['data'][0]['line']['color']='#A777F1'
     # Customize the plot layout
     fig.update_layout(
-        title='Number of Books Read per Year and Quarter<span style="font-size: 8px;"><br>Based on when you set the book to read in Goodreads, <br>if no date read, date added is used</span>',
+        title='Number of Books Read per Year and Quarter<span style="font-size: 8px;"><br>Using dates read in Goodreads, or date added to Goodreads</span>',
         xaxis=dict(title='Year and Quarter'),
         yaxis=dict(title='Number of Books Read'),
         showlegend=False
@@ -200,9 +200,7 @@ def viz_top_values(column, top_n=5):
 
 #### highest and lowest rated books
 
-#### highest and lowest rated books
-
-def book_ratings_bottom(data, title_txt):
+def book_ratings_top(data, title_txt):
     # Define custom colors
     my_rating_color = 'rgb(180,151,231)'
     google_books_color = '#34A853'
@@ -268,7 +266,7 @@ def book_ratings_bottom(data, title_txt):
     return fig
 
 
-def book_ratings_top(data, title_txt):
+def book_ratings_bottom(data, title_txt):
     # Define custom colors
     my_rating_color = 'rgb(180,151,231)'
     google_books_color = '#34A853'
