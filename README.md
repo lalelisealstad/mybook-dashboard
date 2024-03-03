@@ -25,11 +25,11 @@ Docker deployment in gcp:
 ```
 $ gcloud auth login
 $ gcloud auth configure-docker
-$ docker build --platform linux/amd64 -t gcr.io/mybookdashboard/mybook-dashboard:1.7 .
-$ docker push gcr.io/mybookdashboard/mybook-dashboard:1.7
+$ docker build --platform linux/amd64 -t gcr.io/mybookdashboard/mybook-dashboard:1.8 .
+$ docker push gcr.io/mybookdashboard/mybook-dashboard:1.8
 
 $ gcloud run deploy mybook-dashboard \
-      --image=gcr.io/mybookdashboard/mybook-dashboard:1.7 \
+      --image=gcr.io/mybookdashboard/mybook-dashboard:1.8 \
       --platform=managed \
       --region=europe-north1 \
       --timeout=800 \
@@ -111,6 +111,10 @@ Multi-label classification to predict multiple genres from book description
 
 
 # Developing: 
+- ticks of rating on top and bottom books, on mobile it starts at 4. 
+- add small margings on timeline quarter fig, a lot of whitespace on mobile, ad alo to category bar charts, AND to three figs 
+- y or x ticks on average rating top authors and for lollipop, should show 1,2,3,4,5. 
+- y axis label in scatter popularity too long. 
 - add row w a panel with some summary over books read, top author, number of books read this year and month, how many pages that is. and explain how to interact w figures. 
 
 
