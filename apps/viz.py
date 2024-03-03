@@ -39,7 +39,7 @@ def tree_topics(topics_dict):
             'xanchor': 'center',
             'yanchor': 'top',
             'font': dict(
-                size=22
+                size=18
             )
         },
         uniformtext=dict(minsize=16),  # Increase the minimum text size to 70
@@ -200,6 +200,23 @@ def viz_top_values(column, top_n=5):
 
 #### highest and lowest rated books
 
+
+def insert_br(text):
+    if len(text) > 25:
+        index_20 = text.find(' ', 25)  # Find the index of the first space after the 20th character
+        if index_20 != -1:  # If space is found after the 20th character
+            text = text[:index_20] + "<br>" + text[index_20+1:]  # Insert <br> after the space
+    if len(text) > 50:
+        index_40 = text.find(' ', 50)  # Find the index of the first space after the 30th character
+        if index_40 != -1:  # If space is found after the 30th character
+            text = text[:index_40] + "<br>" + text[index_40+1:]  # Insert <br> after the space
+    if len(text) > 75:
+        index_60 = text.find(' ', 75)  # Find the index of the first space after the 45th character
+        if index_60 != -1:  # If space is found after the 45th character
+            text = text[:index_60] + "<br>" + text[index_60+1:]  # Insert <br> after the space
+    return text
+
+
 def book_ratings_top(data, title_txt):
     # Define custom colors
     my_rating_color = 'rgb(180,151,231)'
@@ -213,7 +230,10 @@ def book_ratings_top(data, title_txt):
     filtered_data = filtered_data.sort_values(['My_Rating', 'Date_Read'], ascending=True)
 
     # Select the top 10 books based on your own rating
-    top_books = filtered_data.tail(15)
+    top_books = filtered_data.tail(15).copy()
+    
+    # Apply the function to the column
+    top_books['Title'] = top_books['Title'].apply(insert_br)
 
     # Create the figure object
     fig = px.scatter(template = "plotly_white")
@@ -242,25 +262,26 @@ def book_ratings_top(data, title_txt):
         y=top_books['Title'],
         mode='markers',
         name='My Rating',
-        marker=dict(color=my_rating_color, symbol='circle', size=15),
+        marker=dict(color=my_rating_color, symbol='circle', size=13),
     ))
 
     # Update the layout
     fig.update_layout(
         title= f'{title_txt}<br><span style="font-size: 11px;">*Showing only 15 latest read books</span>',
-        # font=dict(size=12),
-        yaxis=dict(title='Title', side='top', showticklabels=True),
+        height = 700,
+        yaxis=dict(title='Title', side='top', showticklabels=True, tickfont = dict(size = 10)),
         xaxis=dict(
             title='Rating',
             tickmode='array',
             tickvals=[1, 2, 3, 4, 5],
-            range=[0.5, 5.5],  # Set the X-axis range from 0 to 5, 
+            range=[0.8, 5.2],   
             showgrid=True),
         legend=dict(
-            title='Rating',  # Set legend title
+            title='Rating type: ',  # Set legend title
             orientation='h',  # Adjust x position of the legend
-            y=-0.15  # Adjust y position of the legend
-        )
+            y=-0.15,
+            font = dict(size=10)), 
+        margin=dict(l=5, r=5, t=80, b=100),
         )
     return fig
 
@@ -278,7 +299,10 @@ def book_ratings_bottom(data, title_txt):
     filtered_data = filtered_data.sort_values(['My_Rating', 'Date_Read'], ascending=True)
 
     # Select the top 10 books based on your own rating
-    top_books = filtered_data.head(15)
+    top_books = filtered_data.head(15).copy()
+
+    # Apply the function to the column
+    top_books['Title'] = top_books['Title'].apply(insert_br)
 
     # Create the figure object
     fig = px.scatter(template = "plotly_white")
@@ -313,19 +337,20 @@ def book_ratings_bottom(data, title_txt):
     # Update the layout
     fig.update_layout(
         title= f'{title_txt}<br><span style="font-size: 11px;">*Showing only 15 latest read books</span>',
-        # font=dict(size=12),
-        yaxis=dict(title='Title', side='top', showticklabels=True),
+        height = 700,
+        yaxis=dict(title='Title', side='top', showticklabels=True, tickfont = dict(size = 10)),
         xaxis=dict(
             title='Rating',
             tickmode='array',
             tickvals=[1, 2, 3, 4, 5],
-            range=[0.5, 5.5],  # Set the X-axis range from 0 to 5, 
+            range=[0.8, 5.2],   
             showgrid=True),
         legend=dict(
-            title='Rating',  # Set legend title
+            title='Rating type: ',  # Set legend title
             orientation='h',  # Adjust x position of the legend
-            y=-0.15  # Adjust y position of the legend
-        )
+            y=-0.15,
+            font = dict(size=10)), 
+        margin=dict(l=5, r=5, t=80, b=100),
         )
     return fig
 
@@ -405,19 +430,12 @@ def desc_tree(Description):
 
     fig.update_layout(
         title={
-            'text': 'Most common words found in book descriptions',
+            'text': 'Words in book descriptions',
             'y': 0.9,
             'x': 0.5,
             'xanchor': 'center',
             'yanchor': 'top',
-            # 'font': dict(
-            #     size=22
-            # )
         },
-        # uniformtext=dict(minsize=16),  # Increase the minimum text size to 70
-        # font=dict(
-        #     size=16  # Adjust the font size for the entire figure
-        # )
     )
 
     fig.update_traces(
@@ -451,10 +469,9 @@ def scatter_popularity(df):
     # Customize the legend
     fig.update_layout(
         legend=dict(
-            title='Rating Type:', 
+            title='Rating',  
             orientation='h',  
-            x=0.5,  
-            y=1.2,  
+            y=-0.15  
         ),
         
         xaxis=dict(
@@ -486,26 +503,15 @@ def lolli_fig(tbl_genre):
     
     fig3.update_layout(
         title={
-            'text': 'Rating and number of books read in genre',
-            'y': 0.9,
-            'x': 0.5,
-            'xanchor': 'center',
+            'text': 'Rating and number of books read in genre <br><span style="font-size: 7px;">The size of the bubble represent the number of books read within genre. <br>The position of the bubble along the y-axis represent how well books within the genre have been rated.</span>',
             'yanchor': 'top'},
         xaxis_range=[(tbl_genre.My_Rating.min()-0.5),(tbl_genre.My_Rating.max()+0.1)],
         template="plotly_white",  
         showlegend = False, 
+        xaxis_title='Rating',
         height = 800,
         margin=dict(l=10, r=10, t=100, b=30),
         )
-    
-    fig3.add_annotation(
-        x=0.45,
-        y=1.01,
-        xref='paper',
-        yref='paper',
-        text='<span style="font-size: 7px;">The size of the bubble represent the number of books read within genre. <br> The position of the bubble along the y-axis represent how well books within the genre have been rated.</span>',
-        showarrow=False,
-    )
 
     return fig3
  
@@ -537,13 +543,19 @@ def stack_fig(allgenredf, tbl_genre):
     )
     
     fig = px.area(tbl_percent, x='Year_Quarter',y='proportion', color='genres', line_group='genres',
-                title='Genre read - Timeline<span style="font-size: 7px;"><br>Proportion of books in genre read that year-quarter. A book can have multiple genres.</span>')
+                title='Genre read - Timeline<span style="font-size: 8px;"><br>Proportion of books in genre read that year-quarter. A book can have multiple genres.</span>')
         
     fig.update_layout( 
         xaxis_title='Year quarter',
-        yaxis_title='Proportion of books read in quarter with genre',
+        yaxis_title='% of books read with genre',
         legend_title="Genre",
         template="plotly_white"
-        , height = 600)
+        , height = 700, 
+        legend=dict(
+            title='Genres: ',  
+            orientation='h',  
+            y=-0.28,
+            font = dict(size=10)),
+        margin=dict(l=0, r=0, t=80, b=140),)
 
     return fig 

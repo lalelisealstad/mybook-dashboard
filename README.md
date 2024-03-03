@@ -1,3 +1,4 @@
+# My books dashboard 
 
 ## Run the app or the notebooks 
 Run first time: 
@@ -24,22 +25,21 @@ Docker deployment in gcp:
 ```
 $ gcloud auth login
 $ gcloud auth configure-docker
-$ docker build --platform linux/amd64 -t gcr.io/mybookdashboard/mybook-dashboard .
-$ docker tag mybook-dashboard gcr.io/mybookdashboard/mybook-dashboard:1.0
-$ docker push gcr.io/mybookdashboard/mybook-dashboard:1.0
+$ docker build --platform linux/amd64 -t gcr.io/mybookdashboard/mybook-dashboard:1.7 .
+$ docker push gcr.io/mybookdashboard/mybook-dashboard:1.7
 
 $ gcloud run deploy mybook-dashboard \
-      --image=gcr.io/mybookdashboard/mybook-dashboard:1.0 \
+      --image=gcr.io/mybookdashboard/mybook-dashboard:1.7 \
       --platform=managed \
       --region=europe-north1 \
-      --timeout=60 \
+      --timeout=800 \
       --concurrency=80 \
       --cpu=1 \
-      --memory=256Mi \
+      --memory=512Mi \
       --max-instances=10 \
       --allow-unauthenticated
 
-increased memory (and request timeout) - now it is working! 
+Latest version: tag 1.7
 
 # Documentation of process: 
 I first make the code in notebooks and then export the modules in python files to be used in the dahboard. 
@@ -111,19 +111,13 @@ Multi-label classification to predict multiple genres from book description
 
 
 # Developing: 
-
-- adjust legends on the top and bottom rated authors, not nice on mobile 
-- adjust legends for popularity fig too, title not showing
-- adjust text size for lgends and maybe even ledengs to be below for time genre fig, and title and subtitle too long 
-- adjust text in legends, too big. 
-
-
 - add row w a panel with some summary over books read, top author, number of books read this year and month, how many pages that is. and explain how to interact w figures. 
 
 
 ## Interactivity dashboard:
-- dates to view 
-what to read next: 
+- dates to view filter 
+
+what to read next page: 
 - ratings select filter.  
 - find books based on word or topic: show a list of the books. 
 - genre

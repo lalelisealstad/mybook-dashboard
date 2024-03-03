@@ -33,7 +33,6 @@ app = dash.Dash(__name__,
                 external_stylesheets=[dbc.themes.LUX],
                 meta_tags=[{'name': 'viewport',
                             'content': 'width=device-width, initial-scale=0.9, maximum-scale=1.2, minimum-scale=0.5,'}])
-                            # ,external_scripts=['https://cdn.plot.ly/plotly-basic-2.12.1.min.js'])
 
 
 # Define the layout of the app with rows and columns using Bootstrap grid system
@@ -164,15 +163,15 @@ app.layout = html.Div([
                     dcc.Graph(
                         id='figr1',
                     )
-                    ,xs=12, sm=12, md=12, lg=10, xl=10
+                    ,xs=12, sm=12, md=12, lg=5, xl=5
                     ),
-            ], className="mt-4", justify="center"), 
-            dbc.Row([
+            # ], className="mt-4", justify="center"), 
+            # dbc.Row([
                 dbc.Col(
                     dcc.Graph(
                         id='figr2',
                     )
-                   ,xs=12, sm=12, md=12, lg=10, xl=10
+                   ,xs=12, sm=12, md=12, lg=5, xl=5
                 ),
             ], className="mt-4", justify="center"),  
             
@@ -234,7 +233,7 @@ app.layout = html.Div([
                     )
                     ,xs=12, sm=12, md=12, lg=10, xl=10 
                 ),
-            ], className="mt-4", justify="center", style={'height': '610px'}),   
+            ], className="mt-4", justify="center", style={'height': '710px'}),   
             
             html.Div([
                 # dcc.Store inside the user's current browser session
@@ -370,8 +369,6 @@ def update_figure_gapi(contents, filename):
         n_figr1	 = 	book_ratings_top(nmyreads, 'Top Rated Books')
         n_figr2	 = 	book_ratings_bottom(nmyreads, 'Lowest Rated Books')
         n_upload_text	 = 	'Upload success'
-        n_store_data	 = 	nmyreads_list
-        n_is_uploaded_data	 = 	True
         n_scatter_fig	 = 	scatter_popularity(nmyreads)
         
         
@@ -414,8 +411,8 @@ def update_figure_gapi(contents, filename):
             n_figr1	,
             n_figr2	,
             n_upload_text	,
-            n_store_data	,
-            n_is_uploaded_data	,
+            nmyreads_list	,
+            True,
             n_scatter_fig	,
             n_lolli_fig	,
             n_spider_fig	,
@@ -423,8 +420,8 @@ def update_figure_gapi(contents, filename):
     
     
     except Exception as e:
-        print(str(e))
-        uploadtxt_fail = f"{str(e)}Upload failiure...Are you using the csv file from Goodreads export? {str(e)}"
+        logging.error(f"An error occurred on line {e.__traceback__.tb_lineno}: {e}")
+        uploadtxt_fail = f"Upload failiure...Are you using the csv file from Goodreads export?<br>Report error message: {str(e)}"
         year_text = f"This year I have read over {len(myreads.query('Year == @today_year'))} books. Totaling {(myreads.query('Year == @today_year').Number_of_Pages.sum().astype(int))} pages read!"
         myreads_list = myreads[['Author','Title']].to_dict()
         
@@ -487,4 +484,4 @@ def update_figure_ol_api(isuploaded):
     return desctree
 
 if __name__ == '__main__':
-    app.run_server(debug=True, host="0.0.0.0", port=8080, use_reloader=False) # debug False in deployment
+    app.run_server(debug=False, host="0.0.0.0", port=8080, use_reloader=False) # debug False in deployment
