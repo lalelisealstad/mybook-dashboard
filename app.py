@@ -15,20 +15,26 @@ from datetime import datetime
 import base64
 import io
 import pandas as pd
-# import aiohttp
-# import nest_asyncio
+import logging
+
 
 from apps.async_googleapi import book_info_add, asyncio
 from apps.api import api_key
 from apps.prediction import make_genre_tbl, ml_genre
 
 
+# Configure logging to see errors in gcp 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
 #  Create a Dash web application
 app = dash.Dash(__name__, 
-                external_stylesheets=[dbc.themes.LUX], # 'assets/bWLwgP.css'
+                external_stylesheets=[dbc.themes.LUX],
                 meta_tags=[{'name': 'viewport',
-                            'content': 'width=device-width, initial-scale=0.9, maximum-scale=1.2, minimum-scale=0.5,'}]
-                            ,external_scripts=['https://cdn.plot.ly/plotly-basic-2.12.1.min.js'])
+                            'content': 'width=device-width, initial-scale=0.9, maximum-scale=1.2, minimum-scale=0.5,'}])
+                            # ,external_scripts=['https://cdn.plot.ly/plotly-basic-2.12.1.min.js'])
+
 
 # Define the layout of the app with rows and columns using Bootstrap grid system
 app.layout = html.Div([
@@ -136,7 +142,7 @@ app.layout = html.Div([
                 ),
             ], className="mt-4", justify="center"),  
 
-            # Tables
+            # My top authors
             dbc.Row([
                 dbc.Col(
                     dcc.Graph(
@@ -150,7 +156,7 @@ app.layout = html.Div([
                     )
                    ,xs=12, sm=12, md=12, lg=5, xl=5
                 ),
-            ], className="mt-4", justify="center"),   
+            ], className="mt-4", justify="center"),
 
             # Rows for bottom and top rated books
             dbc.Row([
@@ -208,7 +214,7 @@ app.layout = html.Div([
                     )
                     ,xs=12, sm=12, md=12, lg=10, xl=10
                 ),
-            ], className="mt-4", justify="center"),   
+            ], className="mt-4", justify="center", style={'height': '810px'}),   
             
             # 10th row with spider
             dbc.Row([
@@ -218,7 +224,7 @@ app.layout = html.Div([
                     )
                     ,xs=12, sm=12, md=12, lg=10, xl=10 
                 ),
-            ], className="mt-4", justify="center"),   
+            ], className="mt-4", justify="center", style={'height': '610px'}),   
             
             # 11th row with scatter plot popularity
             dbc.Row([
@@ -228,7 +234,7 @@ app.layout = html.Div([
                     )
                     ,xs=12, sm=12, md=12, lg=10, xl=10 
                 ),
-            ], className="mt-4", justify="center"),   
+            ], className="mt-4", justify="center", style={'height': '610px'}),   
             
             html.Div([
                 # dcc.Store inside the user's current browser session
@@ -239,11 +245,10 @@ app.layout = html.Div([
     ], style={'width': '100%', 'display': 'inline-block',
                                  'box-shadow': '2px 2px 2px lightgrey',
                                  'background-color': '#fcfcfc',
-                                 'padding': '20px',
+                                 'padding': '5px',
                                  'align':"center"
                                  }),  
 ])
-
 
 
 server = app.server  # Get the underlying Flask server instance
@@ -320,11 +325,11 @@ def update_figure_gapi(contents, filename):
                 viz_year_read(myreads), 
                 # year_text, 
                 visualize_categories(myreads.query('My_Rating >0 '), 'My_Rating', 'How do I rate my books?<br><span style="font-size: 8px;">Number of books per Ratings category</span>', 'Goodreads rating'), 
-                visualize_categories(myreads, 'Page_Cat', 'How long are the books I read?<br><span style="font-size: 8px;">Number of books per Page Count Category</span>', 'Page Count Category'),
+                visualize_categories(myreads, 'Page_Cat', 'How long are the books I read?<br><span style="font-size: 8px;">Number of books per Page Count</span>', 'Page Count'),
                 viz_top_values(myreads['Language'], top_n=7),
                 viz_top_values(myreads['Categories'], top_n=7),
-                create_rating_table(myreads),
-                create_author_table(myreads),
+                author_count_fig(myreads),
+                author_rating_fig(myreads),
                 book_ratings_top(myreads, 'Top Rated Books'),
                 book_ratings_bottom(myreads, 'Lowest Rated Books'),
                 ' ', 
@@ -343,51 +348,79 @@ def update_figure_gapi(contents, filename):
         new_data = pd.read_csv(io.StringIO(decoded.decode('utf-8')))
         print(new_data)
         nmyreads = new_data.loc[new_data['Exclusive Shelf'] == "read"].copy()
-        print('almost async')
+        logging.info('almost async')
         nmyreadsgg = asyncio.run(book_info_add(nmyreads, api_key))
-        print(nmyreads)
+        logging.info('ascync complete - requests complete')
         nmyreads = dataprep(nmyreads, nmyreadsgg)
-        print('dataprep completed')
+        logging.info('dataprep completed')
         uploadtxt_suc = "Success, your data have been uploaded and the figures updated!"
         nyear_text = f"This year I have read over {len(nmyreads.query('Year == @today_year'))} books. Totaling {(nmyreads.query('Year == @today_year').Number_of_Pages.sum().astype(int))} pages read!"
         nmyreads_list = nmyreads[['Author','Title']].to_dict()
         
+        n_fig1	 = 	viz_pub_year(nmyreads)
+        n_data_info_text1	 = 	uploadtxt_suc
+        n_data_info_text2	 = 	""
+        n_fig2	 = 	viz_year_read(nmyreads)
+        n_fig3	 = 	visualize_categories(nmyreads.query('My_Rating > 0'), 'My_Rating', 'How do I rate my books?<br><span style="font-size: 8px;">Number of books per Ratings category</span>', 'Goodreads rating')
+        n_fig4	 = 	visualize_categories(nmyreads, 'Page_Cat', 'How long are the books I read?<br><span style="font-size: 8px;">Number of books per Page Count</span>', 'Page Count')
+        n_viztop1	 = 	viz_top_values(nmyreads['Language'], top_n=7)
+        n_viztop2	 = 	viz_top_values(nmyreads['Categories'], top_n=7)
+        n_tbl1	 = 	author_count_fig(nmyreads)
+        n_tbl2	 = 	author_rating_fig(nmyreads)
+        n_figr1	 = 	book_ratings_top(nmyreads, 'Top Rated Books')
+        n_figr2	 = 	book_ratings_bottom(nmyreads, 'Lowest Rated Books')
+        n_upload_text	 = 	'Upload success'
+        n_store_data	 = 	nmyreads_list
+        n_is_uploaded_data	 = 	True
+        n_scatter_fig	 = 	scatter_popularity(nmyreads)
+        
+        
+        
         # predict genre 
-        nmyreads = ml_genre(nmyreads)
-        print('prediction complete')
-        
-        # genre table 
-        from ast import literal_eval
-        nmyreads['genres'] = nmyreads['genres'].apply(literal_eval)
-        pd.to_pickle(nmyreads,'assets/test.pkl')
-        nallgenredf = nmyreads.query('genres != "[]"').copy().explode('genres')
-        
-        print('table below')
-        print(nallgenredf)
-        ngenre_tbl = make_genre_tbl(nallgenredf)
-        
+        # in case there is no description, then no genre 
+        if nmyreads.Description.isna().all(): 
+            fig = go.Figure()
+            fig.update_layout(title='Goodreads library books do not have book description, therefore not able to predict genre')
+            n_lolli_fig	 = 	fig
+            n_spider_fig	 = 	fig
+            n_genre_timeline_fig	 = 	fig
+        else:     
+            nmyreads = ml_genre(nmyreads)
+            print('prediction complete')
+            # genre table 
+            from ast import literal_eval
+            nmyreads['genres'] = nmyreads['genres'].apply(literal_eval)
+            # pd.to_pickle(nmyreads,'assets/test.pkl') # for testing 
+            nallgenredf = nmyreads.query('genres != "[]"').copy().explode('genres')
+            print(nallgenredf)
+            ngenre_tbl = make_genre_tbl(nallgenredf)
+            
+            n_lolli_fig	 = 	lolli_fig(ngenre_tbl)
+            n_spider_fig	 = 	spider_fig(ngenre_tbl)
+            n_genre_timeline_fig	 = 	stack_fig(nallgenredf, ngenre_tbl)
+                    
+                
         return(
-            viz_pub_year(nmyreads), 
-            uploadtxt_suc, 
-            "", 
-            viz_year_read(nmyreads), 
-            # nyear_text, 
-            visualize_categories(nmyreads.query('My_Rating > 0'), 'My_Rating', 'How do I rate my books?<br><span style="font-size: 8px;">Number of books per Ratings category</span>', 'Goodreads rating'),
-            visualize_categories(nmyreads, 'Page_Cat', 'How long are the books I read?<br><span style="font-size: 8px;">Number of books per Page Count Category</span>', 'Page Count Category'),
-            viz_top_values(nmyreads['Language'], top_n=7),
-            viz_top_values(nmyreads['Categories'], top_n=7),
-            create_rating_table(nmyreads),
-            create_author_table(nmyreads),
-            book_ratings_top(nmyreads, 'Top Rated Books'),
-            book_ratings_bottom(nmyreads, 'Lowest Rated Books'),
-            'Upload success', 
-            nmyreads_list, 
-            True, 
-            scatter_popularity(nmyreads), 
-            lolli_fig(ngenre_tbl),
-            spider_fig(ngenre_tbl),
-            stack_fig(nallgenredf, ngenre_tbl) 
-        )
+            n_fig1	,
+            n_data_info_text1	,
+            n_data_info_text2	,
+            n_fig2	,
+            n_fig3	,
+            n_fig4	,
+            n_viztop1	,
+            n_viztop2	,
+            n_tbl1	,
+            n_tbl2	,
+            n_figr1	,
+            n_figr2	,
+            n_upload_text	,
+            n_store_data	,
+            n_is_uploaded_data	,
+            n_scatter_fig	,
+            n_lolli_fig	,
+            n_spider_fig	,
+            n_genre_timeline_fig) 
+    
     
     except Exception as e:
         print(str(e))
@@ -402,11 +435,11 @@ def update_figure_gapi(contents, filename):
             viz_year_read(myreads), 
             # year_text, 
             visualize_categories(myreads.query('My_Rating > 0'), 'My_Rating', 'How do I rate my books?<br><span style="font-size: 8px;">Number of books per Ratings category</span>', 'Goodreads rating'),
-            visualize_categories(myreads, 'Page_Cat', 'How long are the books I read?<br><span style="font-size: 8px;">Number of books per Page Count Category</span>', 'Page Count Category'),
+            visualize_categories(myreads, 'Page_Cat', 'How long are the books I read?<br><span style="font-size: 8px;">Number of books per Page Count</span>', 'Page Count'),
             viz_top_values(myreads['Language'], top_n=7),
             viz_top_values(myreads['Categories'], top_n=7),
-            create_rating_table(myreads),
-            create_author_table(myreads),
+            author_count_fig(myreads),
+            author_rating_fig(myreads),
             book_ratings_top(myreads, 'Top Rated Books'),
             book_ratings_bottom(myreads, 'Lowest Rated Books'),
             'upload fail', 
@@ -441,7 +474,7 @@ def update_figure_ol_api(data, isuploaded):
     return [fig]
 
 
-# call back for the desc tree since the ntlk package stop words is so slow
+# call back for the desc tree since the computation was previously slow (when using nltk, not doing that anymore) 
 @app.callback(
     [Output('tree2', 'figure')],
     [Input('is-uploaded-data', 'data')]
@@ -454,4 +487,4 @@ def update_figure_ol_api(isuploaded):
     return desctree
 
 if __name__ == '__main__':
-    app.run_server(debug=False, host="0.0.0.0", port=8080, use_reloader=False) # debug False in deployment
+    app.run_server(debug=True, host="0.0.0.0", port=8080, use_reloader=False) # debug False in deployment

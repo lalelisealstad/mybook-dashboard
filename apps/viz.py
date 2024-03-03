@@ -110,7 +110,7 @@ def viz_pub_year(df):
     
     # Customize the plot layout
     fig.update_layout(
-        title='My Ratings and Publication Year',
+        title='My Rating vs. Publication Year',
         xaxis=dict(title='Publication Years'),
         yaxis=dict(title='My Rating'),
         showlegend=False,
@@ -132,7 +132,7 @@ def viz_year_read(df):
     fig['data'][0]['line']['color']='#A777F1'
     # Customize the plot layout
     fig.update_layout(
-        title='Number of Books Read per Year and Quarter<span style="font-size: 8px;"><br>Using dates read in Goodreads, or date added to Goodreads</span>',
+        title='Number of books read - Timeline',
         xaxis=dict(title='Year and Quarter'),
         yaxis=dict(title='Number of Books Read'),
         showlegend=False
@@ -184,8 +184,8 @@ def viz_top_values(column, top_n=5):
     labels = val_df.iloc[:, 0]
     values = val_df['count']
 
-    # Define the color theme
-    colors = ['rgb(179,205,227)', 'rgb(204,235,197)', 'rgb(222,203,228)', 'rgb(254,217,166)', 'rgb(250,231,175)','rgb(251,180,174)', 'rgb(251,180,174)','#9DC8C8', '#84B1ED' ]
+    # Define the color theme 
+    colors = ['rgba(230,230,250, 0.8)', 'rgb(179,205,227)', 'rgb(204,235,197)', 'rgb(222,203,228)', 'rgb(254,217,166)', 'rgb(250,231,175)','rgb(251,180,174)', 'rgb(251,180,174)','#9DC8C8', '#84B1ED' ]
 
     # Create the pie chart
     fig = go.Figure(data=[go.Pie(labels=labels, values=values)])
@@ -258,9 +258,8 @@ def book_ratings_top(data, title_txt):
             showgrid=True),
         legend=dict(
             title='Rating',  # Set legend title
-            orientation='h',  # Set legend orientation (horizontal)
-            x=0.01,  # Adjust x position of the legend
-            y=1.2,  # Adjust y position of the legend
+            orientation='h',  # Adjust x position of the legend
+            y=-0.15  # Adjust y position of the legend
         )
         )
     return fig
@@ -324,9 +323,8 @@ def book_ratings_bottom(data, title_txt):
             showgrid=True),
         legend=dict(
             title='Rating',  # Set legend title
-            orientation='h',  # Set legend orientation (horizontal)
-            x=0.01,  # Adjust x position of the legend
-            y=1.2,  # Adjust y position of the legend
+            orientation='h',  # Adjust x position of the legend
+            y=-0.15  # Adjust y position of the legend
         )
         )
     return fig
@@ -334,95 +332,55 @@ def book_ratings_bottom(data, title_txt):
 
 
 
-# Rating comparison table 
-
-def create_rating_table(data):
-    # Filter the data where My_Rating > 0
-    filtered_data = data[data['My_Rating'] > 0]
-
-    # Calculate the mean ratings
-    mean_ratings = filtered_data[['Average_Rating_GoogleBooks', 'Average_Rating_Goodreads', 'My_Rating']].mean()
-
-    # Create a list of rating names
-    ratings = ['My Ratings - Average', 'Ratings (Google Books) - Average', 'Ratings (Goodreads) - Average']
-
-    # Create a list of mean rating values
-    mean_values = np.round(mean_ratings.values.tolist(),2)
-
-    # Create a Plotly table
-    table = go.Figure(data=[go.Table(
-        header=dict(values=['Rating', 'Mean Rating'],
-                    fill_color='rgba(230,230,250, 1)',
-                    align=['left', 'center']),
-        cells=dict(values=[ratings, mean_values],
-                   fill_color='rgba(248,248,255,0.5)',
-                   align=['left', 'center'])
-    )])
-
-    # Set the table colors
-    table.update_layout(
-        title = 'My rating vs other people ratings',
-        template='plotly_white',
-        plot_bgcolor='white'
-    )
-
-    return table
-
-
-
 # My top authors 
 
-def create_author_table(data):
-    # Filter the data to include only the books you've read
-    data = data[data['Author'].isin(data['Author'].value_counts().nlargest(5).index)].copy()
+def author_count_fig(myreads):
+        
+        tbl_authors = myreads.Author.value_counts().head(20).reset_index().sort_values(by=['count'], ascending = True)
 
-    # Replace 0 by np.nan so its not included in the mean (Usally 0 rating means it is not rated) 
-    data['My_Rating'] = data['My_Rating'].replace(0, np.nan)
+        fig_author = px.bar(tbl_authors, x = 'count', y = 'Author', orientation = 'h', labels = {'count' : 'Number of books read by author'})
+
+        fig_author.update_layout(title = 'My most read authors',
+                template='plotly_white',
+                plot_bgcolor='white',
+                paper_bgcolor='white',
+                height = 600)
+
+        fig_author.update_traces(marker_color='#C1E1C1', width=0.4)
+        return fig_author
+
+
+
+def author_rating_fig(myreads): 
+    
+    ls_authors = myreads.Author.value_counts().head(20).reset_index().sort_values(by=['count'], ascending = True)['Author']
+
+    myreads['My_Rating'] = myreads['My_Rating'].replace(0, np.nan)
 
     # Calculate the mean 'My_Rating' grouped by 'Author'
-    data['mean_rating_by_author'] = data.groupby('Author',  observed=True)['My_Rating'].transform('mean').copy()
+    myreads['mean_rating_by_author'] = myreads.groupby('Author',  observed=True)['My_Rating'].transform('mean').copy()
 
-    data['My_Rating'] = np.where((data['My_Rating'] == np.nan) | data['My_Rating'].isnull(), data['mean_rating_by_author'], data['My_Rating'])
-
-    # Group the data by author and calculate the required statistics
-    author_stats = np.round(data.groupby('Author',  observed=True).agg({
-        'Read_Count' :'count', 
-        'My_Rating': 'mean',
-        'Average_Rating_Goodreads': 'mean',
-        'Rating_Count': 'sum',
-    }).reset_index(),1)
-
-    # Sort the authors based on the mean rating in descending order
-    sorted_authors = author_stats.sort_values('Read_Count', ascending=False)
-
-    # Select the top five authors
-    top_authors = sorted_authors.head(5)
-
-    # Create a Plotly table
-    table = go.Figure(data=[go.Table(
-        header=dict(values=['Author', 'Read count', 'My Average Rating'], #, 'Number of times rated on Goodreads', 'Average Goodreads Rating'],
-                    fill_color='rgba(230,230,250, 1)',
-                    align='center'),
-        cells=dict(values=[top_authors['Author'],
-                           top_authors['Read_Count'],
-                           top_authors['My_Rating']],
-                        #    top_authors['Rating_Count'],
-                        #    top_authors['Average_Rating_Goodreads']], 
-                           fill=dict(color=['rgba(230,230,250, 0.5)'] + ['rgba(248,248,255,0.5)'] * 2),  # Darker color for the first column
-                           align='center')
-    )])
+    myreads['My_Rating'] = np.where((myreads['My_Rating'] == np.nan) | myreads['My_Rating'].isnull(), myreads['mean_rating_by_author'], myreads['My_Rating'])
 
 
-    # Set the table colors and style
-    table.update_layout(
-        title = 'My most read authors',
-        template='plotly_white',
-        plot_bgcolor='white',
-        paper_bgcolor='white',
-        # font=dict(size=12),  
-    )
+    tbl_rating_authors = (
+        myreads.query('Author in @ls_authors')
+        .groupby('Author')['My_Rating'].mean().reset_index()
+        ).set_index('Author').reindex(index = ls_authors).reset_index()
 
-    return table
+
+    fig_author_rating = px.bar(tbl_rating_authors, x = 'My_Rating', y = 'Author', orientation = 'h', labels = {'My_Rating' : 'My average rating of author'})
+
+    fig_author_rating.update_layout(title = 'My average rating of my most read authors',
+            template='plotly_white',
+            plot_bgcolor='white',
+            paper_bgcolor='white',
+            height = 600)
+
+    fig_author_rating.update_traces(marker_color='#FFD580', width=0.4)
+    
+    return fig_author_rating
+
 
 
 # Three viz of count of words in description
@@ -509,49 +467,46 @@ def scatter_popularity(df):
     )
     return fig
 
-
-## Genre lollipopp
-
 def lolli_fig(tbl_genre):
 
     fig = px.scatter(tbl_genre, 
-        x=tbl_genre.index.tolist(), 
-        y="My_Rating",
+        y=tbl_genre.index.tolist(), 
+        x="My_Rating",
+        orientation='h',
         size="genres", 
         color=tbl_genre.index.tolist(),
-        size_max=50, 
-        )
+        size_max=80)
     fig.update_traces(hovertemplate='Genre: %{x} <br>My average rating of books with genre: %{y}<br>Number of read books with genre: %{marker.size:}') #
     
-    fig2 = px.bar(x=tbl_genre.index, y=tbl_genre['My_Rating'])
+    fig2 = px.bar(y=tbl_genre.index, x=tbl_genre['My_Rating'], orientation='h',)
     
-    fig2.update_traces(marker_color='rgb(158,202,225)', marker_line_color='rgb(158,202,225)',
-                    marker_line_width=1.5, opacity=0.9, width=0.1)                  
+    fig2.update_traces(marker_color='rgb(158,202,225)', marker_line_color='rgb(158,202,225)', marker_line_width=1.5, opacity=0.9, width=0.1)                  
 
     fig3 = go.Figure(data=fig.data + fig2.data)
     
     fig3.update_layout(
         title={
-            'text': 'My average rating and Number of books read with genre',
+            'text': 'Rating and number of books read in genre',
             'y': 0.9,
             'x': 0.5,
             'xanchor': 'center',
             'yanchor': 'top'},
-        yaxis_range=[1,5],
+        xaxis_range=[(tbl_genre.My_Rating.min()-0.5),(tbl_genre.My_Rating.max()+0.1)],
         template="plotly_white",  
         showlegend = False, 
+        height = 800,
+        margin=dict(l=10, r=10, t=100, b=30),
         )
     
     fig3.add_annotation(
-        x=0.5,
-        y=1.11,
+        x=0.45,
+        y=1.01,
         xref='paper',
         yref='paper',
-        text="The size of the bubble represent the number of books read within genre. <br> The position of the bubble along the y-axis represent how well books within the genre have been rated.",
+        text='<span style="font-size: 7px;">The size of the bubble represent the number of books read within genre. <br> The position of the bubble along the y-axis represent how well books within the genre have been rated.</span>',
         showarrow=False,
-        # font=dict(size=10),
     )
-        
+
     return fig3
  
  
@@ -561,7 +516,7 @@ import plotly.express as px
 
 def spider_fig(tbl_genre):
     spider_fig = px.line_polar(tbl_genre, r=tbl_genre.My_Rating, theta=tbl_genre.index, line_close=True, range_r=[1, tbl_genre.My_Rating.max()+0.2]).update_traces(fill='tonext', fillcolor='rgba(167, 119, 241, 0.5)')
-    spider_fig.update_layout(template='plotly_white')
+    spider_fig.update_layout(template='plotly_white', title = 'My average rating of books with genre', height = 600)
     return spider_fig
     
     
@@ -582,12 +537,13 @@ def stack_fig(allgenredf, tbl_genre):
     )
     
     fig = px.area(tbl_percent, x='Year_Quarter',y='proportion', color='genres', line_group='genres',
-                title='Do I go through periods were I read more of the same genres?<span style="font-size: 10px;"><br>Figure shows the proportion of books in each genre read in that year-quarter. A book can have multiple genres.</span>')
+                title='Genre read - Timeline<span style="font-size: 7px;"><br>Proportion of books in genre read that year-quarter. A book can have multiple genres.</span>')
         
     fig.update_layout( 
         xaxis_title='Year quarter',
-        yaxis_title='Proportion of books read with genre',
+        yaxis_title='Proportion of books read in quarter with genre',
         legend_title="Genre",
-        template="plotly_white")
+        template="plotly_white"
+        , height = 600)
 
     return fig 

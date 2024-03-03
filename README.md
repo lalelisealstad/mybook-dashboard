@@ -1,5 +1,5 @@
 
-#### Run the app or the notebooks 
+## Run the app or the notebooks 
 Run first time: 
 ```
 $ python3 -m venv .venv
@@ -15,6 +15,7 @@ $ source .venv/bin/activate
 $ python "app.py"
 ```
 
+## Deployment notes: 
 Docker deploy locally: 
 $ docker build -t mybook-dashboard . 
 $ docker run -p 8080:8080 mybook-dashboard 
@@ -38,7 +39,7 @@ $ gcloud run deploy mybook-dashboard \
       --max-instances=10 \
       --allow-unauthenticated
 
-increased memory - now it is working! 
+increased memory (and request timeout) - now it is working! 
 
 # Documentation of process: 
 I first make the code in notebooks and then export the modules in python files to be used in the dahboard. 
@@ -80,7 +81,8 @@ My read books - viz :
 - distribution of languages, pie chart
 - pie chart categories, 
 - top and botton books my rating with other ratings 
-- most read authors by count, and most liked authors 
+- most read authors by count
+- rating of most read authors  
 - this year in books, total books and total pages. 
 - tree figures showing category and topics in books 
 - scatter pot to visualize if rating and populatity correlate 
@@ -109,22 +111,14 @@ Multi-label classification to predict multiple genres from book description
 
 
 # Developing: 
-- make px padding smaller 
+
 - adjust legends on the top and bottom rated authors, not nice on mobile 
-- bok description three fig title should be shorter 
 - adjust legends for popularity fig too, title not showing
 - adjust text size for lgends and maybe even ledengs to be below for time genre fig, and title and subtitle too long 
-- try and remove whitespace on figures mobile: fig.update_layout(
-    margin=dict(l=20, r=20, t=20, b=20),
-)
+- adjust text in legends, too big. 
 
 
-- add row w a panel with incons showing some quick stats over books read the last year or month.
-- change tables to, horisontal figure, one with mean rating top and count of read books by authors. 
-- check all text, make similar to story graph
-- 0 rating should be changed to "not rated" in the ratings bar. 
-- text that explains how to interact with the figures. 
-- number of books read in year querter have subtext going into the graph
+- add row w a panel with some summary over books read, top author, number of books read this year and month, how many pages that is. and explain how to interact w figures. 
 
 
 ## Interactivity dashboard:
@@ -136,7 +130,7 @@ what to read next:
 - top authors filter, or author select 
 
 #### Improve performance / layout:
-- remove prints and use logging instead. 
+-  stop possibility of bots using app when not on free tier. 
 - set up of topics in json not necessary in case of input
 - link to github / explainer of how the dashboard, api call collection works. 
 - improve speed using client side callbacks 
