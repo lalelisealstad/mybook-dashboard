@@ -35,6 +35,8 @@ app = dash.Dash(__name__,
                 meta_tags=[{'name': 'viewport',
                             'content': 'width=device-width, initial-scale=0.9, maximum-scale=1.2, minimum-scale=0.5,'}])
 
+app.title = 'Book Dashboard'
+
 
 # Define the layout of the app with rows and columns using Bootstrap grid system
 app.layout = html.Div([
@@ -346,7 +348,7 @@ def update_figure_gapi(contents, filename):
         one_year_ago = today - timedelta(days=365)
 
         n_fig1	 = 	viz_pub_year(nmyreads)
-        n_data_info_text1	 = 	f"Your data have been uploaded and the figures updated. In the last 12 months you have read {len(myreads.query('Date_Read > @one_year_ago'))} books. Totaling {(myreads.query('Date_Read > @one_year_ago').Number_of_Pages.sum().astype(int))} pages read. <br><br>View the figures to discover how you rate your books, your most read authors, explore different genres and more. You can interact with the figures by hovering over points to see details or zoom in for a closer look. If you need to reset the figures, simply double-click on them. Enjoy exploring your reading stats!"
+        n_data_info_text1	 = 	f"Your data have been uploaded and the figures updated. In the last 12 months you have read {len(nmyreads.query('Date_Read > @one_year_ago'))} books. Totaling {(nmyreads.query('Date_Read > @one_year_ago').Number_of_Pages.sum().astype(int))} pages read. <br><br>View the figures to discover how you rate your books, your most read authors, explore different genres and more. You can interact with the figures by hovering over points to see details or zoom in for a closer look. If you need to reset the figures, simply double-click on them. Enjoy exploring your reading stats!"
         n_data_info_text2	 = 	""
         n_fig2	 = 	viz_year_read(nmyreads)
         n_fig3	 = 	visualize_categories(nmyreads.query('My_Rating > 0'), 'My_Rating', 'How do I rate my books?<br><span style="font-size: 8px;">Number of books per Ratings category</span>', 'Goodreads rating')
