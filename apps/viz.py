@@ -475,7 +475,7 @@ def scatter_popularity(df):
         ),
         
         xaxis=dict(
-            title='Number of times the book has been rated in Google Books',  
+            title='No. of ratings on Google Books',  
         ),
         
         yaxis=dict(
@@ -506,6 +506,12 @@ def lolli_fig(tbl_genre):
             'text': 'Rating and number of books read in genre <br><span style="font-size: 7px;">The size of the bubble represent the number of books read within genre. <br>The position of the bubble along the y-axis represent how well books within the genre have been rated.</span>',
             'yanchor': 'top'},
         xaxis_range=[(tbl_genre.My_Rating.min()-0.5),(tbl_genre.My_Rating.max()+0.1)],
+        xaxis=dict(
+            title='Rating',
+            tickmode='array',
+            tickvals=[1, 2, 3, 4, 5],
+            range=[0.8, 5.2],   
+            showgrid=True),
         template="plotly_white",  
         showlegend = False, 
         xaxis_title='Rating',
