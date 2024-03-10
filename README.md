@@ -111,7 +111,6 @@ Multi-label classification to predict multiple genres from book description
 
 
 # Developing: 
-
 ## Interactivity dashboard:
 - dates to view filter 
 
