@@ -16,6 +16,7 @@ import base64
 import io
 import pandas as pd
 import logging
+from datetime import datetime, timedelta
 
 
 from apps.async_googleapi import book_info_add, asyncio
@@ -34,6 +35,8 @@ app = dash.Dash(__name__,
                 meta_tags=[{'name': 'viewport',
                             'content': 'width=device-width, initial-scale=0.9, maximum-scale=1.2, minimum-scale=0.5,'}])
 
+app.title = 'Book Dashboard'
+
 
 # Define the layout of the app with rows and columns using Bootstrap grid system
 app.layout = html.Div([
@@ -43,7 +46,7 @@ app.layout = html.Div([
                     dbc.Col(
                         [
                             html.H1("Book dashboard", className="my-4 text-center",style={'color': '#2B2B35', 'text-align': 'center'},),
-                            html.H6("Visualising statistics of read books", style={'color': '#2B2B35', 'text-align': 'center'},),
+                            html.P("Welcome to the Book Reading Statistics Dashboard. Explore insightful data about your reading habits and uncover new insights into your literary adventures!", style={'color': '#2b2b35', 'text-align': 'center', 'font-size': '16px'}),
                         ],
                     style={'background-color': '#D6C9F2'}, className='five columns')
             ,justify="center"),
@@ -76,22 +79,10 @@ app.layout = html.Div([
                             },
                             multiple=False),  # Allow only one file upload at a time
                         dcc.Markdown(id='upload-text', dangerously_allow_html=True, style={'font-size': '11px',  'textAlign': 'center'}),
-                    ]), 
-                    dcc.Markdown('''Upload may take a while depending on library size. Large libraries may take up to 15 minutes..''', style={'font-size': '11px',  'textAlign': 'center'})]
-                    ,xs=10, sm=10, md=10, lg=5, xl=5
-                )
+                        ])
+                    ] ,xs=10, sm=10, md=10, lg=5, xl=5)
             ], className="mt-2", style={'color': '#2B2B35'}, justify="center"), 
-            
-            # row with text summarising year in books
-
-            # dbc.Row([
-            #     dbc.Col(
-            #             html.Div(id='data-info-text3'),
-            #             # (f"This year I have read over {len(myreads.query('Year == @today_year'))} books. Totaling {f'{(myreads.Number_of_Pages.sum().astype(int)):,}'} pages read!", style={'color': '#2B2B35', 'text-align': 'center'}),
-            #         xs=10, sm=10, md=10, lg=5, xl=5
-            #     ),
-            # ], className="mt-6", style={'height': '40px', 'font-size': '16px'}, justify="center"), 
-
+        
             # First row with figures
             dbc.Row([
                 dbc.Col(
@@ -99,13 +90,13 @@ app.layout = html.Div([
                         id='fig1'
                         # figure=viz_pub_year(myreads),
                     )
-                    ,xs=12, sm=12, md=12, lg=5, xl=5
+                    ,xs=12, sm=12, md=5, lg=5, xl=5
                 ),
                 dbc.Col(
                     dcc.Graph(
                         id='fig2'
                     )
-                    ,xs=12, sm=12, md=12, lg=5, xl=5
+                    ,xs=12, sm=12, md=5, lg=5, xl=5
                 ),
             ],className="mt-2", justify="center"),
 
@@ -115,13 +106,13 @@ app.layout = html.Div([
                     dcc.Graph(
                         id='fig3'
                     )
-                    ,xs=12, sm=12, md=12, lg=5, xl=5
+                    ,xs=12, sm=12, md=5, lg=5, xl=5
                 ),
                 dbc.Col(
                     dcc.Graph(
                         id='fig4'
                     )
-                    ,xs=12, sm=12, md=12, lg=5, xl=5
+                    ,xs=12, sm=12, md=5, lg=5, xl=5
                 ),
             ], className="mt-4", justify="center"),  
 
@@ -131,13 +122,13 @@ app.layout = html.Div([
                     dcc.Graph(
                         id='viztop1',
                     )
-                    ,xs=12, sm=12, md=12, lg=5, xl=5
+                    ,xs=12, sm=12, md=5, lg=5, xl=5
                 ),
                 dbc.Col(
                     dcc.Graph(
                         id='viztop2',
                     )
-                    ,xs=12, sm=12, md=12, lg=5, xl=5
+                    ,xs=12, sm=12, md=5, lg=5, xl=5
                 ),
             ], className="mt-4", justify="center"),  
 
@@ -147,13 +138,13 @@ app.layout = html.Div([
                     dcc.Graph(
                         id='tbl1',
                     )
-                    ,xs=12, sm=12, md=12, lg=5, xl=5
+                    ,xs=12, sm=12, md=5, lg=5, xl=5
                     ),
                 dbc.Col(
                     dcc.Graph(
                         id='tbl2',
                     )
-                   ,xs=12, sm=12, md=12, lg=5, xl=5
+                   ,xs=12, sm=12, md=5, lg=5, xl=5
                 ),
             ], className="mt-4", justify="center"),
 
@@ -163,7 +154,7 @@ app.layout = html.Div([
                     dcc.Graph(
                         id='figr1',
                     )
-                    ,xs=12, sm=12, md=12, lg=5, xl=5
+                    ,xs=12, sm=12, md=5, lg=5, xl=5
                     ),
             # ], className="mt-4", justify="center"), 
             # dbc.Row([
@@ -171,7 +162,7 @@ app.layout = html.Div([
                     dcc.Graph(
                         id='figr2',
                     )
-                   ,xs=12, sm=12, md=12, lg=5, xl=5
+                   ,xs=12, sm=12, md=5, lg=5, xl=5
                 ),
             ], className="mt-4", justify="center"),  
             
@@ -181,7 +172,7 @@ app.layout = html.Div([
                     dcc.Graph(
                         id='tree',
                     )
-                    ,xs=12, sm=12, md=12, lg=10, xl=10
+                    ,xs=12, sm=12, md=10, lg=10, xl=10
                 ), 
             ], className="mt-4", justify="center"), 
 
@@ -191,7 +182,7 @@ app.layout = html.Div([
                     dcc.Graph(
                         id='tree2'
                     )
-                    ,xs=12, sm=12, md=12, lg=10, xl=10  
+                    ,xs=12, sm=12, md=10, lg=10, xl=10  
                 ),
             ], className="mt-4", justify="center"),  
             
@@ -201,7 +192,7 @@ app.layout = html.Div([
                     dcc.Graph(
                         id='scatter-fig'
                     )
-                    ,xs=12, sm=12, md=12, lg=10, xl=10
+                    ,xs=12, sm=12, md=10, lg=10, xl=10
                 ),
             ], className="mt-4", justify="center"),  
             
@@ -211,7 +202,7 @@ app.layout = html.Div([
                     dcc.Graph(
                         id='lolli-fig'
                     )
-                    ,xs=12, sm=12, md=12, lg=10, xl=10
+                    ,xs=12, sm=12, md=10, lg=10, xl=10
                 ),
             ], className="mt-4", justify="center", style={'height': '810px'}),   
             
@@ -221,7 +212,7 @@ app.layout = html.Div([
                     dcc.Graph(
                         id='spider-fig'
                     )
-                    ,xs=12, sm=12, md=12, lg=10, xl=10 
+                    ,xs=12, sm=12, md=10, lg=10, xl=10 
                 ),
             ], className="mt-4", justify="center", style={'height': '610px'}),   
             
@@ -231,7 +222,7 @@ app.layout = html.Div([
                     dcc.Graph(
                         id='genre-timeline-fig'
                     )
-                    ,xs=12, sm=12, md=12, lg=10, xl=10 
+                    ,xs=12, sm=12, md=10, lg=10, xl=10 
                 ),
             ], className="mt-4", justify="center", style={'height': '710px'}),   
             
@@ -266,7 +257,6 @@ today_year = datetime.today().year
         Output('data-info-text1', 'children'),
         Output('data-info-text2', 'children'),
         Output('fig2', 'figure'),
-        # Output('data-info-text3', 'children'),
         Output('fig3', 'figure'),
         Output('fig4', 'figure'),
         Output('viztop1', 'figure'),
@@ -305,10 +295,10 @@ def update_figure_gapi(contents, filename):
             uploadtxt_sug1 = "See your reading stats by uploading your Goodreads library export here:"
             uploadtxt_sug2 =  """How to find and export Goodreads library:<br>
                             1. Go to [your Goodreads profile](https://www.goodreads.com/?target=_blank)<br>
-                            2. Click on "My Books"<br>
+                            2. Click on "My Books". If you are on a mobile, go to [https://www.goodreads.com/review/import](https://www.goodreads.com/review/import)<br>
                             3. Scroll down and click on "Import/Export" under "Tools" on the left sidebar<br>
-                            4. Click "Export Your Books" to download the export file"""
-            year_text = f"This year I have read over {len(myreads.query('Year == @today_year'))} books. Totaling {(myreads.query('Year == @today_year').Number_of_Pages.sum().astype(int))} pages read!"
+                            4. Click "Export Your Books" to download the export file<br><br>
+                            Once you upload your data, you'll find insightful statistics and trends about your reading habits."""
             myreads_list = myreads[['Author','Title']].to_dict()
             
             # genre table 
@@ -322,7 +312,6 @@ def update_figure_gapi(contents, filename):
                 uploadtxt_sug1, 
                 uploadtxt_sug2, 
                 viz_year_read(myreads), 
-                # year_text, 
                 visualize_categories(myreads.query('My_Rating >0 '), 'My_Rating', 'How do I rate my books?<br><span style="font-size: 8px;">Number of books per Ratings category</span>', 'Goodreads rating'), 
                 visualize_categories(myreads, 'Page_Cat', 'How long are the books I read?<br><span style="font-size: 8px;">Number of books per Page Count</span>', 'Page Count'),
                 viz_top_values(myreads['Language'], top_n=7),
@@ -331,7 +320,7 @@ def update_figure_gapi(contents, filename):
                 author_rating_fig(myreads),
                 book_ratings_top(myreads, 'Top Rated Books'),
                 book_ratings_bottom(myreads, 'Lowest Rated Books'),
-                ' ', 
+                'Upload may take a while depending on library size. Large libraries may take up to 10 minutes..', 
                 myreads_list, 
                 False, 
                 scatter_popularity(myreads),
@@ -352,12 +341,14 @@ def update_figure_gapi(contents, filename):
         logging.info('ascync complete - requests complete')
         nmyreads = dataprep(nmyreads, nmyreadsgg)
         logging.info('dataprep completed')
-        uploadtxt_suc = "Success, your data have been uploaded and the figures updated!"
-        nyear_text = f"This year I have read over {len(nmyreads.query('Year == @today_year'))} books. Totaling {(nmyreads.query('Year == @today_year').Number_of_Pages.sum().astype(int))} pages read!"
         nmyreads_list = nmyreads[['Author','Title']].to_dict()
         
+        # Year summary
+        today = datetime.today()
+        one_year_ago = today - timedelta(days=365)
+
         n_fig1	 = 	viz_pub_year(nmyreads)
-        n_data_info_text1	 = 	uploadtxt_suc
+        n_data_info_text1	 = 	f"Your data have been uploaded and the figures updated. In the last 12 months you have read {len(nmyreads.query('Date_Read > @one_year_ago'))} books. Totaling {(nmyreads.query('Date_Read > @one_year_ago').Number_of_Pages.sum().astype(int))} pages read. <br><br>View the figures to discover how you rate your books, your most read authors, explore different genres and more. You can interact with the figures by hovering over points to see details or zoom in for a closer look. If you need to reset the figures, simply double-click on them. Enjoy exploring your reading stats!"
         n_data_info_text2	 = 	""
         n_fig2	 = 	viz_year_read(nmyreads)
         n_fig3	 = 	visualize_categories(nmyreads.query('My_Rating > 0'), 'My_Rating', 'How do I rate my books?<br><span style="font-size: 8px;">Number of books per Ratings category</span>', 'Goodreads rating')
@@ -422,7 +413,6 @@ def update_figure_gapi(contents, filename):
     except Exception as e:
         logging.error(f"An error occurred on line {e.__traceback__.tb_lineno}: {e}")
         uploadtxt_fail = f"Upload failiure...Are you using the csv file from Goodreads export?<br>Report error message: {str(e)}"
-        year_text = f"This year I have read over {len(myreads.query('Year == @today_year'))} books. Totaling {(myreads.query('Year == @today_year').Number_of_Pages.sum().astype(int))} pages read!"
         myreads_list = myreads[['Author','Title']].to_dict()
         
         return (
@@ -430,7 +420,6 @@ def update_figure_gapi(contents, filename):
             uploadtxt_fail, 
             "", 
             viz_year_read(myreads), 
-            # year_text, 
             visualize_categories(myreads.query('My_Rating > 0'), 'My_Rating', 'How do I rate my books?<br><span style="font-size: 8px;">Number of books per Ratings category</span>', 'Goodreads rating'),
             visualize_categories(myreads, 'Page_Cat', 'How long are the books I read?<br><span style="font-size: 8px;">Number of books per Page Count</span>', 'Page Count'),
             viz_top_values(myreads['Language'], top_n=7),
