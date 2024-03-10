@@ -25,11 +25,11 @@ Docker deployment in gcp:
 ```
 $ gcloud auth login
 $ gcloud auth configure-docker
-$ docker build --platform linux/amd64 -t gcr.io/mybookdashboard/mybook-dashboard:1.8 .
-$ docker push gcr.io/mybookdashboard/mybook-dashboard:1.8
+$ docker build --platform linux/amd64 -t gcr.io/mybookdashboard/mybook-dashboard:1.9 .
+$ docker push gcr.io/mybookdashboard/mybook-dashboard:1.9
 
 $ gcloud run deploy mybook-dashboard \
-      --image=gcr.io/mybookdashboard/mybook-dashboard:1.8 \
+      --image=gcr.io/mybookdashboard/mybook-dashboard:1.9 \
       --platform=managed \
       --region=europe-north1 \
       --timeout=800 \
@@ -39,7 +39,7 @@ $ gcloud run deploy mybook-dashboard \
       --max-instances=10 \
       --allow-unauthenticated
 
-Latest version: tag 1.7
+Latest version: tag 1.9
 
 # Documentation of process: 
 I first make the code in notebooks and then export the modules in python files to be used in the dahboard. 
