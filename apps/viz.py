@@ -7,6 +7,32 @@ from collections import Counter
 import numpy as np
 import re
 
+
+# books read year
+def viz_read(df):
+    
+    df = df.dropna(subset=['Year'])
+    
+    # Count the number of books read in each year and quarter
+    year_quarter_counts = df.groupby('Year',  observed=True).size().reset_index(name='Books Read')
+    
+    # Create the line chart
+    fig = px.line(year_quarter_counts, x='Year', y='Books Read', markers=True, template = "plotly_white")
+    fig['data'][0]['line']['color']='#A777F1'
+    # Customize the plot layout
+    fig.update_layout(
+        title='Number of books read - Timeline',
+        xaxis=dict(title='Year', dtick=1),
+        yaxis=dict(title='Number of Books Read', range=[year_quarter_counts['Books Read'].min()-20, year_quarter_counts['Books Read'].max()+20]),
+        
+        showlegend=False
+
+    )
+    return fig
+
+
+
+
 # topics viz tree map
 
 def tree_topics(topics_dict): 

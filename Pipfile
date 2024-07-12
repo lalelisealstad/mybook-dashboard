@@ -29,6 +29,7 @@ statsmodels = "*"
 pyarrow = "*"
 langdetect = "*"
 dash-tools = "*"
+beautifulsoup4 = "*"
 
 [dev-packages]
 ipykernel = "*"

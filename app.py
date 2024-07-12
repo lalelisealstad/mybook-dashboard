@@ -8,9 +8,9 @@ from dash.dependencies import Input, Output, State
 import pandas as pd 
 import json
 import numpy as np
-from apps.viz import *
-from apps.dataimport import *
-from apps.collect_data import *
+from apps.viz import viz_read, tree_topics, viz_pub_year, viz_year_read, visualize_categories, viz_top_values, insert_br, book_ratings_top, book_ratings_bottom, author_count_fig, desc_tree, lolli_fig, spider_fig, stack_fig, author_rating_fig
+from apps.dataimport import dataprep
+from apps.collect_data import get_book_topics
 from datetime import datetime
 import base64
 import io
@@ -83,7 +83,34 @@ app.layout = html.Div([
                     ] ,xs=10, sm=10, md=10, lg=5, xl=5)
             ], className="mt-2", style={'color': '#2B2B35'}, justify="center"), 
         
-            # First row with figures
+            # year-timeline
+            dbc.Row([
+                dbc.Col(
+                    dcc.Graph(
+                        id='year-timeline'
+                    )
+                    ,xs=12, sm=12, md=10, lg=10, xl=10  
+                ),
+            ], className="mt-4", justify="center"),  
+            
+            
+            # row with bar charts
+            dbc.Row([
+                dbc.Col(
+                    dcc.Graph(
+                        id='fig3'
+                    )
+                    ,xs=12, sm=12, md=5, lg=5, xl=5
+                ),
+                dbc.Col(
+                    dcc.Graph(
+                        id='fig4'
+                    )
+                    ,xs=12, sm=12, md=5, lg=5, xl=5
+                ),
+            ], className="mt-4", justify="center"),  
+        
+            # publication year rating and read year-quarter
             dbc.Row([
                 dbc.Col(
                     dcc.Graph(
@@ -99,22 +126,6 @@ app.layout = html.Div([
                     ,xs=12, sm=12, md=5, lg=5, xl=5
                 ),
             ],className="mt-2", justify="center"),
-
-            # Second row with bar charts
-            dbc.Row([
-                dbc.Col(
-                    dcc.Graph(
-                        id='fig3'
-                    )
-                    ,xs=12, sm=12, md=5, lg=5, xl=5
-                ),
-                dbc.Col(
-                    dcc.Graph(
-                        id='fig4'
-                    )
-                    ,xs=12, sm=12, md=5, lg=5, xl=5
-                ),
-            ], className="mt-4", justify="center"),  
 
             # Third row - pie charts
             dbc.Row([
@@ -166,7 +177,7 @@ app.layout = html.Div([
                 ),
             ], className="mt-4", justify="center"),  
             
-            # Sixth row with desc fig
+            #row with desc fig
             dbc.Row([
                 dbc.Col(
                     dcc.Graph(
@@ -176,7 +187,7 @@ app.layout = html.Div([
                 ), 
             ], className="mt-4", justify="center"), 
 
-            # Seventh row with topic fig
+            # row with topic fig
             dbc.Row([
                 dbc.Col(
                     dcc.Graph(
@@ -186,17 +197,7 @@ app.layout = html.Div([
                 ),
             ], className="mt-4", justify="center"),  
             
-            # Eight row with scatter plot popularity
-            dbc.Row([
-                dbc.Col(
-                    dcc.Graph(
-                        id='scatter-fig'
-                    )
-                    ,xs=12, sm=12, md=10, lg=10, xl=10
-                ),
-            ], className="mt-4", justify="center"),  
-            
-            # 9th row with lollipop
+            # row with lollipop
             dbc.Row([
                 dbc.Col(
                     dcc.Graph(
@@ -206,7 +207,7 @@ app.layout = html.Div([
                 ),
             ], className="mt-4", justify="center", style={'height': '810px'}),   
             
-            # 10th row with spider
+            # row with spider
             dbc.Row([
                 dbc.Col(
                     dcc.Graph(
@@ -216,7 +217,7 @@ app.layout = html.Div([
                 ),
             ], className="mt-4", justify="center", style={'height': '610px'}),   
             
-            # 11th row with scatter plot popularity
+            # row with scatter plot popularity
             dbc.Row([
                 dbc.Col(
                     dcc.Graph(
@@ -268,10 +269,10 @@ today_year = datetime.today().year
         Output('upload-text', 'children'),
         Output('store-data', 'data'), 
         Output('is-uploaded-data', 'data'),
-        Output('scatter-fig', 'figure'),
         Output('lolli-fig', 'figure'),
         Output('spider-fig', 'figure'),
-        Output('genre-timeline-fig', 'figure')],
+        Output('genre-timeline-fig', 'figure'), 
+        Output('year-timeline', 'figure')],
     [Input('upload-data', 'contents')],
     [State('upload-data', 'filename')]
 )
@@ -323,10 +324,10 @@ def update_figure_gapi(contents, filename):
                 'Upload may take a while depending on library size. Large libraries may take up to 10 minutes..', 
                 myreads_list, 
                 False, 
-                scatter_popularity(myreads),
                 lolli_fig(genre_tbl),
                 spider_fig(genre_tbl),
-                stack_fig(allgenredf, genre_tbl)
+                stack_fig(allgenredf, genre_tbl), 
+                viz_read(myreads)
             )
 
     content_type, content_string = contents.split(',')
@@ -360,7 +361,6 @@ def update_figure_gapi(contents, filename):
         n_figr1	 = 	book_ratings_top(nmyreads, 'Top Rated Books')
         n_figr2	 = 	book_ratings_bottom(nmyreads, 'Lowest Rated Books')
         n_upload_text	 = 	'Upload success'
-        n_scatter_fig	 = 	scatter_popularity(nmyreads)
         
         
         
@@ -404,10 +404,10 @@ def update_figure_gapi(contents, filename):
             n_upload_text	,
             nmyreads_list	,
             True,
-            n_scatter_fig	,
             n_lolli_fig	,
             n_spider_fig	,
-            n_genre_timeline_fig) 
+            n_genre_timeline_fig, 
+            viz_read(nmyreads)) 
     
     
     except Exception as e:
@@ -431,10 +431,10 @@ def update_figure_gapi(contents, filename):
             'upload fail', 
             myreads_list, 
             False, 
-            scatter_popularity(myreads), 
             lolli_fig(genre_tbl),
             spider_fig(genre_tbl),
-            stack_fig(allgenredf, genre_tbl), 
+            stack_fig(allgenredf, genre_tbl),
+            viz_read(myreads),  
         )
 
 
