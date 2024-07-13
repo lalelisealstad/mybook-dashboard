@@ -90,21 +90,21 @@ Docker deployment in gcp:
 ```
 $ gcloud auth login
 $ gcloud auth configure-docker
-$ docker build --platform linux/amd64 -t gcr.io/mybookdashboard/mybook-dashboard:1.95 .
-$ docker push gcr.io/mybookdashboard/mybook-dashboard:1.95
+$ docker build --platform linux/amd64 -t gcr.io/mybookdashboard/mybook-dashboard:1.96 .
+$ docker push gcr.io/mybookdashboard/mybook-dashboard:1.96
 
 $ gcloud run deploy mybook-dashboard \
-      --image=gcr.io/mybookdashboard/mybook-dashboard:1.95 \
+      --image=gcr.io/mybookdashboard/mybook-dashboard:1.96 \
       --platform=managed \
       --region=europe-north1 \
-      --timeout=1000 \
-      --concurrency=100 \
-      --cpu=2 \
-      --memory=2Gi \
-      --max-instances=10 \
+      --timeout=800 \
+      --concurrency=800 \
+      --cpu=1 \
+      --memory=1Gi \
+      --max-instances=8 \
       --allow-unauthenticated
 
-Latest version: tag 1.95
+Latest version: tag 1.96
 
 ### Interactivity dashboard:
 - dates to view filter 

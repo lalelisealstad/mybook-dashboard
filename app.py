@@ -291,7 +291,7 @@ def update_figure_gapi(contents, filename):
         # Use the default data if no file is uploaded
         if uploaded_data.empty:
             # Load your default data
-            mybooks= pd.read_pickle('assets/my_books_genres.pickle')
+            mybooks= pd.read_parquet('assets/my_books_genres.parquet', engine='pyarrow')
             myreads = mybooks.loc[mybooks['Exclusive_Shelf'] == "read"].copy()
             uploadtxt_sug1 = "See your reading stats by uploading your Goodreads library export here:"
             uploadtxt_sug2 =  """How to find and export Goodreads library:<br>
