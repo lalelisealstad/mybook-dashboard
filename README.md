@@ -29,7 +29,7 @@ I first develop the code in Jupyter notebooks and then export the modules to Pyt
 
 My read books - viz:
 - Books read timeline, line chart
-- Timeline showing when books were written, bar chart
+- Timeline showing when books were written vs rating
 - Distribution of pages, bar chart
 - Distribution of languages, pie chart
 - Pie chart categories
@@ -38,7 +38,6 @@ My read books - viz:
 - Rating of most read authors
 - This year in books: total books and total pages
 - Tree figures showing category and topics in books
-- Scatter plot to visualize if rating and popularity correlate
 - Visualize genre:
     - Show spider figure for how often genres are read and how well they are rated
     - Bar and bubble combined
@@ -85,6 +84,7 @@ Docker deployment in gcp:
 ```
 $ docker build -t mybook-dashboard . 
 $ docker run -p 8080:8080 mybook-dashboard 
+```
 
 Docker deployment in gcp: 
 ```
@@ -93,9 +93,20 @@ $ gcloud auth configure-docker
 $ docker build --platform linux/amd64 -t gcr.io/mybookdashboard/mybook-dashboard:1.96 .
 $ docker push gcr.io/mybookdashboard/mybook-dashboard:1.96
 
-$ s
-
+$ gcloud run deploy mybook-dashboard \
+      --image=gcr.io/mybookdashboard/mybook-dashboard:1.96 \
+      --platform=managed \
+      --region=europe-north1 \
+      --timeout=800 \
+      --concurrency=800 \
+      --cpu=1 \
+      --memory=1Gi \
+      --max-instances=8 \
+      --allow-unauthenticated
+```
 Latest version: tag 1.96
+
+# future improvements 
 
 ### Interactivity dashboard:
 - dates to view filter 
