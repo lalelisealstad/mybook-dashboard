@@ -4,10 +4,17 @@ An interactive dashboard app where users can upload their Goodreads library and 
 
 I first developed the code in Jupyter notebooks and then export the modules to Python files to be used in the dashboard. The dashboard is written using the Python libraries Dash and Plotly, and it is mobile responsive. I use two public APIs that collects meta data about the books the user uploads. Since the meta data from the APIs did not contain book genre(s) I trained and implemented a multi-label classification machine learning model to automatically predict book genres. I plan on improving the dashboard to show the user a dedicated page for recommendations on what books to read next based on their reading habits. 
 
-### 2. Data Extraction and Transformation
+# Dashboard components
+- Upload component so users can upload their own Goodreads library and see it visualized
+- Using a spinner for visual indication that a file is being uploaded
+- Created a data pipeline for uploaded data: cleaning data and collecting metadata
+- Using asynchronous programming for collecting metadata faster
+- Plotly figures to visualize reading habits
+- Trained and implemented machine learning model to predit book genres
+- Mobile responsive layout
 
-**Collect metadata from APIs and clean data**
-
+###  Data Extraction and Transformation
+Using dash upload component, the user can upload their Goodreads library. The uploaded dataset of the books are cleaned and meta data is collected using APIs. 
 - **Collect information about the books using the Google Books API**
     - API request for books using title and author
 
@@ -21,13 +28,12 @@ I first developed the code in Jupyter notebooks and then export the modules to P
     - Year and quarter read
     - Mean imputation for missing ratings of top author books
 
-### 3. Asynchronous Queries
+### Asynchronous API requests
+- Using asynchronous code for the Google Books API calls to run batch requests asynchronously, making the dashboard faster and avoiding to exceed the Google Books request quota. 
 
-- Using asynchronous code for the Google Books API calls to run all requests asynchronously, making the dashboard faster.
+### Data Visualization
 
-### 4. Data Visualization
-
-My read books - viz:
+My read books:
 - Books read timeline, line chart
 - Timeline showing when books were written vs rating
 - Distribution of pages, bar chart
@@ -43,15 +49,9 @@ My read books - viz:
     - Bar and bubble combined
     - Show stacked distribution plot, time plot with different lines for genres to see certain times when a genre has been popular
 
-### Dashboard Components in app.py
 
-- Upload component so users can upload their own Goodreads library and see it visualized
-- Using a spinner for visual indication that a file is being uploaded
-- Created a data pipeline for uploaded data: cleaning data and collecting metadata
-- Using asynchronous programming for collecting metadata faster
-- Mobile responsive layout
-
-### 5.2 Machine Learning Model to Predict Genres of Book
+### Machine Learning Model to Predict Genres of Book
+The dashboard app automatically preditcs the genres of uploaded books using a machine learning model I trained using sckikit-learn. The ML predits the genres using book descriptions collected from the Google Books API. 
 
 Multi-label classification to predict multiple genres from book descriptions
 - Data exploration: most common words
@@ -106,7 +106,7 @@ $ gcloud run deploy mybook-dashboard \
 ```
 Latest version: tag 1.96
 
-# future improvements 
+# Future improvements
 
 ### Interactivity dashboard:
 - dates to view filter 
