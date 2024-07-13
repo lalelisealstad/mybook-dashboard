@@ -1,8 +1,8 @@
 # My Books Dashboard
 
-Create a dashboard app where users can upload their Goodreads library and view statistics about their reading habits and books read. Available at: [https://mybook-dashboard-qytxiv2xfq-lz.a.run.app/](https://mybook-dashboard-qytxiv2xfq-lz.a.run.app/)
+An interactive dashboard app where users can upload their Goodreads library and view statistics about their reading habits and books read. Available at: [https://mybook-dashboard-qytxiv2xfq-lz.a.run.app/](https://mybook-dashboard-qytxiv2xfq-lz.a.run.app/)
 
-I first develop the code in Jupyter notebooks and then export the modules to Python files to be used in the dashboard. See the notebooks described below for the process. The dashboard is written using the Python libraries Dash and Plotly, and it is mobile responsive. I use two public APIs that collects meta data about the books the user uploads. Since the meta data from the APIs did not contain book genre(s) I trained and implemented a multi-label classification machine learning model to automatically predict book genres. 
+I first developed the code in Jupyter notebooks and then export the modules to Python files to be used in the dashboard. The dashboard is written using the Python libraries Dash and Plotly, and it is mobile responsive. I use two public APIs that collects meta data about the books the user uploads. Since the meta data from the APIs did not contain book genre(s) I trained and implemented a multi-label classification machine learning model to automatically predict book genres. I plan on improving the dashboard to show the user a dedicated page for recommendations on what books to read next based on their reading habits. 
 
 ### 2. Data Extraction and Transformation
 
