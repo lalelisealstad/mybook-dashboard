@@ -69,9 +69,8 @@ Run first time:
 ```
 $ python3 -m venv .venv
 $ source .venv/bin/activate 
-$ pip install pipenv
-$ pipenv install ipykernel
-$ pipenv install 
+$ pip install -r requirements.txt
+$ pip install ipykernel
 ```
 
 run after installation: 
@@ -91,21 +90,21 @@ Docker deployment in gcp:
 ```
 $ gcloud auth login
 $ gcloud auth configure-docker
-$ docker build --platform linux/amd64 -t gcr.io/mybookdashboard/mybook-dashboard:1.94 .
-$ docker push gcr.io/mybookdashboard/mybook-dashboard:1.94
+$ docker build --platform linux/amd64 -t gcr.io/mybookdashboard/mybook-dashboard:1.95 .
+$ docker push gcr.io/mybookdashboard/mybook-dashboard:1.95
 
 $ gcloud run deploy mybook-dashboard \
-      --image=gcr.io/mybookdashboard/mybook-dashboard:1.94 \
+      --image=gcr.io/mybookdashboard/mybook-dashboard:1.95 \
       --platform=managed \
       --region=europe-north1 \
-      --timeout=800 \
-      --concurrency=80 \
-      --cpu=1 \
-      --memory=512Mi \
+      --timeout=1000 \
+      --concurrency=100 \
+      --cpu=2 \
+      --memory=2Gi \
       --max-instances=10 \
       --allow-unauthenticated
 
-Latest version: tag 1.94
+Latest version: tag 1.95
 
 ### Interactivity dashboard:
 - dates to view filter 

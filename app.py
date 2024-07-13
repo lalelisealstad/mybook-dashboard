@@ -4,13 +4,13 @@ from dash import html
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 # import plotly.express as px
-# import plotly.graph_objs as go
+import plotly.graph_objs as go
 import pandas as pd 
 import json
 import numpy as np
-from apps.viz import viz_read, tree_topics, viz_pub_year, viz_year_read, visualize_categories, viz_top_values, insert_br, book_ratings_top, book_ratings_bottom, author_count_fig, desc_tree, lolli_fig, spider_fig, stack_fig, author_rating_fig
-from apps.dataimport import dataprep
-from apps.collect_data import get_book_topics
+from apps.viz import *
+from apps.dataimport import *
+from apps.collect_data import *
 from datetime import datetime
 import base64
 import io

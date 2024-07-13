@@ -16,6 +16,17 @@ def viz_read(df):
     # Count the number of books read in each year and quarter
     year_quarter_counts = df.groupby('Year',  observed=True).size().reset_index(name='Books Read')
     
+    if year_quarter_counts['Books Read'].min() > 20: 
+        min_x = year_quarter_counts['Books Read'].min()-20
+    elif year_quarter_counts['Books Read'].min() > 10:
+        min_x = year_quarter_counts['Books Read'].min()-10
+    elif year_quarter_counts['Books Read'].min() > 5:
+        min_x = year_quarter_counts['Books Read'].min()-5
+    else: 
+        min_x = year_quarter_counts['Books Read'].min()
+        
+    
+    
     # Create the line chart
     fig = px.line(year_quarter_counts, x='Year', y='Books Read', markers=True, template = "plotly_white")
     fig['data'][0]['line']['color']='#A777F1'
@@ -23,7 +34,7 @@ def viz_read(df):
     fig.update_layout(
         title='Number of books read - Timeline',
         xaxis=dict(title='Year', dtick=1),
-        yaxis=dict(title='Number of Books Read', range=[year_quarter_counts['Books Read'].min()-20, year_quarter_counts['Books Read'].max()+20]),
+        yaxis=dict(title='Number of Books Read', range=[min_x, year_quarter_counts['Books Read'].max()+20]),
         
         showlegend=False
 
