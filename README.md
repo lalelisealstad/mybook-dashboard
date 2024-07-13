@@ -93,16 +93,7 @@ $ gcloud auth configure-docker
 $ docker build --platform linux/amd64 -t gcr.io/mybookdashboard/mybook-dashboard:1.96 .
 $ docker push gcr.io/mybookdashboard/mybook-dashboard:1.96
 
-$ gcloud run deploy mybook-dashboard \
-      --image=gcr.io/mybookdashboard/mybook-dashboard:1.96 \
-      --platform=managed \
-      --region=europe-north1 \
-      --timeout=800 \
-      --concurrency=800 \
-      --cpu=1 \
-      --memory=1Gi \
-      --max-instances=8 \
-      --allow-unauthenticated
+$ s
 
 Latest version: tag 1.96
 
