@@ -18,7 +18,6 @@ app = dash.Dash(__name__,
 
 app.title = 'Book Dashboard'
 
-
 # Define the layout of the app
 app.layout = html.Div([
     html.Div([
@@ -26,20 +25,19 @@ app.layout = html.Div([
             dbc.Row(
                 dbc.Col(
                     [
-                        html.H1("Book Dashboard", className="my-4 text-center",
-                                style={'color': '#2B2B35', 'text-align': 'center'}),
+                        html.H1("Book Dashboard", className="my-4 text-center heading"),
                         html.P("Welcome to the Book Reading Statistics Dashboard. Explore insightful data about your reading habits and uncover new insights into your literary adventures!",
-                               style={'color': '#2b2b35', 'text-align': 'center', 'font-size': '16px'}),
+                               className="subheading"),
                     ],
-                    style={'background-color': '#D6C9F2'}, className='five columns')
+                    className='five columns box-background')
             , justify="center"),
 
             # Row to upload books
             dbc.Row([
                 dbc.Col(
                     [
-                        dcc.Markdown(id='data-info-text1', dangerously_allow_html=True, style={'font-size': '16px'}),
-                        dcc.Markdown(id='data-info-text2', dangerously_allow_html=True, style={'font-size': '11px'}),
+                        dcc.Markdown(id='data-info-text1', dangerously_allow_html=True, className="markdown-large"),
+                        dcc.Markdown(id='data-info-text2', dangerously_allow_html=True, className="markdown-small"),
                     ], xs=10, sm=10, md=10, lg=5, xl=5
                 ),
                 dbc.Col([
@@ -48,23 +46,14 @@ app.layout = html.Div([
                             id='upload-data',
                             children=html.Div([
                                 'Drag and Drop or ',
-                                html.A('Select Files', style={'color': 'blue', 'font-weight': 'bold'}),
+                                html.A('Select Files', className='upload-link'),
                             ]),
-                            style={
-                                'width': '100%',
-                                'height': '100px',
-                                'lineHeight': '100px',
-                                'borderWidth': '2px',
-                                'borderStyle': 'dashed',
-                                'borderRadius': '5px',
-                                'textAlign': 'center',
-                                'margin': '10px'
-                            },
+                            className="upload-area",
                             multiple=False),  # Allow only one file upload at a time
-                        dcc.Markdown(id='upload-text', dangerously_allow_html=True, style={'font-size': '11px', 'textAlign': 'center'}),
+                        dcc.Markdown(id='upload-text', dangerously_allow_html=True, className="upload-text"),
                     ])
                 ], xs=10, sm=10, md=10, lg=5, xl=5)
-            ], className="mt-2", style={'color': '#2B2B35'}, justify="center"),
+            ], className="upload-section", justify="center"),
 
             # Tabs and page navigation
             html.Div(
@@ -88,12 +77,7 @@ app.layout = html.Div([
                 dcc.Store(id='is-uploaded-data', data=[], storage_type='session')  # store binary showing if data is uploaded
             ])
         ], fluid=True),
-    ], style={'width': '100%', 'display': 'inline-block',
-              'box-shadow': '2px 2px 2px lightgrey',
-              'background-color': '#fcfcfc',
-              'padding': '5px',
-              'align': "center"
-    }),
+    ], className="main-container"),
 ])
 
 
