@@ -39,7 +39,7 @@ async def book_info_add(df, api_key):
         return await get_book_info(book_name, author_name, api_key)
 
     # run in batches to not exceed google api quota limit 
-    batch_size = 50
+    batch_size = 99
     combined_book_info = pd.DataFrame()
     
     # split and run queries of df in batches 
@@ -87,7 +87,7 @@ async def book_info_add(df, api_key):
 
             # Introduce a delay of 1 minute between batches, except for the last iteration or if df size is less than batch size
         if start + batch_size < len(df):
-            await asyncio.sleep(70)
+            await asyncio.sleep(65)
 
 
 ##################

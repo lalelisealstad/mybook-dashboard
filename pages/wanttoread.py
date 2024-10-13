@@ -25,6 +25,6 @@ dash.register_page(__name__)
 
 
 layout = html.Div(
-    html.P("page want to read", style={'color': '#2b2b35', 'text-align': 'center', 'font-size': '16px'}),
+    html.P("Find what to read next", style={'color': '#2b2b35', 'text-align': 'center', 'font-size': '16px'}),
 #             # year-timeline
 )

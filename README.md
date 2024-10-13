@@ -107,8 +107,7 @@ $ gcloud run deploy mybook-dashboard \
 Latest version: tag 1.96
 
 # Future improvements
-- remove global variables and store df in dcc store
-- make dash into pages, moving current into read page
+- get new copy of goodreadslibrary to use to make wanttoread section
 - make want to read section
     - use async code to get books and ml to get topics
     - create filter functionality to get books
@@ -116,7 +115,7 @@ Latest version: tag 1.96
         - filter by genre
         - sort by popularity / ratings
 - add yml file to deploy
- - Chanhe to poetry in dash, 
+ - Change to poetry in dash, 
  - add linter formater Ruff, use pytest
 
     - try to see if I can use google books api to get book pic instead of just name

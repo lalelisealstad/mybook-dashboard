@@ -75,11 +75,12 @@
 
 /* Markdown styles */
 .markdown-large {
-    font-size: 16px;
+    font-size: 18px;
+    margin-top: 15px;
 }
 
 .markdown-small {
-    font-size: 11px;
+    font-size: 13px;
 }
 
 /* Upload section colors */
