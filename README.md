@@ -111,15 +111,20 @@ $ gcloud run deploy mybook-dashboard \
 Latest version: tag 1.96
 
 # Future improvements
+- get new copy of goodreadslibrary to use to make wanttoread section
+- make want to read section
+    - use async code to get books and ml to get topics
+    - create filter functionality to get books
+        - filter to show authors read before
+        - filter by genre
+        - sort by popularity / ratings
+- add yml file to deploy
+ - Change to poetry in dash, 
+ - add linter formater Ruff, use pytest
 
-### Interactivity dashboard:
-- dates to view filter 
+    - try to see if I can use google books api to get book pic instead of just name
 
-## what to read next page: 
-- ratings select filter.  
-- find books based on word or topic: show a list of the books. 
-- genre
-- top authors filter, or author select 
+
 
 ### ML Segment analysis for what to read next 
 - Ai recommend books want to read based on books read, segment analysis. 
@@ -133,6 +138,3 @@ recommendations:
 - top five popular books based on rating count
 - books from your top authors
 
-
-### Use api to give single books insights
- example, this is the longest book you have read and show pic of book

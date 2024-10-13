@@ -7,3 +7,9 @@ apps/api.py
 .DS_Store
 testing.ipynb
 assets/test.pkl
+
+*/__pycache__/
+__pycache__/*
+pages/__pycache__/
+pages/__pycache__/read.cpython-312.pyc
+pages/__pycache__/wanttoread.cpython-312.pyc

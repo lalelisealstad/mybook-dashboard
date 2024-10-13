@@ -1,0 +1,100 @@
+/* Style for the tabs container */
+#tabs .tab {
+    font-size: 16px;
+    padding: 6px;
+    background-color: #fcfcfc;
+    border: 1px solid #D6C9F2;
+    border-radius: 5px;
+    margin: 0 4px;
+    text-align: center;
+    margin-top: 15px;
+}
+
+/* Style for the selected tab */
+#tabs .tab--selected {
+    background-color: #D6C9F2;
+    border: 1px solid #D6C9F2;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Hover effect for tabs */
+#tabs .tab:hover {
+    background-color: #D6C9F2;
+    cursor: pointer;
+}
+
+
+/* Main container styling */
+.main-container {
+    width: 100%;
+    display: inline-block;
+    box-shadow: 2px 2px 2px lightgrey;
+    background-color: #fcfcfc;
+    padding: 5px;
+    align-items: center;
+}
+
+/* Heading and subheading */
+.heading {
+    color: #2B2B35;
+    text-align: center;
+}
+
+.subheading {
+    color: #2b2b35;
+    text-align: center;
+    font-size: 16px;
+}
+
+/* Box background styling */
+.box-background {
+    background-color: #D6C9F2;
+}
+
+/* Upload section styling */
+.upload-area {
+    width: 100%;
+    height: 100px;
+    line-height: 100px;
+    border-width: 2px;
+    border-style: dashed;
+    border-radius: 5px;
+    text-align: center;
+    margin: 10px;
+}
+
+.upload-link {
+    color: blue;
+    font-weight: bold;
+}
+
+.upload-text {
+    font-size: 11px;
+    text-align: center;
+}
+
+/* Markdown styles */
+.markdown-large {
+    font-size: 18px;
+    margin-top: 15px;
+}
+
+.markdown-small {
+    font-size: 13px;
+}
+
+/* Upload section colors */
+.upload-section {
+    color: #2B2B35;
+}
+
+/* Tabs styling */
+.tab {
+    background-color: #f1f1f1;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.tab--selected {
+    background-color: #d6c9f2;
+}
