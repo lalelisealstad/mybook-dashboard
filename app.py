@@ -172,7 +172,7 @@ def update_figure_gapi(contents, filename):
         logging.info('ascync complete - requests complete')
         new_data = dataprep(new_data, nmyreadsgg)
         logging.info('dataprep completed')
-        nmyreads_list = nmyreads[['Author','Title']].to_dict()
+        nmyreads_list = new_data[['Author','Title']].to_dict()
         
         new_data = ml_genre(new_data)
         print('prediction complete')

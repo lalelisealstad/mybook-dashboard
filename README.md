@@ -121,8 +121,8 @@ Latest version: tag 1.96
 - add yml file to deploy
  - Change to poetry in dash, 
  - add linter formater Ruff, use pytest
-
-    - try to see if I can use google books api to get book pic instead of just name
+- improve readme file
+- try to see if I can use google books api to get book pic instead of just name
 
 
 
