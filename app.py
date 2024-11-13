@@ -176,9 +176,10 @@ def update_figure_gapi(contents, filename):
         
         new_data = ml_genre(new_data)
         print('prediction complete')
-
-        nmyreads = new_data.loc[new_data['Exclusive Shelf'] == "read"].copy()
-        ntoreads = new_data.loc[new_data['Exclusive Shelf'] == "read"].copy()
+        
+        new_data.rename(columns={'Exclusive Shelf': 'Exclusive_Shelf'}, inplace=True)
+        nmyreads = new_data.query("Exclusive_Shelf == 'read'").copy()
+        ntoreads = new_data.query("Exclusive_Shelf == 'to-read'").copy()
         
         nmyreads_json = nmyreads.to_json(orient='split')
         ntoreads_json = ntoreads.to_json(orient='split')

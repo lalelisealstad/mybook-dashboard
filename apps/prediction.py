@@ -1,8 +1,6 @@
 def ml_genre(df): 
     import pandas as pd
-    
-    
-    # function for text cleaning 
+
     import re
     def clean_text(text):
         # remove backslash-apostrophe 
